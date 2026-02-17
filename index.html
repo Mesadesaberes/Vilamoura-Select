@@ -5,6 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Vilamoura Guide - Global Edition</title>
     
+    <link rel="apple-touch-icon" href="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgcgTG65bbe2IDQQJzNptqaWtHiqAD2kQBDMa2QWhC94gD10X21cB-LrH4gtHgscfjXFO6Fq1MS8Qg9tOE-kVKAjUe-4h7sNUMRduS_05lNMKEuaG4ABJntJWd5TPpB6OKOvkAnYFjpEPmjaodtdbxdMShpC4jw2wkNU-75-SV7dLdXgTvCWJNv0ro3oBYi/s150/Vilamoura_Guide_Logo.gif">
+    <link rel="icon" href="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgcgTG65bbe2IDQQJzNptqaWtHiqAD2kQBDMa2QWhC94gD10X21cB-LrH4gtHgscfjXFO6Fq1MS8Qg9tOE-kVKAjUe-4h7sNUMRduS_05lNMKEuaG4ABJntJWd5TPpB6OKOvkAnYFjpEPmjaodtdbxdMShpC4jw2wkNU-75-SV7dLdXgTvCWJNv0ro3oBYi/s150/Vilamoura_Guide_Logo.gif">
+
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
@@ -14,7 +17,6 @@
     <style>
         body, html { margin: 0; padding: 0; height: 100vh; width: 100%; overflow: hidden; background: #f4f7f9; font-family: 'Segoe UI', Roboto, sans-serif; }
         
-        /* Estilo da Barra de Tradução */
         #google_translate_element {
             padding: 5px;
             text-align: center;
@@ -22,27 +24,11 @@
             border-bottom: 2px solid #c5a059;
             min-height: 38px;
         }
-/* Esconde o balão de sugestão de tradução (pop-up) */
-.goog-te-gadget-simple img, 
-.goog-te-menu-value img,
-.goog-te-banner-frame,
-#goog-gt-tt, 
-.goog-te-balloon-frame,
-.goog-te-tipview {
-    display: none !important;
-}
 
-/* Esconde o destaque amarelo quando passas o rato/dedo no texto traduzido */
-.goog-text-highlight {
-    background: none !important;
-    box-shadow: none !important;
-}
-
-/* Garante que o corpo da página não ganha uma margem estranha no topo */
-body {
-    top: 0px !important;
-}
-        .goog-te-banner-frame.skiptranslate { display: none !important; }
+        /* ESCONDER JANELAS DE CLASSIFICAÇÃO E SUGESTÃO DO GOOGLE */
+        .goog-te-banner-frame.skiptranslate, .goog-te-banner-frame { display: none !important; }
+        #goog-gt-tt, .goog-te-balloon-frame, .goog-te-tipview { display: none !important; }
+        .goog-text-highlight { background: none !important; box-shadow: none !important; }
         body { top: 0px !important; }
         .goog-te-gadget { color: transparent !important; }
         .goog-te-gadget .goog-te-combo { padding: 4px; border-radius: 4px; border: none; font-size: 13px; }
@@ -64,7 +50,6 @@ body {
     <script type="text/babel">
         const { useState, useEffect, useRef } = React;
 
-        // --- BASE DE DADOS COMPLETA (20 LOCAIS) ---
         const LOCAIS_VILAMOURA = [
           { id: "tivoli", nome: "Tivoli Marina", cat: "hoteis", subCat: "5 Estrelas", info: "Luxo sobre a Marina", lat: 37.07433, lng: -8.12017, icon: "🏨", tel: "+351289303303", web: "https://www.tivolihotels.com", img: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgbuotHReCbbgAZXVruQoDzpVQWaZTeqsqIHnANJDswD4BO8OF-oV0nfHsMd-G9zcEpAnpa2FTJtw94Fv0RiGgucHGOtnWz0UdQhce_R5A3inLhytkobCXvrP3bYc8T95Lv03hLt98GIbujpIZeCkiyHt6UZamuoo3MSLhhSBf9nawoKk-12X-8-i4C7GH_/w453-h301/Tivoli_Marina_Vilamoura_.jpg" },
           { id: "ampalius", nome: "Vila Galé Ampalius", cat: "hoteis", subCat: "4 Estrelas", info: "Frente à praia", lat: 37.0773, lng: -8.1179, icon: "🏨", tel: "+351289303970", web: "https://www.vilagale.com", img: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhGVY9LR4Vy8uzfLr-M1OUhJ9VUCAYWg0OAbCOvXzoHhKTxr_3pvfa9I7eCk0tF6P8cHL35VyfCzFb7ZoVcwl-jCBhAdfa_zUuqgTXqnqUPBnZByM_x1lAO32VhpEJQiWGmcE9SbTAd-3AyGxWvJfXoajE0bw7W30cJHf95nymYA9ll8fQrUXD8usF5Fsms/w462-h307/Vila%20Gale%20Ampalius.jfif" },
@@ -240,6 +225,4 @@ body {
     <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
 
 </body>
-
 </html>
-
