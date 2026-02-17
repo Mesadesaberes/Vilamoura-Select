@@ -22,7 +22,26 @@
             border-bottom: 2px solid #c5a059;
             min-height: 38px;
         }
+/* Esconde o balão de sugestão de tradução (pop-up) */
+.goog-te-gadget-simple img, 
+.goog-te-menu-value img,
+.goog-te-banner-frame,
+#goog-gt-tt, 
+.goog-te-balloon-frame,
+.goog-te-tipview {
+    display: none !important;
+}
 
+/* Esconde o destaque amarelo quando passas o rato/dedo no texto traduzido */
+.goog-text-highlight {
+    background: none !important;
+    box-shadow: none !important;
+}
+
+/* Garante que o corpo da página não ganha uma margem estranha no topo */
+body {
+    top: 0px !important;
+}
         .goog-te-banner-frame.skiptranslate { display: none !important; }
         body { top: 0px !important; }
         .goog-te-gadget { color: transparent !important; }
@@ -223,3 +242,4 @@
 </body>
 
 </html>
+
