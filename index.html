@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vilamoura Guide - Global Edition</title>
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCqRtZgE7hw-znacoAqXuXZ4SEGVuXWudo&libraries=places"></script>
+
+    <style>
+        body, html { margin: 0; padding: 0; height: 100vh; width: 100%; overflow: hidden; background: #f4f7f9; font-family: 'Segoe UI', Roboto, sans-serif; }
+        
+        /* Estilo da Barra de Tradução */
+        #google_translate_element {
+            padding: 5px;
+            text-align: center;
+            background: #003366;
+            border-bottom: 2px solid #c5a059;
+            min-height: 38px;
+        }
+
+        .goog-te-banner-frame.skiptranslate { display: none !important; }
+        body { top: 0px !important; }
+        .goog-te-gadget { color: transparent !important; }
+        .goog-te-gadget .goog-te-combo { padding: 4px; border-radius: 4px; border: none; font-size: 13px; }
+
+        #root { height: calc(100% - 45px); }
+
+        .cat-card { transition: all 0.2s; cursor: pointer; background: #fff; border-radius: 15px; text-align: center; padding: 25px 10px; box-shadow: 0 4px 12px rgba(0,51,102,0.08); }
+        .cat-card:active { transform: scale(0.95); background: #f0f0f0; }
+        .btn-action { display: block; text-align: center; padding: 10px; margin-top: 8px; text-decoration: none; border-radius: 8px; font-weight: bold; font-size: 13px; color: #fff; cursor: pointer; border: none; width: 100%; box-sizing: border-box; }
+        ::-webkit-scrollbar { width: 5px; }
+        ::-webkit-scrollbar-thumb { background: #003366; border-radius: 10px; }
+    </style>
+</head>
+<body>
+
+    <div id="google_translate_element"></div>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect, useRef } = React;
+
+        // --- BASE DE DADOS COMPLETA (20 LOCAIS) ---
+        const LOCAIS_VILAMOURA = [
+          { id: "tivoli", nome: "Tivoli Marina", cat: "hoteis", subCat: "5 Estrelas", info: "Luxo sobre a Marina", lat: 37.07433, lng: -8.12017, icon: "🏨", tel: "+351289303303", web: "https://www.tivolihotels.com", img: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgbuotHReCbbgAZXVruQoDzpVQWaZTeqsqIHnANJDswD4BO8OF-oV0nfHsMd-G9zcEpAnpa2FTJtw94Fv0RiGgucHGOtnWz0UdQhce_R5A3inLhytkobCXvrP3bYc8T95Lv03hLt98GIbujpIZeCkiyHt6UZamuoo3MSLhhSBf9nawoKk-12X-8-i4C7GH_/w453-h301/Tivoli_Marina_Vilamoura_.jpg" },
+          { id: "ampalius", nome: "Vila Galé Ampalius", cat: "hoteis", subCat: "4 Estrelas", info: "Frente à praia", lat: 37.0773, lng: -8.1179, icon: "🏨", tel: "+351289303970", web: "https://www.vilagale.com", img: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhGVY9LR4Vy8uzfLr-M1OUhJ9VUCAYWg0OAbCOvXzoHhKTxr_3pvfa9I7eCk0tF6P8cHL35VyfCzFb7ZoVcwl-jCBhAdfa_zUuqgTXqnqUPBnZByM_x1lAO32VhpEJQiWGmcE9SbTAd-3AyGxWvJfXoajE0bw7W30cJHf95nymYA9ll8fQrUXD8usF5Fsms/w462-h307/Vila%20Gale%20Ampalius.jfif" },
+          { id: "colombo", nome: "Colombo", cat: "comer", subCat: "Português", info: "Cozinha tradicional", lat: 37.0757, lng: -8.1150, icon: "🍴", tel: "+351289300919", web: "https://www.facebook.com/restaurantecolombo", img: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEh8BrDSbJXJaPu4G5ahigmv5fnnO71cxKiQfxiJmAZe-jgUcX3cQQG6XXzP0sCgRO_W4jFbfBDytY2oRqaBSWmV8nOkSkapWCvRtFgwPTTGK7PoDNVs_mTeDW11iP_QIo2iwxRtvhkLbjwIRjuUI340anqpR5UchWkRLqQCvsBo0X7gPv97dDZ7xifW0uWY/s1600/20220930_194648.jpg" },
+          { id: "thai", nome: "Thai Vilamoura", cat: "comer", subCat: "Tailandês", info: "Cozinha autêntica", lat: 37.0777, lng: -8.1163, icon: "🍲", tel: "+351289302370", web: "https://www.thaivilamoura.com", img: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhLkC9YJrcg-dbSNHxYMSOEZBOF7CYin0QUJru5O_7Uqk5-mK2-66Ehv-0i5Mami3TCfsSGYDMkGKPfKskK8nhMRezn0WSeLwvtPjUnC43q6NDbyV1MoYGhHqxjxrHr7Dz6vX7Xh_kbuG_XJRgwJpZjVHBBBbjEuANxjQWzoFbx-88s9Ru-dR7kLhvWT4wU/w438-h640/Thai%20Vilamoura.jpg" },
+          { id: "luna", nome: "Luna Rossa", cat: "comer", subCat: "Italiano", info: "Pizzas artesanais", lat: 37.0792, lng: -8.1195, icon: "🍕", tel: "+351289302245", web: "https://lunarossavilamoura.pt", img: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEi7_h6rzfvQ3Q71fpNCPBew1q4d2OZBVTFoRENdwJDTV2u7iCf3ETpWdUxLmcooLKWxwxlh618mshG-iRA0-8myM5bihvdhSgC_XPi4o9ImPBpg3DdWITFFTkgbDDZkaVxRDRxol8Q4Mg_6nVJ8a57CXL-esH305eyVSBAGAO_BSNDXjez-IXrfZS4waxQp/w444-h313/Luna%20rossa.jpg" },
+          { id: "clover", nome: "Golden Clover", cat: "bares", subCat: "Irish Pub", info: "Cerveja e diversão", lat: 37.0752, lng: -8.1154, icon: "🍀", tel: "+351912432626", web: "https://goldenclover.pt", img: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgbb12_0MDt5KGaWQU-NNZ1lOnRmMMXbEp8zPQKhxJ-6tDmbmHdKEh4MjR-qWlEdPmJ1i1SKOkXi9eQ4nYosgR54knP9pcGt6_AOf-YBmkMGZdBc_FYWfY5KWkzyhdWCTZblDWalkekC06h4AwE7kmTfoGs-Y0793B5ncVuxDd9CFkSfGkh4RyV1dG-JAou/w447-h307/Golden%20Clover.jpg" },
+          { id: "hole19", nome: "19th Hole", cat: "bares", subCat: "Sports Bar", info: "Melhores Cocktails", lat: 37.0755, lng: -8.1192, icon: "🍺", tel: "+351914928110", web: "https://19thholevilamoura.com", img: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhWj9XRvveJ01eX0XP2aJEuv-ECFUsDuigj5UD0KFVb-Kql5SgHo_lAQHS3LHREucUUi3Udwo06i2DJMKuky_1FQsYksvc27QAt7GfXwGb2166ylUrHDYhopxvS0hTh0Mid0tmgdmMoWo-JNqAsAI9DLizYbZrz8jAgNDAes-NKdwHT2P4UDV8kltccGE2o/w450-h234/19th%20HOLE.jpg" },
+          { id: "familygolf", nome: "Family Golf Park", cat: "lazer", subCat: "Mini-Golf", info: "Lazer familiar", lat: 37.0780, lng: -8.1130, icon: "⛳", tel: "+351289300440", web: "https://www.familygolfpark.pt", img: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjc3NgjlKZyOeGyESAgI1eDyS_CQahtDMlgphkwWDbl_hGajxBW3G8_6FwV704I6RT3y1U3WVmwlAxLqHRxDJbONvxP253ROq627_Dr19tpB7GR1R09Qz3Oo3S8ljIDjSM8AH_7v-ULFNvJR_clp0owjNlbIyHinnoqlpSso9wz5nxbSolX8Nld6dvCafJ7/s320/family-golf-park.jpg" },
+          { id: "museu", nome: "Cerro da Vila", cat: "lazer", subCat: "Museu", info: "Ruínas Romanas", lat: 37.0801, lng: -8.1190, icon: "🏛️", tel: "+351289312153", web: "https://www.museucerro-davila.pt", img: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjcJRzVqg8sBXmR4Ru_tJ_h8uvMBytfsKq0ZcyyhVv_vMqwV5g9_ECx8Qpzo0CAec4qHUBt2-3kfQ2oqds4HoZfp3iqWHI77lWV6S96XYk2LjdfPinmNIFBOfWGGOdMNDOHq_wJe8H-LCyZAbnTKA_Cpw7nkaY21YAcWGWN8uSmy7ZJpgrT9yeDOxPrzj3k/s1600/Museu%20cerro%20da%20Vila.jfif" },
+          { id: "casino", nome: "Casino Vilamoura", cat: "lazer", subCat: "Entretenimento", info: "Shows e Jogos", lat: 37.0773, lng: -8.1156, icon: "🎰", tel: "+351289310000", web: "https://www.solverde.pt/casino-vilamoura", img: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiQ2NGpAkrZA6JF3mdjzj45f_wn6vEprsp-W3o3KUe3402dmvVvux3Z3hbWnRPns2QRjk-4-AFWfLlGz6XQcAPb41BZO5dQQClIHiHoJSHm_Lka7Ui1kQeR2c-ye_-DkFgc-IKomAWlhbqNFS74yo-Hm6QoXdBVWTiBv9X9Pob-O3TwJzEsSi2JlfHx-oIA/w465-h261/Casino-de-vilamoura.jfif" },
+          { id: "oldcourse", nome: "Old Course", cat: "golf", subCat: "Dom Pedro", info: "Campo Clássico", lat: 37.1021, lng: -8.1155, icon: "🏌️", tel: "+351289310341", web: "https://www.dompedrogolf.com", img: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEi9TeufNw3s8cvFQCBMyEjurQCvim1PTN9Pgyp-wEehCZJXBgRNmvWMjjFIpwhWnbQu_jZ-s-7D8ufYQQTmccDbObpt4yIia1-xm3k0d1NiDCUORo_QIZkmFBmR4Z6dfxo7vWdHh538CPfO8Ar5SOfadBxHptQ0RDSUVp-hPaKJaSecDb5Q2WhPDzR8yOji/s320/old-course-with-logo.jpg" },
+          { id: "millennium", nome: "Millennium Golf", cat: "golf", subCat: "Dom Pedro", info: "Design Moderno", lat: 37.1030, lng: -8.1250, icon: "⛳", tel: "+351289310333", web: "https://www.dompedrogolf.com", img: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEih8kW5HMhTxRlM1XIUrZ4TSciEfZrsvRW4F5roCad245G8zd5RW7GB_SC0CkyaGH0Oty_56EmTfnZxCxjLLXQET_LhHHAKHbYmPgBFMpJFvkq-ngPBWoU4SJzxqI2CyuIQaVg2BroRKbvBoMpzniycJ2r1wbY9OW4oDvKtG7iftq8WImThBLQANgLd5KNx/s1600/millennium-golf-with-logo-.jpg" },
+          { id: "laguna", nome: "Laguna Golf", cat: "golf", subCat: "Dom Pedro", info: "Estilo Links", lat: 37.1050, lng: -8.1300, icon: "⛳", tel: "+351289310333", web: "https://www.dompedrogolf.com", img: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjpqruYU498m27vVpXxHIMtt8C1ktkTH71CfBsUiAn6KeWWMb3L2dhVJ_sRsB8MqWImt1Nc7vHFm6N7ynWlPEWzvlkCAU_ckNVNh6YY2ZWgCuWGnxIZFWxzPlLjtREk8MnWG7YtU0cQSUb3wLvpSs-B6Uem8rzJ0qtOdwYGohE628cAG4UhvIWrhogBU-Hm/s320/laguna-golf-with-logo.jpg" },
+          { id: "pinhal", nome: "Pinhal Golf", cat: "golf", subCat: "Dom Pedro", info: "Pinhal majestoso", lat: 37.0925, lng: -8.1105, icon: "⛳", tel: "+351289310390", web: "https://www.dompedrogolf.com", img: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjmOHg_GgQCiwZ8Nzw0S2bZKA57EZd7Vaoy9Aj-qqmFWoRFnsZ4CON57mhqOozH0eVR_G37tJgibQo8etDAA2rvAlLJO4EP36RldXk2VbSF_ephlsiLUEOk6ASXHhJqZE6T-lPXNdrdodZ8zc37jnrjQvSYm9wIZGD50KwxjMVysb7v6uoSCa_khKeQsMOZ/s320/pinhal-Golf-with-logo.jpg" },
+          { id: "victoria", nome: "Victoria Golf", cat: "golf", subCat: "Campeonato", info: "Arnold Palmer Design", lat: 37.1035, lng: -8.1418, icon: "🏆", tel: "+351289310100", web: "https://www.dompedrogolf.com", img: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhE1xthVUNMfTBR0JzfDp-ROZxgt68NTwsBLyfIW2U0yg_pXH5WqcYXJ3trnAQN1CHmsoX30d6TsoU1gHoi_sxcWJbDLcgQ8gM9DIl-pRs0Mz6fXBDfBPDKenIohFgPSwID2r_CyKciRyvMsBgAi7FXlyQcHdL_lYWUb6ahWrsqz4FuWFA6Tuc-Ok_nv_Pc/w319-h319/Victoria%20Golf.png" },
+          { id: "algarveprop", nome: "Algarve Property.com", cat: "imobiliarias", subCat: "Imobiliária", info: "Desde 1997", lat: 37.07666, lng: -8.11777, icon: "🏠", tel: "+351289310310", web: "https://www.algarveproperty.com", img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSVzBUZBmk6gabC9cgFgvLm0HewvEvduKo91A&s" },
+          { id: "garvetur", nome: "Garvetur Marina", cat: "imobiliarias", subCat: "Imobiliária", info: "Venda e Aluguer", lat: 37.07530, lng: -8.11857, icon: "🏢", tel: "+351289322444", web: "https://www.garvetur.pt", img: "https://images.trvl-media.com/lodging/4000000/3920000/3915300/3915273/d80a3261.jpg?impolicy=resizecrop&rw=575&rh=575&ra=fill" },
+          { id: "gnr", nome: "GNR Vilamoura", cat: "util", subCat: "Segurança", info: "Posto Territorial", lat: 37.08552, lng: -8.11651, icon: "🚓", tel: "+351289381550", web: "https://www.gnr.pt", img: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiQgNFxLWvwZnkV9I4cIlNTLi93LFVaWr3y2oVgyPoGt87EBiETjT2ZT2Jw-XxMOEco59kpDHgwKAympVvrrtSXTvk1pTEh13ZH_OOl3nbDQLtryq1QepMEPz_sve47DwMPwbgINSkmnIajW9R2VQT9lX7Wu4_VeEY-NdO2_Ib_3uuAwjZj6EExkUsETE3f/s320/GNR.jpg" },
+          { id: "farmacia", nome: "Farmácia Silva", cat: "util", subCat: "Saúde", info: "Farmácia", lat: 37.08317, lng: -8.11817, icon: "💊", tel: "+351289312878", web: "https://www.farmaciasilva.pt", img: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEitgXmGISsEp162r5_7dhZN7VIJbr7e_5zkpTrsWtG_SSMdcSL1sYU0c8x7kYpY3rP_zQK1F1BxYNmRwQ77N5UaiPCU0XOf33uTmJwDfo6_tjENtNSCy5nmqCmy0hTg5QchCRT6Jbjd-IDpqcd6ZSR4Hh9muRfbyuAaEnsxMS7O5L_km4lFG2nQZaV-zKKd/s1600/Farm%C3%A1cia%20Silva%20Vilamoura.jfif" },
+          { id: "samba", nome: "Samba", cat: "lojas", subCat: "Moda", info: "Boutique Marina", lat: 37.0768, lng: -8.1180, icon: "🛍️", tel: "+351289314332", web: "https://www.facebook.com/sambavilamoura", img: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgYiHBQegN1seH4WuXdirY0CZQT077YwYDFcGeXxcrAVY9ve3PKX4mso-PBRBMJ7X29J_oD1TwZAudavFaq0rpxU8t24mNp_QtBcDXY-HEhyZHnsqOE4YEG5c-SGuyuW613Lr52PjdLwx2uRLCdLb50Ee69pFyfMlkgEkNUzuKfQM-MMazgOUGrkmsPmyOP/w400-h286/Samba%20Marina%20Vilamoura.jpg" }
+        ];
+
+        const CATEGORIAS_LIST = [
+          { id: 'hoteis', nome: 'Hotéis', faIcon: 'fa-hotel' },
+          { id: 'comer', nome: 'Restaurantes', faIcon: 'fa-utensils' },
+          { id: 'bares', nome: 'Pubs & Bares', faIcon: 'fa-glass-cheers' },
+          { id: 'lazer', nome: 'Lazer', faIcon: 'fa-camera-retro' },
+          { id: 'golf', nome: 'Golf', faIcon: 'fa-golf-ball-tee' },
+          { id: 'lojas', nome: 'Lojas', faIcon: 'fa-bag-shopping' },
+          { id: 'imobiliarias', nome: 'Propriedades', faIcon: 'fa-house-chimney' },
+          { id: 'util', nome: 'Utilitários', faIcon: 'fa-shield-halved' }
+        ];
+
+        function VilamouraApp() {
+          const [view, setView] = useState('splash');
+          const [catAtiva, setCatAtiva] = useState(null);
+          const mapDiv = useRef(null);
+          const [gMap, setGMap] = useState(null);
+          const markers = useRef([]);
+          const infoWindowRef = useRef(null);
+          const directionsRenderer = useRef(null);
+          const directionsService = useRef(null);
+          const pending = useRef(null);
+
+          useEffect(() => {
+            if (view === 'mapa' && window.google && !gMap) {
+              const m = new google.maps.Map(mapDiv.current, {
+                center: { lat: 37.076, lng: -8.118 }, zoom: 15, disableDefaultUI: true,
+                styles: [
+                  { featureType: "poi", elementType: "labels", stylers: [{ visibility: "off" }] },
+                  { featureType: "poi.business", stylers: [{ visibility: "off" }] }
+                ]
+              });
+              directionsService.current = new google.maps.DirectionsService();
+              directionsRenderer.current = new google.maps.DirectionsRenderer({ map: m });
+              infoWindowRef.current = new google.maps.InfoWindow();
+              setGMap(m);
+            }
+          }, [view, gMap]);
+
+          useEffect(() => {
+            if (gMap && view === 'mapa') {
+              const p = pending.current || { all: true };
+              pending.current = null;
+              markers.current.forEach(m => m.setMap(null));
+              markers.current = [];
+              
+              const list = p.all ? LOCAIS_VILAMOURA : [p.item];
+              list.forEach(loc => {
+                const marker = new google.maps.Marker({
+                  position: { lat: loc.lat, lng: loc.lng }, map: gMap,
+                  label: { text: loc.icon, color: 'white', fontSize: '14px' },
+                  icon: { path: google.maps.SymbolPath.CIRCLE, scale: 15, fillColor: '#003366', fillOpacity: 1, strokeWeight: 2, strokeColor: '#fff' }
+                });
+
+                marker.addListener("click", () => {
+                  window.calcRoute = (dLat, dLng) => {
+                    navigator.geolocation.getCurrentPosition(pos => {
+                      directionsService.current.route({
+                        origin: { lat: pos.coords.latitude, lng: pos.coords.longitude },
+                        destination: { lat: dLat, lng: dLng },
+                        travelMode: 'DRIVING'
+                      }, (res, status) => {
+                        if (status === 'OK') directionsRenderer.current.setDirections(res);
+                      });
+                    });
+                  };
+
+                  const content = `
+                    <div style="width:220px; font-family:sans-serif;">
+                      <img src="${loc.img}" style="width:100%; height:110px; object-fit:cover; border-radius:8px;"/>
+                      <h4 style="margin:8px 0 2px 0; color:#003366;">${loc.nome}</h4>
+                      <div style="font-size:11px; color:#666; margin-bottom:10px;">${loc.info}</div>
+                      <button onclick="calcRoute(${loc.lat}, ${loc.lng})" class="btn-action" style="background:#27ae60;"><i class="fas fa-route"></i> TRAÇAR ROTA</button>
+                      <a href="tel:${loc.tel}" class="btn-action" style="background:#003366;"><i class="fas fa-phone"></i> LIGAR</a>
+                      <a href="${loc.web}" target="_blank" class="btn-action" style="background:#c5a059;">WEBSITE</a>
+                    </div>
+                  `;
+                  infoWindowRef.current.setContent(content);
+                  infoWindowRef.current.open(gMap, marker);
+                });
+                markers.current.push(marker);
+              });
+              if (p.item) gMap.panTo({ lat: p.item.lat, lng: p.item.lng });
+            }
+          }, [gMap, view]);
+
+          return (
+            <div style={{ width: '100%', height: '100%' }}>
+              {view === 'splash' && (
+                <div style={{ height: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', background: '#003366' }}>
+                  <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgcgTG65bbe2IDQQJzNptqaWtHiqAD2kQBDMa2QWhC94gD10X21cB-LrH4gtHgscfjXFO6Fq1MS8Qg9tOE-kVKAjUe-4h7sNUMRduS_05lNMKEuaG4ABJntJWd5TPpB6OKOvkAnYFjpEPmjaodtdbxdMShpC4jw2wkNU-75-SV7dLdXgTvCWJNv0ro3oBYi/w593-h333/Vilamoura_Guide_Logo.gif" style={{ width: '80%', borderRadius: '20px' }} />
+                  <button onClick={() => setView('menu')} style={{ marginTop: '40px', padding: '15px 60px', borderRadius: '30px', background: '#fff', color: '#003366', border: 'none', fontWeight: 'bold' }}>ENTRAR / ENTER</button>
+                </div>
+              )}
+
+              {view === 'menu' && (
+                <div style={{ height: '100%', padding: '20px', boxSizing: 'border-box', overflowY: 'auto' }}>
+                  <h2 style={{ textAlign: 'center', color: '#003366' }}>Vilamoura Guide</h2>
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '15px' }}>
+                    {CATEGORIAS_LIST.map(c => (
+                      <div key={c.id} onClick={() => { setCatAtiva(c.id); setView('lista'); }} className="cat-card">
+                        <i className={`fas ${c.faIcon}`} style={{ fontSize: '28px', color: '#003366', marginBottom: '10px' }}></i>
+                        <div style={{ fontWeight: '600', color: '#333', fontSize: '14px' }}>{c.nome}</div>
+                      </div>
+                    ))}
+                  </div>
+                  <button onClick={() => { pending.current = {all:true}; setView('mapa'); }} style={{ width: '100%', marginTop: '25px', padding: '15px', borderRadius: '15px', background: '#27ae60', color: '#fff', border: 'none', fontWeight: 'bold' }}>📍 VER TUDO / VIEW ALL</button>
+                </div>
+              )}
+
+              {view === 'lista' && (
+                <div style={{ height: '100%', padding: '20px', boxSizing: 'border-box' }}>
+                  <button onClick={() => setView('menu')} style={{ color: '#003366', border: 'none', background: 'none', fontWeight: 'bold', fontSize: '16px', marginBottom: '15px' }}>
+                    <i className="fas fa-chevron-left"></i> VOLTAR / BACK
+                  </button>
+                  <div style={{ overflowY: 'auto', height: '80%' }}>
+                    {LOCAIS_VILAMOURA.filter(i => i.cat === catAtiva).map(item => (
+                      <div key={item.id} onClick={() => { pending.current = {item}; setView('mapa'); }} style={{ display: 'flex', gap: '12px', padding: '12px', background: '#fff', borderRadius: '12px', marginBottom: '12px', alignItems: 'center', boxShadow:'0 2px 5px rgba(0,0,0,0.05)' }}>
+                        <img src={item.img} style={{ width: '60px', height: '60px', objectFit: 'cover', borderRadius: '10px' }} />
+                        <div>
+                          <div style={{ fontWeight: 'bold', color: '#003366' }}>{item.nome}</div>
+                          <div style={{ fontSize: '12px', color: '#777' }}>{item.subCat}</div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              <div style={{ width: '100%', height: '100%', display: view === 'mapa' ? 'block' : 'none', position: 'relative' }}>
+                <button onClick={() => { directionsRenderer.current.setDirections({routes:[]}); setView('menu'); }} style={{ position: 'absolute', top: '20px', left: '20px', zIndex: 10, padding: '10px 20px', borderRadius: '20px', background: '#003366', color: '#fff', border: 'none', fontWeight: 'bold' }}>MENU</button>
+                <div ref={mapDiv} style={{ width: '100%', height: '100%' }} />
+              </div>
+            </div>
+          );
+        }
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<VilamouraApp />);
+    </script>
+
+    <script type="text/javascript">
+        function googleTranslateElementInit() {
+          new google.translate.TranslateElement({
+            pageLanguage: 'pt',
+            includedLanguages: 'en,fr,de,es,it,nl,sv,no',
+            layout: google.translate.TranslateElement.InlineLayout.SIMPLE
+          }, 'google_translate_element');
+        }
+    </script>
+    <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+
+</body>
+</html>
