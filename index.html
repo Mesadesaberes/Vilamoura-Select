@@ -23,21 +23,42 @@
             background: #003366;
             border-bottom: 2px solid #c5a059;
             min-height: 38px;
+            position: relative;
+            z-index: 10000;
         }
 
-        /* ESCONDER JANELAS DE CLASSIFICAÇÃO E SUGESTÃO DO GOOGLE */
+        /* ESCONDER INTERFERÊNCIAS DO GOOGLE */
         .goog-te-banner-frame.skiptranslate, .goog-te-banner-frame { display: none !important; }
         #goog-gt-tt, .goog-te-balloon-frame, .goog-te-tipview { display: none !important; }
         .goog-text-highlight { background: none !important; box-shadow: none !important; }
         body { top: 0px !important; }
         .goog-te-gadget { color: transparent !important; }
-        .goog-te-gadget .goog-te-combo { padding: 4px; border-radius: 4px; border: none; font-size: 13px; }
+        .goog-te-gadget .goog-te-combo { padding: 4px; border-radius: 4px; border: none; font-size: 13px; background: white !important; color: black !important; }
 
-        #root { height: calc(100% - 45px); }
+        #root { height: calc(100% - 48px); position: relative; }
 
         .cat-card { transition: all 0.2s; cursor: pointer; background: #fff; border-radius: 15px; text-align: center; padding: 25px 10px; box-shadow: 0 4px 12px rgba(0,51,102,0.08); }
         .cat-card:active { transform: scale(0.95); background: #f0f0f0; }
+        
         .btn-action { display: block; text-align: center; padding: 10px; margin-top: 8px; text-decoration: none; border-radius: 8px; font-weight: bold; font-size: 13px; color: #fff; cursor: pointer; border: none; width: 100%; box-sizing: border-box; }
+        
+        /* BOTÃO MENU BLINDADO */
+        .btn-menu-fixo {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            z-index: 9999;
+            padding: 12px 20px;
+            border-radius: 25px;
+            background: #003366;
+            color: #fff;
+            border: 2px solid #fff;
+            font-weight: bold;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            text-transform: uppercase;
+            cursor: pointer;
+        }
+
         ::-webkit-scrollbar { width: 5px; }
         ::-webkit-scrollbar-thumb { background: #003366; border-radius: 10px; }
     </style>
@@ -57,7 +78,7 @@
           { id: "thai", nome: "Thai Vilamoura", cat: "comer", subCat: "Tailandês", info: "Cozinha autêntica", lat: 37.0777, lng: -8.1163, icon: "🍲", tel: "+351289302370", web: "https://www.thaivilamoura.com", img: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhLkC9YJrcg-dbSNHxYMSOEZBOF7CYin0QUJru5O_7Uqk5-mK2-66Ehv-0i5Mami3TCfsSGYDMkGKPfKskK8nhMRezn0WSeLwvtPjUnC43q6NDbyV1MoYGhHqxjxrHr7Dz6vX7Xh_kbuG_XJRgwJpZjVHBBBbjEuANxjQWzoFbx-88s9Ru-dR7kLhvWT4wU/w438-h640/Thai%20Vilamoura.jpg" },
           { id: "luna", nome: "Luna Rossa", cat: "comer", subCat: "Italiano", info: "Pizzas artesanais", lat: 37.0792, lng: -8.1195, icon: "🍕", tel: "+351289302245", web: "https://lunarossavilamoura.pt", img: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEi7_h6rzfvQ3Q71fpNCPBew1q4d2OZBVTFoRENdwJDTV2u7iCf3ETpWdUxLmcooLKWxwxlh618mshG-iRA0-8myM5bihvdhSgC_XPi4o9ImPBpg3DdWITFFTkgbDDZkaVxRDRxol8Q4Mg_6nVJ8a57CXL-esH305eyVSBAGAO_BSNDXjez-IXrfZS4waxQp/w444-h313/Luna%20rossa.jpg" },
           { id: "clover", nome: "Golden Clover", cat: "bares", subCat: "Irish Pub", info: "Cerveja e diversão", lat: 37.0752, lng: -8.1154, icon: "🍀", tel: "+351912432626", web: "https://goldenclover.pt", img: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgbb12_0MDt5KGaWQU-NNZ1lOnRmMMXbEp8zPQKhxJ-6tDmbmHdKEh4MjR-qWlEdPmJ1i1SKOkXi9eQ4nYosgR54knP9pcGt6_AOf-YBmkMGZdBc_FYWfY5KWkzyhdWCTZblDWalkekC06h4AwE7kmTfoGs-Y0793B5ncVuxDd9CFkSfGkh4RyV1dG-JAou/w447-h307/Golden%20Clover.jpg" },
-          { id: "hole19", nome: "19th Hole", cat: "bares", subCat: "Sports Bar", info: "Melhores Cocktails", lat: 37.0755, lng: -8.1192, icon: "🍺", tel: "+351914928110", web: "https://19thholevilamoura.com", img: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhWj9XRvveJ01eX0XP2aJEuv-ECFUsDuigj5UD0KFVb-Kql5SgHo_lAQHS3LHREucUUi3Udwo06i2DJMKuky_1FQsYksvc27QAt7GfXwGb2166ylUrHDYhopxvS0hTh0Mid0tmgdmMoWo-JNqAsAI9DLizYbZrz8jAgNDAes-NKdwHT2P4UDV8kltccGE2o/w450-h234/19th%20HOLE.jpg" },
+          { id: "hole19", nome: "19th Hole", cat: "bares", subCat: "Sports Bar", info: "Melhores Cocktails", lat: 37.0755, lng: -8.1192, icon: "🍺", tel: "+351914928110", web: "https://19thholevilamoura.com", img: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhWj9XRveJ01eX0XP2aJEuv-ECFUsDuigj5UD0KFVb-Kql5SgHo_lAQHS3LHREucUUi3Udwo06i2DJMKuky_1FQsYksvc27QAt7GfXwGb2166ylUrHDYhopxvS0hTh0Mid0tmgdmMoWo-JNqAsAI9DLizYbZrz8jAgNDAes-NKdwHT2P4UDV8kltccGE2o/w450-h234/19th%20HOLE.jpg" },
           { id: "familygolf", nome: "Family Golf Park", cat: "lazer", subCat: "Mini-Golf", info: "Lazer familiar", lat: 37.0780, lng: -8.1130, icon: "⛳", tel: "+351289300440", web: "https://www.familygolfpark.pt", img: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjc3NgjlKZyOeGyESAgI1eDyS_CQahtDMlgphkwWDbl_hGajxBW3G8_6FwV704I6RT3y1U3WVmwlAxLqHRxDJbONvxP253ROq627_Dr19tpB7GR1R09Qz3Oo3S8ljIDjSM8AH_7v-ULFNvJR_clp0owjNlbIyHinnoqlpSso9wz5nxbSolX8Nld6dvCafJ7/s320/family-golf-park.jpg" },
           { id: "museu", nome: "Cerro da Vila", cat: "lazer", subCat: "Museu", info: "Ruínas Romanas", lat: 37.0801, lng: -8.1190, icon: "🏛️", tel: "+351289312153", web: "https://www.museucerro-davila.pt", img: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjcJRzVqg8sBXmR4Ru_tJ_h8uvMBytfsKq0ZcyyhVv_vMqwV5g9_ECx8Qpzo0CAec4qHUBt2-3kfQ2oqds4HoZfp3iqWHI77lWV6S96XYk2LjdfPinmNIFBOfWGGOdMNDOHq_wJe8H-LCyZAbnTKA_Cpw7nkaY21YAcWGWN8uSmy7ZJpgrT9yeDOxPrzj3k/s1600/Museu%20cerro%20da%20Vila.jfif" },
           { id: "casino", nome: "Casino Vilamoura", cat: "lazer", subCat: "Entretenimento", info: "Shows e Jogos", lat: 37.0773, lng: -8.1156, icon: "🎰", tel: "+351289310000", web: "https://www.solverde.pt/casino-vilamoura", img: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiQ2NGpAkrZA6JF3mdjzj45f_wn6vEprsp-W3o3KUe3402dmvVvux3Z3hbWnRPns2QRjk-4-AFWfLlGz6XQcAPb41BZO5dQQClIHiHoJSHm_Lka7Ui1kQeR2c-ye_-DkFgc-IKomAWlhbqNFS74yo-Hm6QoXdBVWTiBv9X9Pob-O3TwJzEsSi2JlfHx-oIA/w465-h261/Casino-de-vilamoura.jfif" },
@@ -122,8 +143,7 @@
               list.forEach(loc => {
                 const marker = new google.maps.Marker({
                   position: { lat: loc.lat, lng: loc.lng }, map: gMap,
-                  label: { text: loc.icon, color: 'white', fontSize: '14px' },
-                  icon: { path: google.maps.SymbolPath.CIRCLE, scale: 15, fillColor: '#003366', fillOpacity: 1, strokeWeight: 2, strokeColor: '#fff' }
+                  icon: { path: google.maps.SymbolPath.CIRCLE, scale: 12, fillColor: '#003366', fillOpacity: 1, strokeWeight: 2, strokeColor: '#fff' }
                 });
 
                 marker.addListener("click", () => {
@@ -184,7 +204,7 @@
 
               {view === 'lista' && (
                 <div style={{ height: '100%', padding: '20px', boxSizing: 'border-box' }}>
-                  <button onClick={() => setView('menu')} style={{ color: '#003366', border: 'none', background: 'none', fontWeight: 'bold', fontSize: '16px', marginBottom: '15px' }}>
+                  <button translate="no" onClick={() => setView('menu')} style={{ color: '#003366', border: 'none', background: 'none', fontWeight: 'bold', fontSize: '16px', marginBottom: '15px' }}>
                     <i className="fas fa-chevron-left"></i> VOLTAR / BACK
                   </button>
                   <div style={{ overflowY: 'auto', height: '80%' }}>
@@ -202,7 +222,15 @@
               )}
 
               <div style={{ width: '100%', height: '100%', display: view === 'mapa' ? 'block' : 'none', position: 'relative' }}>
-                <button onClick={() => { directionsRenderer.current.setDirections({routes:[]}); setView('menu'); }} style={{ position: 'absolute', top: '20px', left: '20px', zIndex: 10, padding: '10px 20px', borderRadius: '20px', background: '#003366', color: '#fff', border: 'none', fontWeight: 'bold' }}>MENU</button>
+                <button 
+                    translate="no" 
+                    className="btn-menu-fixo"
+                    onClick={() => { 
+                        if(directionsRenderer.current) directionsRenderer.current.setDirections({routes:[]}); 
+                        setView('menu'); 
+                    }}>
+                    MENU
+                </button>
                 <div ref={mapDiv} style={{ width: '100%', height: '100%' }} />
               </div>
             </div>
