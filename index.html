@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vilamoura Guide - Global Edition</title>
+    <title>Vilamoura Guide</title>
     
     <link rel="apple-touch-icon" href="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgcgTG65bbe2IDQQJzNptqaWtHiqAD2kQBDMa2QWhC94gD10X21cB-LrH4gtHgscfjXFO6Fq1MS8Qg9tOE-kVKAjUe-4h7sNUMRduS_05lNMKEuaG4ABJntJWd5TPpB6OKOvkAnYFjpEPmjaodtdbxdMShpC4jw2wkNU-75-SV7dLdXgTvCWJNv0ro3oBYi/s150/Vilamoura_Guide_Logo.gif">
     <link rel="icon" href="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgcgTG65bbe2IDQQJzNptqaWtHiqAD2kQBDMa2QWhC94gD10X21cB-LrH4gtHgscfjXFO6Fq1MS8Qg9tOE-kVKAjUe-4h7sNUMRduS_05lNMKEuaG4ABJntJWd5TPpB6OKOvkAnYFjpEPmjaodtdbxdMShpC4jw2wkNU-75-SV7dLdXgTvCWJNv0ro3oBYi/s150/Vilamoura_Guide_Logo.gif">
@@ -15,65 +15,41 @@
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCqRtZgE7hw-znacoAqXuXZ4SEGVuXWudo&libraries=places"></script>
 
     <style>
-        body, html { margin: 0; padding: 0; height: 100vh; width: 100%; overflow: hidden; background: #f4f7f9; font-family: 'Segoe UI', Roboto, sans-serif; }
+        body, html { margin: 0; padding: 0; height: 100vh; width: 100%; background: #f4f7f9; font-family: 'Segoe UI', Roboto, sans-serif; }
         
-        /* ESCONDER A BARRA SUPERIOR AZUL/CINZENTA DO GOOGLE APÓS TRADUÇÃO */
-        .goog-te-banner-frame.skiptranslate { display: none !important; }
-        body { top: 0px !important; }
-        
-        /* ESCONDER POPUPS DE SUGESTÃO E TOOLTIPS */
-        #goog-gt-tt, .goog-te-balloon-frame, .goog-te-tipview { display: none !important; }
-        .goog-text-highlight { background: none !important; box-shadow: none !important; }
-
-        /* CONTENTOR DO TRADUTOR */
+        /* 1. ESTRATÉGIA: Não esconder, apenas organizar */
         #google_translate_element {
-            padding: 8px;
-            text-align: center;
             background: #003366;
+            padding: 10px;
+            text-align: center;
             border-bottom: 2px solid #c5a059;
-            min-height: 40px;
         }
 
-        /* ESTILO DO SELECT DO GOOGLE */
-        .goog-te-gadget .goog-te-combo {
-            padding: 6px;
-            border-radius: 4px;
-            border: 1px solid #c5a059;
-            background: white;
-            color: #003366;
-            font-weight: bold;
-            outline: none;
-        }
+        /* Ajuste para a barra que o Google insere no topo */
+        .goog-te-banner-frame { visibility: hidden !important; display: none !important; }
+        body { top: 0px !important; }
 
-        #root { height: calc(100% - 58px); position: relative; }
+        #root { height: calc(100vh - 65px); position: relative; overflow: hidden; }
 
         .cat-card { transition: all 0.2s; cursor: pointer; background: #fff; border-radius: 15px; text-align: center; padding: 25px 10px; box-shadow: 0 4px 12px rgba(0,51,102,0.08); }
-        .cat-card:active { transform: scale(0.95); background: #f0f0f0; }
+        .cat-card:active { transform: scale(0.95); }
         
-        .btn-action { display: block; text-align: center; padding: 10px; margin-top: 8px; text-decoration: none; border-radius: 8px; font-weight: bold; font-size: 13px; color: #fff !important; cursor: pointer; border: none; width: 100%; box-sizing: border-box; }
+        .btn-action { display: block; text-align: center; padding: 12px; margin-top: 8px; text-decoration: none; border-radius: 8px; font-weight: bold; color: #fff !important; cursor: pointer; border: none; width: 100%; box-sizing: border-box; }
         
         .btn-menu-fixo {
-            position: absolute;
-            top: 15px;
-            left: 15px;
-            z-index: 9999;
-            padding: 12px 20px;
-            border-radius: 25px;
-            background: #003366;
-            color: #fff;
-            border: 2px solid #fff;
-            font-weight: bold;
+            position: absolute; top: 15px; left: 15px; z-index: 9999;
+            padding: 12px 20px; border-radius: 25px; background: #003366;
+            color: #fff; border: 2px solid #fff; font-weight: bold;
             box-shadow: 0 4px 10px rgba(0,0,0,0.3);
-            text-transform: uppercase;
         }
 
-        ::-webkit-scrollbar { width: 5px; }
-        ::-webkit-scrollbar-thumb { background: #003366; border-radius: 10px; }
+        .notranslate-img { translate: no !important; }
     </style>
 </head>
 <body>
 
     <div id="google_translate_element"></div>
+
     <div id="root"></div>
 
     <script type="text/babel">
@@ -81,12 +57,13 @@
 
         const LOCAIS_VILAMOURA = [
           { id: "tivoli", nome: "Tivoli Marina", cat: "hoteis", subCat: "5 Estrelas", info: "Luxo sobre a Marina", lat: 37.07433, lng: -8.12017, icon: "🏨", tel: "+351289303303", web: "https://www.tivolihotels.com", img: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgbuotHReCbbgAZXVruQoDzpVQWaZTeqsqIHnANJDswD4BO8OF-oV0nfHsMd-G9zcEpAnpa2FTJtw94Fv0RiGgucHGOtnWz0UdQhce_R5A3inLhytkobCXvrP3bYc8T95Lv03hLt98GIbujpIZeCkiyHt6UZamuoo3MSLhhSBf9nawoKk-12X-8-i4C7GH_/w453-h301/Tivoli_Marina_Vilamoura_.jpg" },
+          { id: "hole19", nome: "19th Hole", cat: "bares", subCat: "Sports Bar", icon: "🍺", lat: 37.0755, lng: -8.1192, tel: "+351914928110", web: "https://19thholevilamoura.com", img: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhWj9XRveJ01eX0XP2aJEuv-ECFUsDuigj5UD0KFVb-Kql5SgHo_lAQHS3LHREucUUi3Udwo06i2DJMKuky_1FQsYksvc27QAt7GfXwGb2166ylUrHDYhopxvS0hTh0Mid0tmgdmMoWo-JNqAsAI9DLizYbZrz8jAgNDAes-NKdwHT2P4UDV8kltccGE2o/w450-h234/19th%20HOLE.jpg", info: "Melhores Cocktails" },
+          // ... (mantive os outros no código completo que vais copiar)
           { id: "ampalius", nome: "Vila Galé Ampalius", cat: "hoteis", subCat: "4 Estrelas", info: "Frente à praia", lat: 37.0773, lng: -8.1179, icon: "🏨", tel: "+351289303970", web: "https://www.vilagale.com", img: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhGVY9LR4Vy8uzfLr-M1OUhJ9VUCAYWg0OAbCOvXzoHhKTxr_3pvfa9I7eCk0tF6P8cHL35VyfCzFb7ZoVcwl-jCBhAdfa_zUuqgTXqnqUPBnZByM_x1lAO32VhpEJQiWGmcE9SbTAd-3AyGxWvJfXoajE0bw7W30cJHf95nymYA9ll8fQrUXD8usF5Fsms/w462-h307/Vila%20Gale%20Ampalius.jfif" },
           { id: "colombo", nome: "Colombo", cat: "comer", subCat: "Português", info: "Cozinha tradicional", lat: 37.0757, lng: -8.1150, icon: "🍴", tel: "+351289300919", web: "https://www.facebook.com/restaurantecolombo", img: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEh8BrDSbJXJaPu4G5ahigmv5fnnO71cxKiQfxiJmAZe-jgUcX3cQQG6XXzP0sCgRO_W4jFbfBDytY2oRqaBSWmV8nOkSkapWCvRtFgwPTTGK7PoDNVs_mTeDW11iP_QIo2iwxRtvhkLbjwIRjuUI340anqpR5UchWkRLqQCvsBo0X7gPv97dDZ7xifW0uWY/s1600/20220930_194648.jpg" },
           { id: "thai", nome: "Thai Vilamoura", cat: "comer", subCat: "Tailandês", info: "Cozinha autêntica", lat: 37.0777, lng: -8.1163, icon: "🍲", tel: "+351289302370", web: "https://www.thaivilamoura.com", img: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhLkC9YJrcg-dbSNHxYMSOEZBOF7CYin0QUJru5O_7Uqk5-mK2-66Ehv-0i5Mami3TCfsSGYDMkGKPfKskK8nhMRezn0WSeLwvtPjUnC43q6NDbyV1MoYGhHqxjxrHr7Dz6vX7Xh_kbuG_XJRgwJpZjVHBBBbjEuANxjQWzoFbx-88s9Ru-dR7kLhvWT4wU/w438-h640/Thai%20Vilamoura.jpg" },
           { id: "luna", nome: "Luna Rossa", cat: "comer", subCat: "Italiano", info: "Pizzas artesanais", lat: 37.0792, lng: -8.1195, icon: "🍕", tel: "+351289302245", web: "https://lunarossavilamoura.pt", img: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEi7_h6rzfvQ3Q71fpNCPBew1q4d2OZBVTFoRENdwJDTV2u7iCf3ETpWdUxLmcooLKWxwxlh618mshG-iRA0-8myM5bihvdhSgC_XPi4o9ImPBpg3DdWITFFTkgbDDZkaVxRDRxol8Q4Mg_6nVJ8a57CXL-esH305eyVSBAGAO_BSNDXjez-IXrfZS4waxQp/w444-h313/Luna%20rossa.jpg" },
           { id: "clover", nome: "Golden Clover", cat: "bares", subCat: "Irish Pub", icon: "🍀", lat: 37.0752, lng: -8.1154, tel: "+351912432626", web: "https://goldenclover.pt", img: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgbb12_0MDt5KGaWQU-NNZ1lOnRmMMXbEp8zPQKhxJ-6tDmbmHdKEh4MjR-qWlEdPmJ1i1SKOkXi9eQ4nYosgR54knP9pcGt6_AOf-YBmkMGZdBc_FYWfY5KWkzyhdWCTZblDWalkekC06h4AwE7kmTfoGs-Y0793B5ncVuxDd9CFkSfGkh4RyV1dG-JAou/w447-h307/Golden%20Clover.jpg", info: "Cerveja e diversão" },
-          { id: "hole19", nome: "19th Hole", cat: "bares", subCat: "Sports Bar", icon: "🍺", lat: 37.0755, lng: -8.1192, tel: "+351914928110", web: "https://19thholevilamoura.com", img: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhWj9XRveJ01eX0XP2aJEuv-ECFUsDuigj5UD0KFVb-Kql5SgHo_lAQHS3LHREucUUi3Udwo06i2DJMKuky_1FQsYksvc27QAt7GfXwGb2166ylUrHDYhopxvS0hTh0Mid0tmgdmMoWo-JNqAsAI9DLizYbZrz8jAgNDAes-NKdwHT2P4UDV8kltccGE2o/w450-h234/19th%20HOLE.jpg", info: "Melhores Cocktails" },
           { id: "familygolf", nome: "Family Golf Park", cat: "lazer", subCat: "Mini-Golf", info: "Lazer familiar", lat: 37.0780, lng: -8.1130, icon: "⛳", tel: "+351289300440", web: "https://www.familygolfpark.pt", img: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjc3NgjlKZyOeGyESAgI1eDyS_CQahtDMlgphkwWDbl_hGajxBW3G8_6FwV704I6RT3y1U3WVmwlAxLqHRxDJbONvxP253ROq627_Dr19tpB7GR1R09Qz3Oo3S8ljIDjSM8AH_7v-ULFNvJR_clp0owjNlbIyHinnoqlpSso9wz5nxbSolX8Nld6dvCafJ7/s320/family-golf-park.jpg" },
           { id: "museu", nome: "Cerro da Vila", cat: "lazer", subCat: "Museu", info: "Ruínas Romanas", lat: 37.0801, lng: -8.1190, icon: "🏛️", tel: "+351289312153", web: "https://www.museucerro-davila.pt", img: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjcJRzVqg8sBXmR4Ru_tJ_h8uvMBytfsKq0ZcyyhVv_vMqwV5g9_ECx8Qpzo0CAec4qHUBt2-3kfQ2oqds4HoZfp3iqWHI77lWV6S96XYk2LjdfPinmNIFBOfWGGOdMNDOHq_wJe8H-LCyZAbnTKA_Cpw7nkaY21YAcWGWN8uSmy7ZJpgrT9yeDOxPrzj3k/s1600/Museu%20cerro%20da%20Vila.jfif" },
           { id: "casino", nome: "Casino Vilamoura", cat: "lazer", subCat: "Entretenimento", info: "Shows e Jogos", lat: 37.0773, lng: -8.1156, icon: "🎰", tel: "+351289310000", web: "https://www.solverde.pt/casino-vilamoura", img: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiQ2NGpAkrZA6JF3mdjzj45f_wn6vEprsp-W3o3KUe3402dmvVvux3Z3hbWnRPns2QRjk-4-AFWfLlGz6XQcAPb41BZO5dQQClIHiHoJSHm_Lka7Ui1kQeR2c-ye_-DkFgc-IKomAWlhbqNFS74yo-Hm6QoXdBVWTiBv9X9Pob-O3TwJzEsSi2JlfHx-oIA/w465-h261/Casino-de-vilamoura.jfif" },
@@ -167,8 +144,8 @@
 
                   const content = `
                     <div style="width:220px; font-family:sans-serif;">
-                      <img src="${loc.img}" style="width:100%; height:110px; object-fit:cover; border-radius:8px;" class="notranslate" />
-                      <h4 class="notranslate" style="margin:8px 0 2px 0; color:#003366;">${loc.nome}</h4>
+                      <img src="${loc.img}" style="width:100%; height:110px; object-fit:cover; border-radius:8px;" class="notranslate" translate="no" />
+                      <h4 class="notranslate" translate="no" style="margin:8px 0 2px 0; color:#003366;">${loc.nome}</h4>
                       <div style="font-size:11px; color:#666; margin-bottom:10px;">${loc.info}</div>
                       <button onclick="calcRoute(${loc.lat}, ${loc.lng})" class="btn-action" style="background:#27ae60;"><i class="fas fa-walking"></i> ROTA A PÉ</button>
                       <a href="tel:${loc.tel}" class="btn-action" style="background:#003366;"><i class="fas fa-phone"></i> LIGAR</a>
@@ -216,9 +193,9 @@
                   <div style={{ overflowY: 'auto', height: '80%' }}>
                     {LOCAIS_VILAMOURA.filter(i => i.cat === catAtiva).map(item => (
                       <div key={item.id} onClick={() => { pending.current = {item}; setView('mapa'); }} style={{ display: 'flex', gap: '12px', padding: '12px', background: '#fff', borderRadius: '12px', marginBottom: '12px', alignItems: 'center', boxShadow:'0 2px 5px rgba(0,0,0,0.05)' }}>
-                        <img src={item.img} style={{ width: '60px', height: '60px', objectFit: 'cover', borderRadius: '10px' }} class="notranslate" />
+                        <img src={item.img} style={{ width: '60px', height: '60px', objectFit: 'cover', borderRadius: '10px' }} className="notranslate" translate="no" />
                         <div>
-                          <div class="notranslate" style={{ fontWeight: 'bold', color: '#003366' }}>{item.nome}</div>
+                          <div className="notranslate" translate="no" style={{ fontWeight: 'bold', color: '#003366' }}>{item.nome}</div>
                           <div style={{ fontSize: '12px', color: '#777' }}>{item.subCat}</div>
                         </div>
                       </div>
@@ -244,7 +221,8 @@
           new google.translate.TranslateElement({
             pageLanguage: 'pt',
             includedLanguages: 'en,fr,de,es,it,nl,sv,no',
-            layout: google.translate.TranslateElement.InlineLayout.SIMPLE
+            layout: google.translate.TranslateElement.InlineLayout.SIMPLE,
+            autoDisplay: false
           }, 'google_translate_element');
         }
     </script>
