@@ -17,33 +17,35 @@
     <style>
         body, html { margin: 0; padding: 0; height: 100vh; width: 100%; overflow: hidden; background: #f4f7f9; font-family: 'Segoe UI', Roboto, sans-serif; }
         
-        /* IMPEDIR BALÕES E BARRAS DO GOOGLE TRANSLATE */
-        .goog-te-banner-frame.skiptranslate, .goog-te-banner-frame { display: none !important; }
+        /* ESCONDER A BARRA SUPERIOR AZUL/CINZENTA DO GOOGLE APÓS TRADUÇÃO */
+        .goog-te-banner-frame.skiptranslate { display: none !important; }
         body { top: 0px !important; }
-        #goog-gt-tt, .goog-te-balloon-frame, .goog-te-tipview, .goog-te-gadget-icon { display: none !important; visibility: hidden !important; }
-        .goog-text-highlight { background: transparent !important; box-shadow: none !important; }
         
-        /* BARRA DE TRADUÇÃO LIMPA */
+        /* ESCONDER POPUPS DE SUGESTÃO E TOOLTIPS */
+        #goog-gt-tt, .goog-te-balloon-frame, .goog-te-tipview { display: none !important; }
+        .goog-text-highlight { background: none !important; box-shadow: none !important; }
+
+        /* CONTENTOR DO TRADUTOR */
         #google_translate_element {
-            padding: 10px;
+            padding: 8px;
             text-align: center;
             background: #003366;
             border-bottom: 2px solid #c5a059;
-            z-index: 10000;
-            position: relative;
-        }
-        .goog-te-gadget { color: transparent !important; font-size: 0 !important; }
-        .goog-te-gadget .goog-te-combo { 
-            padding: 8px; 
-            border-radius: 6px; 
-            border: 1px solid #c5a059; 
-            font-size: 14px; 
-            background: white !important; 
-            color: #003366 !important;
-            font-weight: bold;
+            min-height: 40px;
         }
 
-        #root { height: calc(100% - 55px); position: relative; }
+        /* ESTILO DO SELECT DO GOOGLE */
+        .goog-te-gadget .goog-te-combo {
+            padding: 6px;
+            border-radius: 4px;
+            border: 1px solid #c5a059;
+            background: white;
+            color: #003366;
+            font-weight: bold;
+            outline: none;
+        }
+
+        #root { height: calc(100% - 58px); position: relative; }
 
         .cat-card { transition: all 0.2s; cursor: pointer; background: #fff; border-radius: 15px; text-align: center; padding: 25px 10px; box-shadow: 0 4px 12px rgba(0,51,102,0.08); }
         .cat-card:active { transform: scale(0.95); background: #f0f0f0; }
@@ -63,15 +65,16 @@
             font-weight: bold;
             box-shadow: 0 4px 10px rgba(0,0,0,0.3);
             text-transform: uppercase;
-            cursor: pointer;
         }
 
         ::-webkit-scrollbar { width: 5px; }
         ::-webkit-scrollbar-thumb { background: #003366; border-radius: 10px; }
     </style>
 </head>
-<body class="notranslate"> <div id="google_translate_element"></div>
-    <div id="root" class="notranslate"></div>
+<body>
+
+    <div id="google_translate_element"></div>
+    <div id="root"></div>
 
     <script type="text/babel">
         const { useState, useEffect, useRef } = React;
@@ -125,10 +128,7 @@
             if (view === 'mapa' && window.google && !gMap) {
               const m = new google.maps.Map(mapDiv.current, {
                 center: { lat: 37.076, lng: -8.118 }, zoom: 15, disableDefaultUI: true,
-                styles: [
-                  { featureType: "poi", elementType: "labels", stylers: [{ visibility: "off" }] },
-                  { featureType: "poi.business", stylers: [{ visibility: "off" }] }
-                ]
+                styles: [{ featureType: "poi", elementType: "labels", stylers: [{ visibility: "off" }] }]
               });
               directionsService.current = new google.maps.DirectionsService();
               directionsRenderer.current = new google.maps.DirectionsRenderer({ map: m });
@@ -166,10 +166,10 @@
                   };
 
                   const content = `
-                    <div style="width:220px; font-family:sans-serif;" class="notranslate">
-                      <img src="${loc.img}" style="width:100%; height:110px; object-fit:cover; border-radius:8px;" decoratable="false" class="notranslate"/>
-                      <h4 style="margin:8px 0 2px 0; color:#003366;">${loc.nome}</h4>
-                      <div class="translate-me" style="font-size:11px; color:#666; margin-bottom:10px;">${loc.info}</div>
+                    <div style="width:220px; font-family:sans-serif;">
+                      <img src="${loc.img}" style="width:100%; height:110px; object-fit:cover; border-radius:8px;" class="notranslate" />
+                      <h4 class="notranslate" style="margin:8px 0 2px 0; color:#003366;">${loc.nome}</h4>
+                      <div style="font-size:11px; color:#666; margin-bottom:10px;">${loc.info}</div>
                       <button onclick="calcRoute(${loc.lat}, ${loc.lng})" class="btn-action" style="background:#27ae60;"><i class="fas fa-walking"></i> ROTA A PÉ</button>
                       <a href="tel:${loc.tel}" class="btn-action" style="background:#003366;"><i class="fas fa-phone"></i> LIGAR</a>
                       <a href="${loc.web}" target="_blank" class="btn-action" style="background:#c5a059;">WEBSITE</a>
@@ -216,9 +216,9 @@
                   <div style={{ overflowY: 'auto', height: '80%' }}>
                     {LOCAIS_VILAMOURA.filter(i => i.cat === catAtiva).map(item => (
                       <div key={item.id} onClick={() => { pending.current = {item}; setView('mapa'); }} style={{ display: 'flex', gap: '12px', padding: '12px', background: '#fff', borderRadius: '12px', marginBottom: '12px', alignItems: 'center', boxShadow:'0 2px 5px rgba(0,0,0,0.05)' }}>
-                        <img src={item.img} style={{ width: '60px', height: '60px', objectFit: 'cover', borderRadius: '10px' }} decoratable="false" className="notranslate" />
+                        <img src={item.img} style={{ width: '60px', height: '60px', objectFit: 'cover', borderRadius: '10px' }} class="notranslate" />
                         <div>
-                          <div className="notranslate" style={{ fontWeight: 'bold', color: '#003366' }}>{item.nome}</div>
+                          <div class="notranslate" style={{ fontWeight: 'bold', color: '#003366' }}>{item.nome}</div>
                           <div style={{ fontSize: '12px', color: '#777' }}>{item.subCat}</div>
                         </div>
                       </div>
@@ -228,14 +228,7 @@
               )}
 
               <div style={{ width: '100%', height: '100%', display: view === 'mapa' ? 'block' : 'none', position: 'relative' }}>
-                <button 
-                    className="btn-menu-fixo notranslate"
-                    onClick={() => { 
-                        if(directionsRenderer.current) directionsRenderer.current.setDirections({routes:[]}); 
-                        setView('menu'); 
-                    }}>
-                    MENU
-                </button>
+                <button className="btn-menu-fixo" onClick={() => { directionsRenderer.current.setDirections({routes:[]}); setView('menu'); }}>MENU</button>
                 <div ref={mapDiv} style={{ width: '100%', height: '100%' }} />
               </div>
             </div>
@@ -251,8 +244,7 @@
           new google.translate.TranslateElement({
             pageLanguage: 'pt',
             includedLanguages: 'en,fr,de,es,it,nl,sv,no',
-            layout: google.translate.TranslateElement.InlineLayout.SIMPLE,
-            autoDisplay: false // Impede que a barra apareça sozinha
+            layout: google.translate.TranslateElement.InlineLayout.SIMPLE
           }, 'google_translate_element');
         }
     </script>
