@@ -9,214 +9,601 @@
     <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCqRtZgE7hw-znacoAqXuXZ4SEGVuXWudo&libraries=places"></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCqRtZgE7hw-znacoAqXuXZ4SEGVuXWudo&libraries=places,geometry"></script>
 
     <style>
-        body, html { margin: 0; padding: 0; height: 100vh; width: 100%; overflow: hidden; background: #fff; font-family: 'Segoe UI', sans-serif; }
-        #root { height: 100%; width: 100%; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body, html { 
+            margin: 0; 
+            padding: 0; 
+            height: 100vh; 
+            width: 100%; 
+            overflow: hidden; 
+            background: #f4f7f9; 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
         
-        /* Splash Screen com o Teu Logo */
-        .splash-screen { position: fixed; inset: 0; background: #fff; display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 1000; text-align: center; }
-        .splash-logo { width: 80%; max-width: 350px; height: auto; margin-bottom: 20px; }
+        #root { 
+            height: 100%; 
+            width: 100%; 
+        }
         
-        .lang-bar { background: #003366; display: flex; justify-content: center; gap: 5px; padding: 8px; border-bottom: 2px solid #c5a059; height: 45px; box-sizing: border-box; }
-        .lang-btn { background: rgba(255,255,255,0.1); border: 1px solid #fff; color: #fff; padding: 4px 8px; border-radius: 8px; cursor: pointer; font-size: 11px; font-weight: bold; }
-        .lang-btn.active { background: #c5a059; border-color: #c5a059; }
-
-        .app-content { height: calc(100vh - 45px); position: relative; width: 100%; background: #f4f7f9; }
-
-        .menu-view { height: 100%; overflow-y: auto; padding-bottom: 80px; box-sizing: border-box; }
-        .search-area { padding: 15px; position: sticky; top: 0; background: #f4f7f9; z-index: 10; }
-        .search-box { position: relative; }
-        .search-box input { width: 100%; padding: 12px 40px; border-radius: 25px; border: 1px solid #ddd; box-shadow: 0 2px 5px rgba(0,0,0,0.1); box-sizing: border-box; }
-        .search-box i { position: absolute; left: 15px; top: 14px; color: #888; }
-
-        .grid-cats { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding: 0 15px; }
-        .cat-card { background: #fff; border-radius: 15px; text-align: center; padding: 20px 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); cursor: pointer; border: 1px solid #eee; }
+        /* Splash Screen */
+        .splash-screen { 
+            position: fixed; 
+            top: 0; 
+            left: 0; 
+            width: 100%; 
+            height: 100%; 
+            background: linear-gradient(135deg, #003366 0%, #001f3f 100%);
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            justify-content: center; 
+            z-index: 1000; 
+            color: white; 
+            animation: fadeOut 0.5s ease-out forwards;
+            animation-delay: 2s;
+        }
         
-        .footer-nav { position: absolute; bottom: 0; width: 100%; padding: 15px; background: white; border-top: 1px solid #eee; box-sizing: border-box; text-align: center; }
-        .btn-explore { width: 100%; max-width: 300px; padding: 14px; border-radius: 30px; background: #27ae60; color: white; border: none; font-weight: bold; font-size: 16px; cursor: pointer; }
+        @keyframes fadeOut {
+            from { opacity: 1; visibility: visible; }
+            to { opacity: 0; visibility: hidden; }
+        }
+        
+        .splash-logo { 
+            width: 150px; 
+            height: 150px; 
+            background: linear-gradient(135deg, #c5a059 0%, #8b6b3c 100%);
+            border-radius: 50%; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            font-size: 60px; 
+            margin-bottom: 20px; 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        
+        .splash-screen h1 {
+            font-size: 28px;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .splash-screen p {
+            font-size: 16px;
+            opacity: 0.9;
+        }
 
-        .map-view { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 20; background: white; }
-        .btn-back-map { position: absolute; top: 15px; left: 15px; z-index: 30; padding: 10px 20px; border-radius: 25px; background: #003366; color: white; border: 2px solid white; font-weight: bold; }
-        #map-canvas { width: 100%; height: 100%; }
+        /* Language Bar */
+        .lang-bar { 
+            background: #003366; 
+            display: flex; 
+            justify-content: center; 
+            gap: 8px; 
+            padding: 10px; 
+            border-bottom: 3px solid #c5a059; 
+            height: 50px; 
+            box-sizing: border-box; 
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .lang-btn { 
+            background: rgba(255,255,255,0.15); 
+            border: 1px solid rgba(255,255,255,0.3); 
+            color: #fff; 
+            padding: 5px 12px; 
+            border-radius: 20px; 
+            cursor: pointer; 
+            font-size: 12px; 
+            font-weight: bold; 
+            transition: all 0.3s ease;
+        }
+        
+        .lang-btn:hover {
+            background: rgba(255,255,255,0.3);
+        }
+        
+        .lang-btn.active { 
+            background: #c5a059; 
+            border-color: #c5a059; 
+            box-shadow: 0 2px 8px rgba(197, 160, 89, 0.4);
+        }
 
-        .item-row { display: flex; gap: 12px; background: #fff; padding: 12px; border-radius: 12px; margin: 0 15px 10px 15px; align-items: center; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+        /* App Content */
+        .app-content { 
+            height: calc(100vh - 50px); 
+            position: relative; 
+            width: 100%; 
+            background: #f4f7f9;
+        }
 
-        .info-buttons { display: flex; flex-direction: column; gap: 6px; margin-top: 10px; }
-        .btn-action { display: block; text-align: center; padding: 10px; border-radius: 6px; text-decoration: none; color: white; font-size: 13px; font-weight: bold; border: none; cursor: pointer; }
+        /* Menu View */
+        .menu-view { 
+            height: 100%; 
+            overflow-y: auto; 
+            padding-bottom: 90px; 
+            box-sizing: border-box; 
+            background: #f4f7f9;
+        }
+        
+        .search-area { 
+            padding: 15px; 
+            position: sticky; 
+            top: 0; 
+            background: #f4f7f9; 
+            z-index: 10; 
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+        
+        .search-box { 
+            position: relative; 
+        }
+        
+        .search-box input { 
+            width: 100%; 
+            padding: 14px 45px; 
+            border-radius: 30px; 
+            border: none;
+            background: white;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+        
+        .search-box input:focus {
+            outline: none;
+            box-shadow: 0 4px 20px rgba(0,51,102,0.2);
+        }
+        
+        .search-box i { 
+            position: absolute; 
+            left: 18px; 
+            top: 17px; 
+            color: #888; 
+            font-size: 18px;
+        }
+
+        /* Categories Grid */
+        .grid-cats { 
+            display: grid; 
+            grid-template-columns: repeat(2, 1fr); 
+            gap: 15px; 
+            padding: 15px; 
+        }
+        
+        .cat-card { 
+            background: white; 
+            border-radius: 20px; 
+            text-align: center; 
+            padding: 25px 15px; 
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05); 
+            cursor: pointer; 
+            border: 1px solid rgba(0,0,0,0.05);
+            transition: all 0.3s ease;
+        }
+        
+        .cat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0,51,102,0.15);
+            border-color: #c5a059;
+        }
+        
+        .cat-card i {
+            font-size: 32px;
+            color: #003366;
+            margin-bottom: 10px;
+        }
+        
+        .cat-card div {
+            font-size: 14px;
+            font-weight: 600;
+            color: #333;
+        }
+        
+        /* Item Row */
+        .item-row { 
+            display: flex; 
+            gap: 15px; 
+            background: white; 
+            padding: 15px; 
+            border-radius: 15px; 
+            margin: 0 15px 10px 15px; 
+            align-items: center; 
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 1px solid transparent;
+        }
+        
+        .item-row:hover {
+            transform: translateX(5px);
+            box-shadow: 0 4px 15px rgba(0,51,102,0.1);
+            border-color: #c5a059;
+        }
+        
+        .item-row img {
+            width: 60px;
+            height: 60px;
+            object-fit: cover;
+            border-radius: 10px;
+        }
+        
+        .item-info {
+            flex: 1;
+        }
+        
+        .item-info h4 {
+            color: #003366;
+            margin-bottom: 4px;
+            font-size: 16px;
+        }
+        
+        .item-info p {
+            font-size: 13px;
+            color: #666;
+        }
+
+        /* Footer Navigation */
+        .footer-nav { 
+            position: fixed; 
+            bottom: 0; 
+            left: 0;
+            width: 100%; 
+            padding: 15px; 
+            background: white; 
+            border-top: 1px solid #eee; 
+            box-sizing: border-box; 
+            text-align: center; 
+            box-shadow: 0 -5px 20px rgba(0,0,0,0.05);
+        }
+        
+        .btn-explore { 
+            width: 100%; 
+            max-width: 300px; 
+            padding: 15px; 
+            border-radius: 30px; 
+            background: linear-gradient(135deg, #27ae60 0%, #219a52 100%);
+            color: white; 
+            border: none; 
+            font-weight: bold; 
+            font-size: 16px; 
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(39, 174, 96, 0.3);
+        }
+        
+        .btn-explore:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(39, 174, 96, 0.4);
+        }
+
+        /* Map View */
+        .map-view { 
+            position: absolute; 
+            top: 0; 
+            left: 0; 
+            width: 100%; 
+            height: 100%; 
+            z-index: 20; 
+            background: white; 
+            transition: all 0.3s ease;
+        }
+        
+        .btn-back-map { 
+            position: absolute; 
+            top: 15px; 
+            left: 15px; 
+            z-index: 30; 
+            padding: 12px 25px; 
+            border-radius: 30px; 
+            background: #003366; 
+            color: white; 
+            border: 2px solid white; 
+            font-weight: bold; 
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-back-map:hover {
+            background: #004080;
+            transform: scale(1.05);
+        }
+        
+        #map-canvas { 
+            width: 100%; 
+            height: 100%; 
+        }
+
+        /* InfoWindow Styles */
+        .info-window {
+            padding: 5px;
+            max-width: 200px;
+        }
+        
+        .info-window img {
+            width: 100%;
+            height: 120px;
+            object-fit: cover;
+            border-radius: 8px;
+            margin-bottom: 8px;
+        }
+        
+        .info-window h4 {
+            color: #003366;
+            margin: 5px 0;
+            font-size: 14px;
+        }
+        
+        .info-window p {
+            font-size: 11px;
+            color: #666;
+            margin-bottom: 8px;
+            line-height: 1.3;
+        }
+        
+        .info-buttons { 
+            display: flex; 
+            flex-direction: column; 
+            gap: 6px; 
+            margin-top: 8px; 
+        }
+        
+        .btn-info { 
+            display: block; 
+            text-align: center; 
+            padding: 8px; 
+            border-radius: 6px; 
+            text-decoration: none; 
+            color: white; 
+            font-size: 12px; 
+            font-weight: bold; 
+            border: none; 
+            cursor: pointer; 
+            transition: all 0.3s ease;
+        }
+        
+        .btn-info:hover {
+            opacity: 0.9;
+            transform: translateY(-2px);
+        }
+        
+        .bg-blue { 
+            background: #003366; 
+        }
+        
+        .bg-green { 
+            background: #27ae60; 
+        }
+        
+        .bg-gold { 
+            background: #c5a059; 
+        }
+
+        /* Loading Spinner */
+        .loading {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100px;
+        }
+        
+        .spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #003366;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* Back Button */
+        .back-btn {
+            margin: 10px 15px;
+            background: none;
+            border: none;
+            color: #003366;
+            font-weight: bold;
+            font-size: 14px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .back-btn i {
+            font-size: 12px;
+        }
+        
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: #999;
+        }
+        
+        .empty-state i {
+            font-size: 50px;
+            margin-bottom: 15px;
+            color: #ccc;
+        }
     </style>
 </head>
 <body>
-
     <div id="root"></div>
 
     <script type="text/babel">
         const { useState, useEffect, useRef } = React;
 
-        const mapStyle = [{ featureType: "poi", elementType: "labels", stylers: [{ visibility: "off" }] }];
+        // Map Styles
+        const mapStyle = [
+            {
+                featureType: "poi",
+                elementType: "labels",
+                stylers: [{ visibility: "off" }]
+            },
+            {
+                featureType: "transit",
+                elementType: "labels",
+                stylers: [{ visibility: "off" }]
+            }
+        ];
 
+        // Translations
         const i18n = {
-          pt: { enter: "ENTRAR", search: "Procurar em Vilamoura...", back: "VOLTAR", walk: "ROTA A PÉ", explore: "📍 EXPLORAR TUDO", cats: { hoteis: "Hotéis", comer: "Comer", bares: "Bares", lazer: "Lazer", golf: "Golf", lojas: "Lojas", imobiliarias: "Imóveis", util: "Útil" } },
-          en: { enter: "ENTER", search: "Search Vilamoura...", back: "BACK", walk: "WALK ROUTE", explore: "📍 EXPLORE ALL", cats: { hoteis: "Hotels", comer: "Eat", bares: "Bars", lazer: "Leisure", golf: "Golf", lojas: "Shops", imobiliarias: "Property", util: "Useful" } },
-          fr: { enter: "ENTRER", search: "Chercher...", back: "RETOUR", walk: "MARCHER", explore: "📍 TOUT VOIR", cats: { hoteis: "Hôtels", comer: "Manger", bares: "Bars", lazer: "Loisirs", golf: "Golf", lojas: "Boutiques", imobiliarias: "Immo", util: "Utile" } },
-          de: { enter: "EINTRETEN", search: "Suche...", back: "ZURÜCK", walk: "GEHEN", explore: "📍 ALLES SEHEN", cats: { hoteis: "Hotels", comer: "Essen", bares: "Bars", lazer: "Freizeit", golf: "Golf", lojas: "Läden", imobiliarias: "Immo", util: "Nützlich" } },
-          es: { enter: "ENTRAR", search: "Buscar...", back: "VOLVER", walk: "CAMINAR", explore: "📍 EXPLORAR TODO", cats: { hoteis: "Hoteles", comer: "Comer", bares: "Bares", lazer: "Ocio", golf: "Golf", lojas: "Tiendas", imobiliarias: "Inmuebles", util: "Útil" } }
+            pt: { 
+                enter: "ENTRAR", 
+                search: "Procurar em Vilamoura...", 
+                back: "VOLTAR", 
+                walk: "ROTA A PÉ", 
+                explore: "📍 EXPLORAR TUDO",
+                website: "WEBSITE",
+                call: "LIGAR",
+                route: "ROTA",
+                loading: "A carregar...",
+                noResults: "Nenhum resultado encontrado",
+                cats: { 
+                    hoteis: "Hotéis", 
+                    comer: "Restaurantes", 
+                    bares: "Pubs & Bares", 
+                    lazer: "Lazer", 
+                    golf: "Golf", 
+                    lojas: "Lojas", 
+                    imobiliarias: "Imobiliárias", 
+                    util: "Utilitários" 
+                } 
+            },
+            en: { 
+                enter: "ENTER", 
+                search: "Search Vilamoura...", 
+                back: "BACK", 
+                walk: "WALK ROUTE", 
+                explore: "📍 EXPLORE ALL",
+                website: "WEBSITE",
+                call: "CALL",
+                route: "ROUTE",
+                loading: "Loading...",
+                noResults: "No results found",
+                cats: { 
+                    hoteis: "Hotels", 
+                    comer: "Restaurants", 
+                    bares: "Pubs & Bars", 
+                    lazer: "Leisure", 
+                    golf: "Golf", 
+                    lojas: "Shops", 
+                    imobiliarias: "Real Estate", 
+                    util: "Utilities" 
+                } 
+            },
+            fr: { 
+                enter: "ENTRER", 
+                search: "Chercher...", 
+                back: "RETOUR", 
+                walk: "MARCHER", 
+                explore: "📍 TOUT VOIR",
+                website: "SITE WEB",
+                call: "APPELER",
+                route: "ITINÉRAIRE",
+                loading: "Chargement...",
+                noResults: "Aucun résultat",
+                cats: { 
+                    hoteis: "Hôtels", 
+                    comer: "Restaurants", 
+                    bares: "Bars", 
+                    lazer: "Loisirs", 
+                    golf: "Golf", 
+                    lojas: "Boutiques", 
+                    imobiliarias: "Immobilier", 
+                    util: "Utilitaires" 
+                } 
+            },
+            de: { 
+                enter: "EINTRETEN", 
+                search: "Suche...", 
+                back: "ZURÜCK", 
+                walk: "GEHEN", 
+                explore: "📍 ALLES SEHEN",
+                website: "WEBSITE",
+                call: "ANRUFEN",
+                route: "ROUTE",
+                loading: "Laden...",
+                noResults: "Keine Ergebnisse",
+                cats: { 
+                    hoteis: "Hotels", 
+                    comer: "Restaurants", 
+                    bares: "Bars", 
+                    lazer: "Freizeit", 
+                    golf: "Golf", 
+                    lojas: "Geschäfte", 
+                    imobiliarias: "Immobilien", 
+                    util: "Dienstleistungen" 
+                } 
+            },
+            es: { 
+                enter: "ENTRAR", 
+                search: "Buscar...", 
+                back: "VOLVER", 
+                walk: "CAMINAR", 
+                explore: "📍 EXPLORAR TODO",
+                website: "SITIO WEB",
+                call: "LLAMAR",
+                route: "RUTA",
+                loading: "Cargando...",
+                noResults: "Sin resultados",
+                cats: { 
+                    hoteis: "Hoteles", 
+                    comer: "Restaurantes", 
+                    bares: "Bares", 
+                    lazer: "Ocio", 
+                    golf: "Golf", 
+                    lojas: "Tiendas", 
+                    imobiliarias: "Inmobiliarias", 
+                    util: "Servicios" 
+                } 
+            }
         };
 
+        // Places Data - Expanded with more examples
         const LOCAIS = [
-            { id: "tivoli", nome: "Tivoli Marina", cat: "hoteis", lat: 37.07433, lng: -8.12017, icon: "🏨", img: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgbuotHReCbbgAZXVruQoDzpVQWaZTeqsqIHnANJDswD4BO8OF-oV0nfHsMd-G9zcEpAnpa2FTJtw94Fv0RiGgucHGOtnWz0UdQhce_R5A3inLhytkobCXvrP3bYc8T95Lv03hLt98GIbujpIZeCkiyHt6UZamuoo3MSLhhSBf9nawoKk-12X-8-i4C7GH_/w453-h301/Tivoli_Marina_Vilamoura_.jpg", web: "https://www.tivolihotels.com", tel: "+351289303300", info: { pt: "Luxo sobre a Marina", en: "Luxury over the Marina", fr: "Luxe sur la Marina", de: "Luxus am Hafen", es: "Lujo en la Marina" } },
-            { id: "hole19", nome: "19th Hole", cat: "bares", lat: 37.0755, lng: -8.1192, icon: "🍺", img: "https://media-cdn.tripadvisor.com/media/photo-s/02/db/0b/a4/19th-hole.jpg", web: "https://www.facebook.com/19thHoleVilamoura", tel: "+351289381730", info: { pt: "Melhores Cocktails", en: "Best Cocktails", fr: "Meilleurs Cocktails", de: "Beste Cocktails", es: "Mejores Cócteles" } },
-            { id: "oldcourse", nome: "Old Course", cat: "golf", lat: 37.1021, lng: -8.1155, icon: "🏌️", img: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEi9TeufNw3s8cvFQCBMyEjurQCvim1PTN9Pgyp-wEehCZJXBgRNmvWMjjFIpwhWnbQu_jZ-s-7D8ufYQQTmccDbObpt4yIia1-xm3k0d1NiDCUORo_QIZkmFBmR4Z6dfxo7vWdHh538CPfO8Ar5SOfadBxHptQ0RDSUVp-hPaKJaSecDb5Q2WhPDzR8yOji/s320/old-course-with-logo.jpg", web: "https://www.dompedrogolf.com", tel: "+351289310333", info: { pt: "Campo Clássico", en: "Classic Course", fr: "Parcours classique", de: "Klassischer Platz", es: "Campo Clásico" } },
-            { id: "gnr", nome: "GNR Vilamoura", cat: "util", lat: 37.08552, lng: -8.11651, icon: "🚓", img: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiQgNFxLWvwZnkV9I4cIlNTLi93LFVaWr3y2oVgyPoGt87EBiETjT2ZT2Jw-XxMOEco59kpDHgwKAympVvrrtSXTvk1pTEh13ZH_OOl3nbDQLtryq1QepMEPz_sve47DwMPwbgINSkmnIajW9R2VQT9lX7Wu4_VeEY-NdO2_Ib_3uuAwjZj6EExkUsETE3f/s320/GNR.jpg", web: "#", tel: "+351289300430", info: { pt: "Segurança 24h", en: "24h Security", fr: "Sécurité 24h", de: "24h Sicherheit", es: "Segurança 24h" } }
-            // ... (Todos os outros locais estão preservados no seu código final)
-        ];
+            // Hotéis
+            { id: "tivoli", nome: "Tivoli Marina Vilamoura", cat: "hoteis", lat: 37.07433, lng: -8.12017, icon: "🏨", img: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgbuotHReCbbgAZXVruQoDzpVQWaZTeqsqIHnANJDswD4BO8OF-oV0nfHsMd-G9zcEpAnpa2FTJtw94Fv0RiGgucHGOtnWz0UdQhce_R5A3inLhytkobCXvrP3bYc8T95Lv03hLt98GIbujpIZeCkiyHt6UZamuoo3MSLhhSBf9nawoKk-12X-8-i4C7GH_/w453-h301/Tivoli_Marina_Vilamoura_.jpg", web: "https://www.tivolihotels.com", tel: "+351289303300", info: { pt: "Luxo sobre a Marina", en: "Luxury over the Marina", fr: "Luxe sur la Marina", de: "Luxus am Hafen", es: "Lujo en la Marina" } },
+            { id: "ampalius", nome: "Vila Galé Ampalius", cat: "hoteis", lat: 37.0773, lng: -8.1179, icon: "🏨", img: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhGVY9LR4Vy8uzfLr-M1OUhJ9VUCAYWg0OAbCOvXzoHhKTxr_3pvfa9I7eCk0tF6P8cHL35VyfCzFb7ZoVcwl-jCBhAdfa_zUuqgTXqnqUPBnZByM_x1lAO32VhpEJQiWGmcE9SbTAd-3AyGxWvJfXoajE0bw7W30cJHf95nymYA9ll8fQrUXD8usF5Fsms/w462-h307/Vila%20Gale%20Ampalius.jfif", web: "https://www.vilagale.com", tel: "+351289303970", info: { pt: "Frente à praia", en: "Beachfront", fr: "Face à la plage", de: "Direkt am Strand", es: "Frente a la playa" } },
+            { id: "dompedro", nome: "Dom Pedro Marina", cat: "hoteis", lat: 37.0748, lng: -8.1195, icon: "🏨", img: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhc5xExICg92pMepZTRx2P5A59BqNfkLjfF2SxHFkghqMx0s2pOJtWZktTH7h5KXzT4Sy-9u1j_fgRpHl2uLzO3z9Z9Q9Q9Q9Q9Q9Q9Q9Q9Q9Q9Q9Q9Q9Q9/s320/dom-pedro-marina.jpg", web: "https://www.dompedro.com", tel: "+351289303300", info: { pt: "Conforto e localização", en: "Comfort and location", fr: "Confort et emplacement", de: "Komfort und Lage", es: "Confort y ubicación" } },
 
-        const CATEGORIAS = [
-          { id: 'hoteis', icon: 'fa-hotel' }, { id: 'comer', icon: 'fa-utensils' },
-          { id: 'bares', icon: 'fa-glass-cheers' }, { id: 'lazer', icon: 'fa-camera-retro' },
-          { id: 'golf', icon: 'fa-golf-ball-tee' }, { id: 'lojas', icon: 'fa-bag-shopping' },
-          { id: 'imobiliarias', icon: 'fa-house-chimney' }, { id: 'util', icon: 'fa-shield-halved' }
-        ];
+            // Restaurantes
+            { id: "colombo", nome: "Restaurante Colombo", cat: "comer", lat: 37.0757, lng: -8.1150, icon: "🍴", img: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEh8BrDSbJXJaPu4G5ahigmv5fnnO71cxKiQfxiJmAZe-jgUcX3cQQG6XXzP0sCgRO_W4jFbfBDytY2oRqaBSWmV8nOkSkapWCvRtFgwPTTGK7PoDNVs_mTeDW11iP_QIo2iwxRtvhkLbjwIRjuUI340anqpR5UchWkRLqQCvsBo0X7gPv97dDZ7xifW0uWY/s1600/20220930_194648.jpg", web: "https://www.facebook.com/restaurante.colombo.vilamoura", tel: "+351289314111", info: { pt: "Cozinha tradicional portuguesa", en: "Traditional Portuguese cuisine", fr: "Cuisine portugaise traditionnelle", de: "Traditionelle portugiesische Küche", es: "Cocina tradicional portuguesa" } },
+            { id: "thai", nome: "Thai Vilamoura", cat: "comer", lat: 37.0777, lng: -8.1163, icon: "🍲", img: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhLkC9YJrcg-dbSNHxYMSOEZBOF7CYin0QUJru5O_7Uqk5-mK2-66Ehv-0i5Mami3TCfsSGYDMkGKPfKskK8nhMRezn0WSeLwvtPjUnC43q6NDbyV1MoYGhHqxjxrHr7Dz6vX7Xh_kbuG_XJRgwJpZjVHBBBbjEuANxjQWzoFbx-88s9Ru-dR7kLhvWT4wU/w438-h640/Thai%20Vilamoura.jpg", web: "https://www.thaivilamoura.com", tel: "+351289381735", info: { pt: "Comida Tailandesa autêntica", en: "Authentic Thai Food", fr: "Cuisine thaïlandaise authentique", de: "Authentisches thailändisches Essen", es: "Comida tailandesa auténtica" } },
+            { id: "luna", nome: "Luna Rossa", cat: "comer", lat: 37.0792, lng: -8.1195, icon: "🍕", img: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEi7_h6rzfvQ3Q71fpNCPBew1q4d2OZBVTFoRENdwJDTV2u7iCf3ETpWdUxLmcooLKWxwxlh618mshG-iRA0-8myM5bihvdhSgC_XPi4o9ImPBpg3DdWITFFTkgbDDZkaVxRDRxol8Q4Mg_6nVJ8a57CXL-esH305eyVSBAGAO_BSNDXjez-IXrfZS4waxQp/w444-h313/Luna%20rossa.jpg", web: "#", tel: "+351289381731", info: { pt: "Pizzas artesanais italianas", en: "Artisan Italian pizzas", fr: "Pizzas italiennes artisanales", de: "Hausgemachte italienische Pizza", es: "Pizzas artesanales italianas" } },
+            { id: "oasis", nome: "Oasis Restaurante", cat: "comer", lat: 37.0765, lng: -8.1185, icon: "🍽️", img: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhc5xExICg92pMepZTRx2P5A59BqNfkLjfF2SxHFkghqMx0s2pOJtWZktTH7h5KXzT4Sy-9u1j_fgRpHl2uLzO3z9Z9Q9Q9Q9Q9Q9Q9Q9Q9Q9Q9Q9Q9Q9Q/s320/oasis.jpg", web: "#", tel: "+351289314112", info: { pt: "Comida mediterrânica", en: "Mediterranean cuisine", fr: "Cuisine méditerranéenne", de: "Mediterrane Küche", es: "Cocina mediterránea" } },
 
-        function App() {
-          const [view, setView] = useState('splash');
-          const [lang, setLang] = useState('pt');
-          const [subView, setSubView] = useState('grid');
-          const [catAtiva, setCatAtiva] = useState(null);
-          const [query, setQuery] = useState('');
-          
-          const mapRef = useRef(null);
-          const googleMap = useRef(null);
-          const markers = useRef([]);
-          const directionsRenderer = useRef(null);
+            // Pubs & Bares
+            { id: "hole19", nome: "19th Hole", cat: "bares", lat: 37.0755, lng: -8.1192, icon: "🍺", img: "https://media-cdn.tripadvisor.com/media/photo-s/02/db/0b/a4/19th-hole.jpg", web: "https://www.facebook.com/19thHoleVilamoura", tel: "+351289381730", info: { pt: "Melhores Cocktails e música", en: "Best Cocktails and music", fr: "Meilleurs cocktails et musique", de: "Beste Cocktails und Musik", es: "Mejores cócteles y música" } },
+            { id: "clover", nome: "Golden Clover", cat: "bares", lat: 37.0752, lng: -8.1154, icon: "🍀", img: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgbb12_0MDt5KGaWQU-NNZ1lOnRmMMXbEp8zPQKhxJ-6tDmbmHdKEh4MjR-qWlEdPmJ1i1SKOkXi9eQ4nYosgR54knP9pcGt6_AOf-YBmkMGZdBc_FYWfY5KWkzyhdWCTZblDWalkekC06h4AwE7kmTfoGs-Y0793B5ncVuxDd9CFkSfGkh4RyV1dG-JAou/w447-h307/Golden%20Clover.jpg", web: "#", tel: "+351289314112", info: { pt: "Cerveja artesanal e diversão", en: "Craft beer and fun", fr: "Bière artisanale et plaisir", de: "Craftbier und Spaß", es: "Cerveza artesanal y diversión" } },
+            { id: "irishpub", nome: "Irish Pub Vilamoura", cat: "bares", lat: 37.0760, lng: -8.1170, icon: "🍻", img: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhc5xExICg92pMepZTRx2P5A59BqNfkLjfF2SxHFkghqMx0s2pOJtWZktTH7h5KXzT4Sy-9u1j_fgRpHl2uLzO3z9Z9Q9Q9Q9Q9Q9Q9Q9Q9Q9Q9Q9Q9Q9Q/s320/irish-pub.jpg", web: "#", tel: "+351289314113", info: { pt: "Autêntico pub irlandês", en: "Authentic Irish pub", fr: "Authentique pub irlandais", de: "Authentischer irischer Pub", es: "Auténtico pub irlandés" } },
 
-          const t = i18n[lang];
+            // Lazer
+            { id: "casino", nome: "Casino Vilamoura", cat: "lazer", lat: 37.0773, lng: -8.1156, icon: "🎰", img: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiQ2NGpAkrZA6JF3mdjzj45f_wn6vEprsp-W3o3KUe3402dmvVvux3Z3hbWnRPns2QRjk-4-AFWfLlGz6XQcAPb41BZO5dQQClIHiHoJSHm_Lka7Ui1kQeR2c-ye_-DkFgc-IKomAWlhbqNFS74yo-Hm6QoXdBVWTiBv9X9Pob-O3TwJzEsSi2JlfHx-oIA/w465-h261/Casino-de-vilamoura.jfif", web: "#", tel: "+351289310000", info: { pt: "Shows, jogos e entretenimento", en: "Shows, games and entertainment", fr: "Spectacles, jeux et divertissement", de: "Shows, Spiele und Unterhaltung", es: "Espectáculos, juegos y entretenimiento" } },
+            { id: "familygolf", nome: "Family Golf Park", cat: "lazer", lat: 37.0780, lng: -8.1130, icon: "⛳", img: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjc3NgjlKZyOeGyESAgI1eDyS_CQahtDMlgphkwWDbl_hGajxBW3G8_6FwV704I6RT3y1U3WVmwlAxLqHRxDJbONvxP253ROq627_Dr19tpB7GR1R09Qz3Oo3S8ljIDjSM8AH_7v-ULFNvJR_clp0owjNlbIyHinnoqlpSso9wz5nxbSolX8Nld6dvCafJ7/s320/family-golf-park.jpg", web: "https://www.familygolfpark.pt", tel: "+351289300400", info: { pt: "Diversão para toda a família", en: "Fun for the whole family", fr: "Amusement pour toute la famille", de: "Spaß für die ganze Familie", es: "Diversión para toda la familia" } },
+            { id: "museu", nome: "Cerro da Vila", cat: "lazer", lat: 37.0801, lng: -8.1190, icon: "🏛️", img: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjcJRzVqg8sBXmR4Ru_tJ_h8uvMBytfsKq0ZcyyhVv_vMqwV5g9_ECx8Qpzo0CAec4qHUBt2-3kfQ2oqds4HoZfp3iqWHI77lWV6S96XYk2LjdfPinmNIFBOfWGGOdMNDOHq_wJe8H-LCyZAbnTKA_Cpw7nkaY21YAcWGWN8uSmy7ZJpgrT9yeDOxPrzj3k/s1600/Museu%20cerro%20da%20Vila.jfif", web: "#", tel: "+351289312153", info: { pt: "Ruínas Romanas e museu", en: "Roman Ruins and museum", fr: "Ruines romaines et musée", de: "Römische Ruinen und Museum", es: "Ruinas romanas y museo" } },
+            { id: "marina", nome: "Marina de Vilamoura", cat: "lazer", lat: 37.0740, lng: -8.1190, icon: "⛵", img: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhc5xExICg92pMepZTRx2P5A59BqNfkLjfF2SxHFkghqMx0s2pOJtWZktTH7h5KXzT4Sy-9u1j_fgRpHl2uLzO3z9Z9Q9Q9Q9Q9Q9Q9Q9Q9Q9Q9Q9Q9Q9Q/s320/marina.jpg", web: "#", tel: "+351289310000", info: { pt: "Passeios de barco e restaurantes", en: "Boat trips and restaurants", fr: "Promenades en bateau et restaurants", de: "Bootsfahrten und Restaurants", es: "Paseos en barco y restaurantes" } },
 
-          useEffect(() => {
-            if (view === 'menu' && !googleMap.current && mapRef.current) {
-                googleMap.current = new google.maps.Map(mapRef.current, {
-                    center: { lat: 37.076, lng: -8.118 },
-                    zoom: 15,
-                    disableDefaultUI: true,
-                    styles: mapStyle
-                });
-                directionsRenderer.current = new google.maps.DirectionsRenderer({
-                    map: googleMap.current,
-                    polylineOptions: { strokeColor: "#003366", strokeWeight: 5 }
-                });
-            }
-          }, [view]);
-
-          const handleRoute = (lat, lng) => {
-            if (navigator.geolocation) {
-                navigator.geolocation.getCurrentPosition((pos) => {
-                    const start = { lat: pos.coords.latitude, lng: pos.coords.longitude };
-                    const end = { lat, lng };
-                    const service = new google.maps.DirectionsService();
-                    service.route({
-                        origin: start,
-                        destination: end,
-                        travelMode: google.maps.TravelMode.WALKING
-                    }, (result, status) => {
-                        if (status === 'OK') directionsRenderer.current.setDirections(result);
-                    });
-                });
-            }
-          };
-
-          const openMap = (items) => {
-            setSubView('mapa');
-            markers.current.forEach(m => m.setMap(null));
-            if(directionsRenderer.current) directionsRenderer.current.setDirections({routes: []});
-            
-            const list = Array.isArray(items) ? items : [items];
-            list.forEach(loc => {
-                const marker = new google.maps.Marker({
-                    position: { lat: loc.lat, lng: loc.lng },
-                    map: googleMap.current,
-                    label: { text: loc.icon, color: 'white' },
-                    icon: { path: google.maps.SymbolPath.CIRCLE, scale: 16, fillColor: '#003366', fillOpacity: 1, strokeWeight: 2, strokeColor: 'white' }
-                });
-
-                marker.addListener('click', () => {
-                    const content = document.createElement('div');
-                    content.style.width = '200px';
-                    content.innerHTML = `
-                        <img src="${loc.img}" style="width:100%; border-radius:8px">
-                        <h3 style="margin:10px 0 5px">${loc.nome}</h3>
-                        <p style="font-size:12px; color:#666">${loc.info[lang]}</p>
-                        <div class="info-buttons">
-                            ${loc.web !== '#' ? `<a href="${loc.web}" target="_blank" class="btn-action" style="background:#003366">Website</a>` : ''}
-                            <a href="tel:${loc.tel}" class="btn-action" style="background:#27ae60">Ligar</a>
-                            <button id="route-btn" class="btn-action" style="background:#c5a059">${t.walk}</button>
-                        </div>
-                    `;
-                    const iw = new google.maps.InfoWindow({ content });
-                    iw.open(googleMap.current, marker);
-                    google.maps.event.addListenerOnce(iw, 'domready', () => {
-                        document.getElementById('route-btn').onclick = () => { handleRoute(loc.lat, loc.lng); iw.close(); };
-                    });
-                });
-                markers.current.push(marker);
-            });
-          };
-
-          if (view === 'splash') {
-            return (
-              <div className="splash-screen">
-                <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEj7L0l6N8m8v2N4n3B8G2z6G_7YyY5eX9z6_8C7o1F4W8R6U9T2X3P7Q8R9S2T1U4V5W6X7Y8Z9/s1600/Vilamoura_Guide_Logo.gif" className="splash-logo" alt="Logo" />
-                <button className="btn-explore" onClick={() => setView('menu')}>{t.enter}</button>
-              </div>
-            );
-          }
-
-          return (
-            <div style={{height: '100%'}}>
-              <div className="lang-bar">
-                {['pt','en','fr','de','es'].map(l => (
-                  <button key={l} className={`lang-btn ${lang === l ? 'active' : ''}`} onClick={() => setLang(l)}>{l.toUpperCase()}</button>
-                ))}
-              </div>
-              <div className="app-content">
-                <div className="menu-view" style={{ display: subView !== 'mapa' ? 'block' : 'none' }}>
-                    <div className="search-area">
-                        <div className="search-box">
-                            <i className="fas fa-search"></i>
-                            <input type="text" placeholder={t.search} onChange={(e) => setQuery(e.target.value)} />
-                        </div>
-                    </div>
-                    {subView === 'grid' ? (
-                        <div className="grid-cats">
-                            {CATEGORIAS.map(c => (
-                                <div key={c.id} className="cat-card" onClick={() => { setCatAtiva(c.id); setSubView('lista'); }}>
-                                    <i className={`fas ${c.icon}`} style={{fontSize:'24px', color:'#003366'}}></i>
-                                    <div style={{fontWeight:'bold', marginTop:5}}>{t.cats[c.id]}</div>
-                                </div>
-                            ))}
-                        </div>
-                    ) : (
-                        <div>
-                            <button onClick={() => setSubView('grid')} style={{padding:15, background:'none', border:'none', color:'#003366', fontWeight:'bold'}}>← {t.back}</button>
-                            {LOCAIS.filter(l => l.cat === catAtiva).map(l => (
-                                <div key={l.id} className="item-row" onClick={() => openMap(l)}>
-                                    <img src={l.img} style={{width:50, height:50, borderRadius:8, objectFit:'cover'}} />
-                                    <div style={{fontWeight:'bold'}}>{l.nome}</div>
-                                </div>
-                            ))}
-                        </div>
-                    )}
-                    <div className="footer-nav"><button className="btn-explore" onClick={() => openMap(LOCAIS)}>{t.explore}</button></div>
-                </div>
-                <div className="map-view" style={{ visibility: subView === 'mapa' ? 'visible' : 'hidden' }}>
-                    <button className="btn-back-map" onClick={() => setSubView('grid')}>MENU</button>
-                    <div ref={mapRef} id="map-canvas"></div>
-                </div>
-              </div>
-            </div>
-          );
-        }
-        ReactDOM.createRoot(document.getElementById('root')).render(<App />);
-    </script>
-</body>
-</html>
+            // Golf
+            { id: "oldcourse", nome: "Old Course", cat: "golf", lat: 37.1021, lng: -8.1155, icon: "🏌️", img: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEi9TeufNw3
