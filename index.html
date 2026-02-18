@@ -15,19 +15,8 @@
         body, html { margin: 0; padding: 0; height: 100vh; width: 100%; overflow: hidden; background: #f4f7f9; font-family: 'Segoe UI', sans-serif; }
         #root { height: 100%; width: 100%; }
         
-        /* Splash Screen com o teu GIF */
-        .splash-screen { 
-            position: fixed; inset: 0; 
-            background: #ffffff; 
-            display: flex; flex-direction: column; align-items: center; 
-            justify-content: center; z-index: 1000; text-align: center; 
-        }
-        .splash-logo-img { 
-            width: 85%; 
-            max-width: 350px; 
-            height: auto; 
-            margin-bottom: 20px;
-        }
+        .splash-screen { position: fixed; inset: 0; background: #ffffff; display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 1000; text-align: center; }
+        .splash-logo-img { width: 85%; max-width: 350px; height: auto; margin-bottom: 20px; }
 
         .lang-bar { background: #003366; display: flex; justify-content: center; gap: 5px; padding: 8px; border-bottom: 2px solid #c5a059; height: 45px; box-sizing: border-box; }
         .lang-btn { background: rgba(255,255,255,0.1); border: 1px solid #fff; color: #fff; padding: 4px 8px; border-radius: 8px; cursor: pointer; font-size: 11px; font-weight: bold; }
@@ -51,8 +40,10 @@
         #map-canvas { width: 100%; height: 100%; }
 
         .item-row { display: flex; gap: 12px; background: #fff; padding: 12px; border-radius: 12px; margin: 0 15px 10px 15px; align-items: center; box-shadow: 0 2px 5px rgba(0,0,0,0.05); cursor: pointer; }
-        .info-buttons { display: flex; flex-direction: column; gap: 5px; margin-top: 10px; }
-        .btn-info { display: block; text-align: center; padding: 8px; border-radius: 4px; text-decoration: none; color: white; font-size: 12px; font-weight: bold; border: none; cursor: pointer; }
+        
+        /* Estilos dos Botões de Info */
+        .info-buttons { display: flex; flex-direction: column; gap: 6px; margin-top: 10px; }
+        .btn-info { display: block; text-align: center; padding: 10px; border-radius: 6px; text-decoration: none; color: white; font-size: 11px; font-weight: bold; }
         .bg-blue { background: #003366; }
         .bg-green { background: #27ae60; }
         .bg-gold { background: #c5a059; }
@@ -68,47 +59,32 @@
         const mapStyle = [{ featureType: "poi", elementType: "labels", stylers: [{ visibility: "off" }] }];
 
         const i18n = {
-          pt: { enter: "ENTRAR", search: "Procurar em Vilamoura...", back: "VOLTAR", walk: "ROTA A PÉ", explore: "📍 EXPLORAR TUDO", cats: { hoteis: "Hotéis", comer: "Comer", bares: "Bares", lazer: "Lazer", golf: "Golf", lojas: "Lojas", imobiliarias: "Imóveis", util: "Útil" } },
-          en: { enter: "ENTER", search: "Search Vilamoura...", back: "BACK", walk: "WALK ROUTE", explore: "📍 EXPLORE ALL", cats: { hoteis: "Hotels", comer: "Eat", bares: "Bars", lazer: "Leisure", golf: "Golf", lojas: "Shops", imobiliarias: "Property", util: "Useful" } },
-          fr: { enter: "ENTRER", search: "Chercher...", back: "RETOUR", walk: "MARCHER", explore: "📍 TOUT VOIR", cats: { hoteis: "Hôtels", comer: "Manger", bares: "Bars", lazer: "Loisirs", golf: "Golf", lojas: "Boutiques", imobiliarias: "Immo", util: "Utile" } },
-          de: { enter: "EINTRETEN", search: "Suche...", back: "ZURÜCK", walk: "GEHEN", explore: "📍 ALLES SEHEN", cats: { hoteis: "Hotels", comer: "Essen", bares: "Bars", lazer: "Freizeit", golf: "Golf", lojas: "Läden", imobiliarias: "Immo", util: "Nützlich" } },
-          es: { enter: "ENTRAR", search: "Buscar...", back: "VOLVER", walk: "CAMINAR", explore: "📍 EXPLORAR TODO", cats: { hoteis: "Hoteles", comer: "Comer", bares: "Bares", lazer: "Ocio", golf: "Golf", lojas: "Tiendas", imobiliarias: "Inmuebles", util: "Útil" } }
+          pt: { enter: "ENTRAR", search: "Procurar...", back: "VOLTAR", route: "ROTA", call: "LIGAR", visit: "WEBSITE", explore: "📍 EXPLORAR TUDO", cats: { hoteis: "Hotéis", comer: "Comer", bares: "Bares", lazer: "Lazer", golf: "Golf", lojas: "Lojas", imobiliarias: "Imóveis", util: "Útil" } },
+          en: { enter: "ENTER", search: "Search...", back: "BACK", route: "ROUTE", call: "CALL", visit: "WEBSITE", explore: "📍 EXPLORE ALL", cats: { hoteis: "Hotels", comer: "Eat", bares: "Bars", lazer: "Leisure", golf: "Golf", lojas: "Shops", imobiliarias: "Property", util: "Useful" } },
+          fr: { enter: "ENTRER", search: "Chercher...", back: "RETOUR", route: "ROUTE", call: "APPELER", visit: "SITE WEB", explore: "📍 TOUT VOIR", cats: { hoteis: "Hôtels", comer: "Manger", bares: "Bars", lazer: "Loisirs", golf: "Golf", lojas: "Boutiques", imobiliarias: "Immo", util: "Utile" } }
         };
 
         const LOCAIS = [
-            // HOTEIS
-            { id: "tivoli", nome: "Tivoli Marina", cat: "hoteis", lat: 37.07433, lng: -8.12017, icon: "🏨", img: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgbuotHReCbbgAZXVruQoDzpVQWaZTeqsqIHnANJDswD4BO8OF-oV0nfHsMd-G9zcEpAnpa2FTJtw94Fv0RiGgucHGOtnWz0UdQhce_R5A3inLhytkobCXvrP3bYc8T95Lv03hLt98GIbujpIZeCkiyHt6UZamuoo3MSLhhSBf9nawoKk-12X-8-i4C7GH_/w453-h301/Tivoli_Marina_Vilamoura_.jpg", web: "https://www.tivolihotels.com", tel: "+351289303300", info: { pt: "Luxo sobre a Marina", en: "Luxury over the Marina", fr: "Luxe sur la Marina", de: "Luxus am Hafen", es: "Lujo en la Marina" } },
-            { id: "ampalius", nome: "Vila Galé Ampalius", cat: "hoteis", lat: 37.0773, lng: -8.1179, icon: "🏨", img: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhGVY9LR4Vy8uzfLr-M1OUhJ9VUCAYWg0OAbCOvXzoHhKTxr_3pvfa9I7eCk0tF6P8cHL35VyfCzFb7ZoVcwl-jCBhAdfa_zUuqgTXqnqUPBnZByM_x1lAO32VhpEJQiWGmcE9SbTAd-3AyGxWvJfXoajE0bw7W30cJHf95nymYA9ll8fQrUXD8usF5Fsms/w462-h307/Vila%20Gale%20Ampalius.jfif", web: "https://www.vilagale.com", tel: "+351289303970", info: { pt: "Frente à praia", en: "Beachfront", fr: "Face à la plage", de: "Direkt am Strand", es: "Frente a la playa" } },
-            
-            // COMER
-            { id: "colombo", nome: "Colombo", cat: "comer", lat: 37.0757, lng: -8.1150, icon: "🍴", img: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEh8BrDSbJXJaPu4G5ahigmv5fnnO71cxKiQfxiJmAZe-jgUcX3cQQG6XXzP0sCgRO_W4jFbfBDytY2oRqaBSWmV8nOkSkapWCvRtFgwPTTGK7PoDNVs_mTeDW11iP_QIo2iwxRtvhkLbjwIRjuUI340anqpR5UchWkRLqQCvsBo0X7gPv97dDZ7xifW0uWY/s1600/20220930_194648.jpg", web: "https://www.facebook.com/restaurante.colombo.vilamoura", tel: "+351289314111", info: { pt: "Cozinha tradicional", en: "Traditional cuisine", fr: "Cuisine traditionnelle", de: "Traditionelle Küche", es: "Cocina tradicional" } },
-            { id: "thai", nome: "Thai Vilamoura", cat: "comer", lat: 37.0777, lng: -8.1163, icon: "🍲", img: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhLkC9YJrcg-dbSNHxYMSOEZBOF7CYin0QUJru5O_7Uqk5-mK2-66Ehv-0i5Mami3TCfsSGYDMkGKPfKskK8nhMRezn0WSeLwvtPjUnC43q6NDbyV1MoYGhHqxjxrHr7Dz6vX7Xh_kbuG_XJRgwJpZjVHBBBbjEuANxjQWzoFbx-88s9Ru-dR7kLhvWT4wU/w438-h640/Thai%20Vilamoura.jpg", web: "https://www.thaivilamoura.com", tel: "+351289381735", info: { pt: "Comida Tailandesa", en: "Thai Food", fr: "Cuisine Thaïlandaise", de: "Thailändisches Essen", es: "Comida Tailandesa" } },
-            { id: "luna", nome: "Luna Rossa", cat: "comer", lat: 37.0792, lng: -8.1195, icon: "🍕", img: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEi7_h6rzfvQ3Q71fpNCPBew1q4d2OZBVTFoRENdwJDTV2u7iCf3ETpWdUxLmcooLKWxwxlh618mshG-iRA0-8myM5bihvdhSgC_XPi4o9ImPBpg3DdWITFFTkgbDDZkaVxRDRxol8Q4Mg_6nVJ8a57CXL-esH305eyVSBAGAO_BSNDXjez-IXrfZS4waxQp/w444-h313/Luna%20rossa.jpg", web: "#", tel: "+351289381731", info: { pt: "Pizzas artesanais", en: "Artisan pizzas", fr: "Pizzas artisanales", de: "Hausgemachte Pizza", es: "Pizzas artesanales" } },
-
-            // BARES
-            { id: "hole19", nome: "19th Hole", cat: "bares", lat: 37.0755, lng: -8.1192, icon: "🍺", img: "https://media-cdn.tripadvisor.com/media/photo-s/02/db/0b/a4/19th-hole.jpg", web: "https://www.facebook.com/19thHoleVilamoura", tel: "+351289381730", info: { pt: "Melhores Cocktails", en: "Best Cocktails", fr: "Meilleurs Cocktails", de: "Beste Cocktails", es: "Mejores Cócteles" } },
-            { id: "clover", nome: "Golden Clover", cat: "bares", lat: 37.0752, lng: -8.1154, icon: "🍀", img: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgbb12_0MDt5KGaWQU-NNZ1lOnRmMMXbEp8zPQKhxJ-6tDmbmHdKEh4MjR-qWlEdPmJ1i1SKOkXi9eQ4nYosgR54knP9pcGt6_AOf-YBmkMGZdBc_FYWfY5KWkzyhdWCTZblDWalkekC06h4AwE7kmTfoGs-Y0793B5ncVuxDd9CFkSfGkh4RyV1dG-JAou/w447-h307/Golden%20Clover.jpg", web: "#", tel: "+351289314112", info: { pt: "Cerveja e diversão", en: "Beer and fun", fr: "Bière et plaisir", de: "Bier und Spaß", es: "Cerveza y diversión" } },
-
-            // GOLF
-            { id: "oldcourse", nome: "Old Course", cat: "golf", lat: 37.1021, lng: -8.1155, icon: "🏌️", img: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEi9TeufNw3s8cvFQCBMyEjurQCvim1PTN9Pgyp-wEehCZJXBgRNmvWMjjFIpwhWnbQu_jZ-s-7D8ufYQQTmccDbObpt4yIia1-xm3k0d1NiDCUORo_QIZkmFBmR4Z6dfxo7vWdHh538CPfO8Ar5SOfadBxHptQ0RDSUVp-hPaKJaSecDb5Q2WhPDzR8yOji/s320/old-course-with-logo.jpg", web: "https://www.dompedrogolf.com", tel: "+351289310333", info: { pt: "Campo Clássico", en: "Classic Course", fr: "Parcours classique", de: "Klassischer Platz", es: "Campo Clásico" } },
-            { id: "millennium", nome: "Millennium Golf", cat: "golf", lat: 37.1030, lng: -8.1250, icon: "⛳", img: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEih8kW5HMhTxRlM1XIUrZ4TSciEfZrsvRW4F5roCad245G8zd5RW7GB_SC0CkyaGH0Oty_56EmTfnZxCxjLLXQET_LhHHAKHbYmPgBFMpJFvkq-ngPBWoU4SJzxqI2CyuIQaVg2BroRKbvBoMpzniycJ2r1wbY9OW4oDvKtG7iftq8WImThBLQANgLd5KNx/s1600/millennium-golf-with-logo-.jpg", web: "#", tel: "+351289310333", info: { pt: "Design Moderno", en: "Modern Design", fr: "Design moderne", de: "Modernes Design", es: "Diseño Moderno" } },
-            { id: "laguna", nome: "Laguna Golf", cat: "golf", lat: 37.1050, lng: -8.1300, icon: "⛳", img: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjpqruYU498m27vVpXxHIMtt8C1ktkTH71CfBsUiAn6KeWWMb3L2dhVJ_sRsB8MqWImt1Nc7vHFm6N7ynWlPEWzvlkCAU_ckNVNh6YY2ZWgCuWGnxIZFWxzPlLjtREk8MnWG7YtU0cQSUb3wLvpSs-B6Uem8rzJ0qtOdwYGohE628cAG4UhvIWrhogBU-Hm/s320/laguna-golf-with-logo.jpg", web: "#", tel: "+351289310333", info: { pt: "Estilo Links", en: "Links Style", fr: "Style Links", de: "Links-Stil", es: "Estilo Links" } },
-            { id: "pinhal", nome: "Pinhal Golf", cat: "golf", lat: 37.0925, lng: -8.1105, icon: "⛳", img: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjmOHg_GgQCiwZ8Nzw0S2bZKA57EZd7Vaoy9Aj-qqmFWoRFnsZ4CON57mhqOozH0eVR_G37tJgibQo8etDAA2rvAlLJO4EP36RldXk2VbSF_ephlsiLUEOk6ASXHhJqZE6T-lPXNdrdodZ8zc37jnrjQvSYm9wIZGD50KwxjMVysb7v6uoSCa_khKeQsMOZ/s320/pinhal-Golf-with-logo.jpg", web: "#", tel: "+351289310333", info: { pt: "Pinhal majestoso", en: "Majestic Pine", fr: "Pinède majestueuse", de: "Majestätischer Pinienwald", es: "Pinar majestuoso" } },
-            { id: "victoria", nome: "Victoria Golf", cat: "golf", lat: 37.1035, lng: -8.1418, icon: "🏆", img: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhE1xthVUNMfTBR0JzfDp-ROZxgt68NTwsBLyfIW2U0yg_pXH5WqcYXJ3trnAQN1CHmsoX30d6TsoU1gHoi_sxcWJbDLcgQ8gM9DIl-pRs0Mz6fXBDfBPDKenIohFgPSwID2r_CyKciRyvMsBgAi7FXlyQcHdL_lYWUb6ahWrsqz4FuWFA6Tuc-Ok_nv_Pc/w319-h319/Victoria%20Golf.png", web: "#", tel: "+351289310333", info: { pt: "Arnold Palmer", en: "Arnold Palmer Design", fr: "Design Arnold Palmer", de: "Arnold Palmer Design", es: "Diseño Arnold Palmer" } },
-
-            // LAZER
-            { id: "familygolf", nome: "Family Golf Park", cat: "lazer", lat: 37.0780, lng: -8.1130, icon: "⛳", img: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjc3NgjlKZyOeGyESAgI1eDyS_CQahtDMlgphkwWDbl_hGajxBW3G8_6FwV704I6RT3y1U3WVmwlAxLqHRxDJbONvxP253ROq627_Dr19tpB7GR1R09Qz3Oo3S8ljIDjSM8AH_7v-ULFNvJR_clp0owjNlbIyHinnoqlpSso9wz5nxbSolX8Nld6dvCafJ7/s320/family-golf-park.jpg", web: "https://www.familygolfpark.pt", tel: "+351289300400", info: { pt: "Lazer familiar", en: "Family leisure", fr: "Loisirs en famille", de: "Freizeit für Familien", es: "Ocio familiar" } },
-            { id: "museu", nome: "Cerro da Vila", cat: "lazer", lat: 37.0801, lng: -8.1190, icon: "🏛️", img: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjcJRzVqg8sBXmR4Ru_tJ_h8uvMBytfsKq0ZcyyhVv_vMqwV5g9_ECx8Qpzo0CAec4qHUBt2-3kfQ2oqds4HoZfp3iqWHI77lWV6S96XYk2LjdfPinmNIFBOfWGGOdMNDOHq_wJe8H-LCyZAbnTKA_Cpw7nkaY21YAcWGWN8uSmy7ZJpgrT9yeDOxPrzj3k/s1600/Museu%20cerro%20da%20Vila.jfif", web: "#", tel: "+351289312153", info: { pt: "Ruínas Romanas", en: "Roman Ruins", fr: "Ruines romaines", de: "Römische Ruinen", es: "Ruinas Romanas" } },
-            { id: "casino", nome: "Casino Vilamoura", cat: "lazer", lat: 37.0773, lng: -8.1156, icon: "🎰", img: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiQ2NGpAkrZA6JF3mdjzj45f_wn6vEprsp-W3o3KUe3402dmvVvux3Z3hbWnRPns2QRjk-4-AFWfLlGz6XQcAPb41BZO5dQQClIHiHoJSHm_Lka7Ui1kQeR2c-ye_-DkFgc-IKomAWlhbqNFS74yo-Hm6QoXdBVWTiBv9X9Pob-O3TwJzEsSi2JlfHx-oIA/w465-h261/Casino-de-vilamoura.jfif", web: "#", tel: "+351289310000", info: { pt: "Shows e Jogos", en: "Shows and Games", fr: "Spectacles et Jeux", de: "Shows und Spiele", es: "Espectáculos y Juegos" } },
-
-            // IMOBILIARIAS
-            { id: "algarveprop", nome: "AlgarveProperty", cat: "imobiliarias", lat: 37.07666, lng: -8.11777, icon: "🏠", img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSVzBUZBmk6gabC9cgFgvLm0HewvEvduKo91A&s", web: "https://www.algarveproperty.com", tel: "+351289310310", info: { pt: "Especialistas", en: "Specialists", fr: "Spécialistes", de: "Spezialisten", es: "Especialistas" } },
-            { id: "garvetur", nome: "Garvetur Marina", cat: "imobiliarias", lat: 37.07530, lng: -8.11857, icon: "🏢", img: "https://images.trvl-media.com/lodging/4000000/3920000/3915300/3915273/d80a3261.jpg?impolicy=resizecrop&rw=575&rh=575&ra=fill", web: "https://www.garvetur.pt", tel: "+351289322444", info: { pt: "Venda e Aluguer", en: "Sales and Rentals", fr: "Ventes et Locations", de: "Verkauf und Vermietung", es: "Venta y Alquiler" } },
-
-            // UTIL & LOJAS
-            { id: "gnr", nome: "GNR Vilamoura", cat: "util", lat: 37.08552, lng: -8.11651, icon: "🚓", img: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiQgNFxLWvwZnkV9I4cIlNTLi93LFVaWr3y2oVgyPoGt87EBiETjT2ZT2Jw-XxMOEco59kpDHgwKAympVvrrtSXTvk1pTEh13ZH_OOl3nbDQLtryq1QepMEPz_sve47DwMPwbgINSkmnIajW9R2VQT9lX7Wu4_VeEY-NdO2_Ib_3uuAwjZj6EExkUsETE3f/s320/GNR.jpg", web: "#", tel: "+351289300430", info: { pt: "Segurança 24h", en: "24h Security", fr: "Sécurité 24h", de: "24h Sicherheit", es: "Segurança 24h" } },
-            { id: "farmacia", nome: "Farmácia Silva", cat: "util", lat: 37.08317, lng: -8.11817, icon: "💊", img: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEitgXmGISsEp162r5_7dhZN7VIJbr7e_5zkpTrsWtG_SSMdcSL1sYU0c8x7kYpY3rP_zQK1F1BxYNmRwQ77N5UaiPCU0XOf33uTmJwDfo6_tjENtNSCy5nmqCmy0hTg5QchCRT6Jbjd-IDpqcd6ZSR4Hh9muRfbyuAaEnsxMS7O5L_km4lFG2nQZaV-zKKd/s1600/Farm%C3%A1cia%20Silva%20Vilamoura.jfif", web: "#", tel: "+351289306443", info: { pt: "Saúde e Bem-estar", en: "Health and Wellness", fr: "Santé et Bien-être", de: "Gesundheit", es: "Salud" } },
-            { id: "samba", nome: "Samba Boutique", cat: "lojas", lat: 37.0768, lng: -8.1180, icon: "🛍️", img: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgYiHBQegN1seH4WuXdirY0CZQT077YwYDFcGeXxcrAVY9ve3PKX4mso-PBRBMJ7X29J_oD1TwZAudavFaq0rpxU8t24mNp_QtBcDXY-HEhyZHnsqOE4YEG5c-SGuyuW613Lr52PjdLwx2uRLCdLb50Ee69pFyfMlkgEkNUzuKfQM-MMazgOUGrkmsPmyOP/w400-h286/Samba%20Marina%20Vilamoura.jpg", web: "#", tel: "+351289314455", info: { pt: "Moda Feminina", en: "Womens Fashion", fr: "Mode féminine", de: "Damenmode", es: "Moda Femenina" } }
+            { id: "tivoli", nome: "Tivoli Marina", cat: "hoteis", lat: 37.07433, lng: -8.12017, icon: "🏨", img: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgbuotHReCbbgAZXVruQoDzpVQWaZTeqsqIHnANJDswD4BO8OF-oV0nfHsMd-G9zcEpAnpa2FTJtw94Fv0RiGgucHGOtnWz0UdQhce_R5A3inLhytkobCXvrP3bYc8T95Lv03hLt98GIbujpIZeCkiyHt6UZamuoo3MSLhhSBf9nawoKk-12X-8-i4C7GH_/w453-h301/Tivoli_Marina_Vilamoura_.jpg", web: "https://www.tivolihotels.com", tel: "+351289303300", info: { pt: "Luxo sobre a Marina", en: "Luxury over the Marina" } },
+            { id: "ampalius", nome: "Vila Galé Ampalius", cat: "hoteis", lat: 37.0773, lng: -8.1179, icon: "🏨", img: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhGVY9LR4Vy8uzfLr-M1OUhJ9VUCAYWg0OAbCOvXzoHhKTxr_3pvfa9I7eCk0tF6P8cHL35VyfCzFb7ZoVcwl-jCBhAdfa_zUuqgTXqnqUPBnZByM_x1lAO32VhpEJQiWGmcE9SbTAd-3AyGxWvJfXoajE0bw7W30cJHf95nymYA9ll8fQrUXD8usF5Fsms/w462-h307/Vila%20Gale%20Ampalius.jfif", web: "https://www.vilagale.com", tel: "+351289303970", info: { pt: "Frente à praia", en: "Beachfront" } },
+            { id: "colombo", nome: "Colombo", cat: "comer", lat: 37.0757, lng: -8.1150, icon: "🍴", img: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEh8BrDSbJXJaPu4G5ahigmv5fnnO71cxKiQfxiJmAZe-jgUcX3cQQG6XXzP0sCgRO_W4jFbfBDytY2oRqaBSWmV8nOkSkapWCvRtFgwPTTGK7PoDNVs_mTeDW11iP_QIo2iwxRtvhkLbjwIRjuUI340anqpR5UchWkRLqQCvsBo0X7gPv97dDZ7xifW0uWY/s1600/20220930_194648.jpg", web: "https://www.facebook.com/restaurante.colombo.vilamoura", tel: "+351289314111", info: { pt: "Cozinha tradicional", en: "Traditional cuisine" } },
+            { id: "thai", nome: "Thai Vilamoura", cat: "comer", lat: 37.0777, lng: -8.1163, icon: "🍲", img: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhLkC9YJrcg-dbSNHxYMSOEZBOF7CYin0QUJru5O_7Uqk5-mK2-66Ehv-0i5Mami3TCfsSGYDMkGKPfKskK8nhMRezn0WSeLwvtPjUnC43q6NDbyV1MoYGhHqxjxrHr7Dz6vX7Xh_kbuG_XJRgwJpZjVHBBBbjEuANxjQWzoFbx-88s9Ru-dR7kLhvWT4wU/w438-h640/Thai%20Vilamoura.jpg", web: "https://www.thaivilamoura.com", tel: "+351289381735", info: { pt: "Comida Tailandesa", en: "Thai Food" } },
+            { id: "luna", nome: "Luna Rossa", cat: "comer", lat: 37.0792, lng: -8.1195, icon: "🍕", img: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEi7_h6rzfvQ3Q71fpNCPBew1q4d2OZBVTFoRENdwJDTV2u7iCf3ETpWdUxLmcooLKWxwxlh618mshG-iRA0-8myM5bihvdhSgC_XPi4o9ImPBpg3DdWITFFTkgbDDZkaVxRDRxol8Q4Mg_6nVJ8a57CXL-esH305eyVSBAGAO_BSNDXjez-IXrfZS4waxQp/w444-h313/Luna%20rossa.jpg", web: "https://www.lunarossa.pt", tel: "+351289381731", info: { pt: "Pizzas artesanais", en: "Artisan pizzas" } },
+            { id: "hole19", nome: "19th Hole", cat: "bares", lat: 37.0755, lng: -8.1192, icon: "🍺", img: "https://media-cdn.tripadvisor.com/media/photo-s/02/db/0b/a4/19th-hole.jpg", web: "https://www.facebook.com/19thHoleVilamoura", tel: "+351289381730", info: { pt: "Melhores Cocktails", en: "Best Cocktails" } },
+            { id: "clover", nome: "Golden Clover", cat: "bares", lat: 37.0752, lng: -8.1154, icon: "🍀", img: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgbb12_0MDt5KGaWQU-NNZ1lOnRmMMXbEp8zPQKhxJ-6tDmbmHdKEh4MjR-qWlEdPmJ1i1SKOkXi9eQ4nYosgR54knP9pcGt6_AOf-YBmkMGZdBc_FYWfY5KWkzyhdWCTZblDWalkekC06h4AwE7kmTfoGs-Y0793B5ncVuxDd9CFkSfGkh4RyV1dG-JAou/w447-h307/Golden%20Clover.jpg", web: "#", tel: "+351289314112", info: { pt: "Cerveja e diversão", en: "Beer and fun" } },
+            { id: "oldcourse", nome: "Old Course", cat: "golf", lat: 37.1021, lng: -8.1155, icon: "🏌️", img: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEi9TeufNw3s8cvFQCBMyEjurQCvim1PTN9Pgyp-wEehCZJXBgRNmvWMjjFIpwhWnbQu_jZ-s-7D8ufYQQTmccDbObpt4yIia1-xm3k0d1NiDCUORo_QIZkmFBmR4Z6dfxo7vWdHh538CPfO8Ar5SOfadBxHptQ0RDSUVp-hPaKJaSecDb5Q2WhPDzR8yOji/s320/old-course-with-logo.jpg", web: "https://www.dompedrogolf.com", tel: "+351289310333", info: { pt: "Campo Clássico", en: "Classic Course" } },
+            { id: "millennium", nome: "Millennium Golf", cat: "golf", lat: 37.1030, lng: -8.1250, icon: "⛳", img: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEih8kW5HMhTxRlM1XIUrZ4TSciEfZrsvRW4F5roCad245G8zd5RW7GB_SC0CkyaGH0Oty_56EmTfnZxCxjLLXQET_LhHHAKHbYmPgBFMpJFvkq-ngPBWoU4SJzxqI2CyuIQaVg2BroRKbvBoMpzniycJ2r1wbY9OW4oDvKtG7iftq8WImThBLQANgLd5KNx/s1600/millennium-golf-with-logo-.jpg", web: "#", tel: "+351289310333", info: { pt: "Design Moderno", en: "Modern Design" } },
+            { id: "laguna", nome: "Laguna Golf", cat: "golf", lat: 37.1050, lng: -8.1300, icon: "⛳", img: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjpqruYU498m27vVpXxHIMtt8C1ktkTH71CfBsUiAn6KeWWMb3L2dhVJ_sRsB8MqWImt1Nc7vHFm6N7ynWlPEWzvlkCAU_ckNVNh6YY2ZWgCuWGnxIZFWxzPlLjtREk8MnWG7YtU0cQSUb3wLvpSs-B6Uem8rzJ0qtOdwYGohE628cAG4UhvIWrhogBU-Hm/s320/laguna-golf-with-logo.jpg", web: "#", tel: "+351289310333", info: { pt: "Estilo Links", en: "Links Style" } },
+            { id: "pinhal", nome: "Pinhal Golf", cat: "golf", lat: 37.0925, lng: -8.1105, icon: "⛳", img: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjmOHg_GgQCiwZ8Nzw0S2bZKA57EZd7Vaoy9Aj-qqmFWoRFnsZ4CON57mhqOozH0eVR_G37tJgibQo8etDAA2rvAlLJO4EP36RldXk2VbSF_ephlsiLUEOk6ASXHhJqZE6T-lPXNdrdodZ8zc37jnrjQvSYm9wIZGD50KwxjMVysb7v6uoSCa_khKeQsMOZ/s320/pinhal-Golf-with-logo.jpg", web: "#", tel: "+351289310333", info: { pt: "Pinhal majestoso", en: "Majestic Pine" } },
+            { id: "victoria", nome: "Victoria Golf", cat: "golf", lat: 37.1035, lng: -8.1418, icon: "🏆", img: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhE1xthVUNMfTBR0JzfDp-ROZxgt68NTwsBLyfIW2U0yg_pXH5WqcYXJ3trnAQN1CHmsoX30d6TsoU1gHoi_sxcWJbDLcgQ8gM9DIl-pRs0Mz6fXBDfBPDKenIohFgPSwID2r_CyKciRyvMsBgAi7FXlyQcHdL_lYWUb6ahWrsqz4FuWFA6Tuc-Ok_nv_Pc/w319-h319/Victoria%20Golf.png", web: "#", tel: "+351289310333", info: { pt: "Arnold Palmer", en: "Arnold Palmer Design" } },
+            { id: "familygolf", nome: "Family Golf Park", cat: "lazer", lat: 37.0780, lng: -8.1130, icon: "⛳", img: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjc3NgjlKZyOeGyESAgI1eDyS_CQahtDMlgphkwWDbl_hGajxBW3G8_6FwV704I6RT3y1U3WVmwlAxLqHRxDJbONvxP253ROq627_Dr19tpB7GR1R09Qz3Oo3S8ljIDjSM8AH_7v-ULFNvJR_clp0owjNlbIyHinnoqlpSso9wz5nxbSolX8Nld6dvCafJ7/s320/family-golf-park.jpg", web: "https://www.familygolfpark.pt", tel: "+351289300400", info: { pt: "Lazer familiar", en: "Family leisure" } },
+            { id: "museu", nome: "Cerro da Vila", cat: "lazer", lat: 37.0801, lng: -8.1190, icon: "🏛️", img: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjcJRzVqg8sBXmR4Ru_tJ_h8uvMBytfsKq0ZcyyhVv_vMqwV5g9_ECx8Qpzo0CAec4qHUBt2-3kfQ2oqds4HoZfp3iqWHI77lWV6S96XYk2LjdfPinmNIFBOfWGGOdMNDOHq_wJe8H-LCyZAbnTKA_Cpw7nkaY21YAcWGWN8uSmy7ZJpgrT9yeDOxPrzj3k/s1600/Museu%20cerro%20da%20Vila.jfif", web: "#", tel: "+351289312153", info: { pt: "Ruínas Romanas", en: "Roman Ruins" } },
+            { id: "casino", nome: "Casino Vilamoura", cat: "lazer", lat: 37.0773, lng: -8.1156, icon: "🎰", img: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiQ2NGpAkrZA6JF3mdjzj45f_wn6vEprsp-W3o3KUe3402dmvVvux3Z3hbWnRPns2QRjk-4-AFWfLlGz6XQcAPb41BZO5dQQClIHiHoJSHm_Lka7Ui1kQeR2c-ye_-DkFgc-IKomAWlhbqNFS74yo-Hm6QoXdBVWTiBv9X9Pob-O3TwJzEsSi2JlfHx-oIA/w465-h261/Casino-de-vilamoura.jfif", web: "#", tel: "+351289310000", info: { pt: "Shows e Jogos", en: "Shows and Games" } },
+            { id: "algarveprop", nome: "AlgarveProperty", cat: "imobiliarias", lat: 37.07666, lng: -8.11777, icon: "🏠", img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSVzBUZBmk6gabC9cgFgvLm0HewvEvduKo91A&s", web: "https://www.algarveproperty.com", tel: "+351289310310", info: { pt: "Especialistas", en: "Specialists" } },
+            { id: "garvetur", nome: "Garvetur Marina", cat: "imobiliarias", lat: 37.07530, lng: -8.11857, icon: "🏢", img: "https://images.trvl-media.com/lodging/4000000/3920000/3915300/3915273/d80a3261.jpg", web: "https://www.garvetur.pt", tel: "+351289322444", info: { pt: "Venda e Aluguer", en: "Sales and Rentals" } },
+            { id: "gnr", nome: "GNR Vilamoura", cat: "util", lat: 37.08552, lng: -8.11651, icon: "🚓", img: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiQgNFxLWvwZnkV9I4cIlNTLi93LFVaWr3y2oVgyPoGt87EBiETjT2ZT2Jw-XxMOEco59kpDHgwKAympVvrrtSXTvk1pTEh13ZH_OOl3nbDQLtryq1QepMEPz_sve47DwMPwbgINSkmnIajW9R2VQT9lX7Wu4_VeEY-NdO2_Ib_3uuAwjZj6EExkUsETE3f/s320/GNR.jpg", web: "#", tel: "+351289300430", info: { pt: "Segurança 24h", en: "24h Security" } },
+            { id: "farmacia", nome: "Farmácia Silva", cat: "util", lat: 37.08317, lng: -8.11817, icon: "💊", img: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEitgXmGISsEp162r5_7dhZN7VIJbr7e_5zkpTrsWtG_SSMdcSL1sYU0c8x7kYpY3rP_zQK1F1BxYNmRwQ77N5UaiPCU0XOf33uTmJwDfo6_tjENtNSCy5nmqCmy0hTg5QchCRT6Jbjd-IDpqcd6ZSR4Hh9muRfbyuAaEnsxMS7O5L_km4lFG2nQZaV-zKKd/s1600/Farm%C3%A1cia%20Silva%20Vilamoura.jfif", web: "#", tel: "+351289306443", info: { pt: "Saúde 24h", en: "24h Pharmacy" } },
+            { id: "samba", nome: "Samba Boutique", cat: "lojas", lat: 37.0768, lng: -8.1180, icon: "🛍️", img: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgYiHBQegN1seH4WuXdirY0CZQT077YwYDFcGeXxcrAVY9ve3PKX4mso-PBRBMJ7X29J_oD1TwZAudavFaq0rpxU8t24mNp_QtBcDXY-HEhyZHnsqOE4YEG5c-SGuyuW613Lr52PjdLwx2uRLCdLb50Ee69pFyfMlkgEkNUzuKfQM-MMazgOUGrkmsPmyOP/w400-h286/Samba%20Marina%20Vilamoura.jpg", web: "#", tel: "+351289314455", info: { pt: "Moda Feminina", en: "Fashion Boutique" } }
         ];
 
         const CATEGORIAS = [
@@ -128,9 +104,8 @@
           const mapRef = useRef(null);
           const googleMap = useRef(null);
           const markers = useRef([]);
-          const directionsRenderer = useRef(null);
 
-          const t = i18n[lang];
+          const t = i18n[lang] || i18n.en;
 
           useEffect(() => {
             if (view === 'menu' && !googleMap.current && mapRef.current) {
@@ -140,10 +115,6 @@
                     disableDefaultUI: true,
                     styles: mapStyle
                 });
-                directionsRenderer.current = new google.maps.DirectionsRenderer({
-                    map: googleMap.current,
-                    polylineOptions: { strokeColor: "#003366", strokeWeight: 5 }
-                });
             }
           }, [view]);
 
@@ -151,6 +122,7 @@
             setSubView('mapa');
             markers.current.forEach(m => m.setMap(null));
             const list = Array.isArray(items) ? items : [items];
+            
             list.forEach(loc => {
                 const marker = new google.maps.Marker({
                     position: { lat: loc.lat, lng: loc.lng },
@@ -158,15 +130,31 @@
                     label: { text: loc.icon, color: 'white' },
                     icon: { path: google.maps.SymbolPath.CIRCLE, scale: 16, fillColor: '#003366', fillOpacity: 1, strokeWeight: 2, strokeColor: 'white' }
                 });
-                marker.addListener('click', () => {
-                    const iw = new google.maps.InfoWindow({
-                        content: `<div style="width:180px"><img src="${loc.img}" style="width:100%"><h4 style="margin:5px 0">${loc.nome}</h4><p style="font-size:11px">${loc.info[lang]}</p><div class="info-buttons"><a href="tel:${loc.tel}" class="btn-info bg-green">Ligar</a></div></div>`
-                    });
-                    iw.open(googleMap.current, marker);
-                });
+
+                const contentString = `
+                    <div style="width:200px; padding:5px;">
+                        <img src="${loc.img}" style="width:100%; border-radius:8px;">
+                        <h3 style="margin:10px 0 5px 0; color:#003366;">${loc.nome}</h3>
+                        <p style="font-size:12px; margin-bottom:10px;">${loc.info[lang] || loc.info.en}</p>
+                        <div class="info-buttons">
+                            <a href="https://www.google.com/maps/dir/?api=1&destination=${loc.lat},${loc.lng}" target="_blank" class="btn-info bg-blue">${t.route}</a>
+                            <a href="tel:${loc.tel}" class="btn-info bg-green">${t.call}</a>
+                            ${loc.web !== '#' ? `<a href="${loc.web}" target="_blank" class="btn-info bg-gold">${t.visit}</a>` : ''}
+                        </div>
+                    </div>
+                `;
+
+                const iw = new google.maps.InfoWindow({ content: contentString });
+                marker.addListener('click', () => iw.open(googleMap.current, marker));
                 markers.current.push(marker);
             });
-            if(!Array.isArray(items)) googleMap.current.setCenter({lat: items.lat, lng: items.lng});
+
+            if(!Array.isArray(items)) {
+                googleMap.current.setCenter({lat: items.lat, lng: items.lng});
+                googleMap.current.setZoom(17);
+            } else {
+                googleMap.current.setZoom(14);
+            }
           };
 
           const filtered = LOCAIS.filter(l => l.nome.toLowerCase().includes(query.toLowerCase()));
@@ -174,14 +162,8 @@
           if (view === 'splash') {
             return (
               <div className="splash-screen">
-                <img 
-                    src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEin_fE4hbcxBUz4ZPCu4p_2Qpctbyyih5dEm1AMIUbTj6Uw-h_jiJ2exk7EmMYZuG8oNj_B_lHcrefPLG7ELOLDwAj8tV1zd8KnJAAdeDBTn2XQbjshxtldmSlPnIVsawzYEeHOZDcXzETLrlFWuAIyIw_VO7vRYm199BSgvRW6ttnZ1JBZEd03OBlnN4zS/w425-h239/Vilamoura_Guide_Logo.gif" 
-                    className="splash-logo-img" 
-                    alt="Vilamoura Guide Pro" 
-                />
-                <button className="btn-explore" style={{width:'200px', background: '#003366'}} onClick={() => setView('menu')}>
-                    {t.enter}
-                </button>
+                <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEin_fE4hbcxBUz4ZPCu4p_2Qpctbyyih5dEm1AMIUbTj6Uw-h_jiJ2exk7EmMYZuG8oNj_B_lHcrefPLG7ELOLDwAj8tV1zd8KnJAAdeDBTn2XQbjshxtldmSlPnIVsawzYEeHOZDcXzETLrlFWuAIyIw_VO7vRYm199BSgvRW6ttnZ1JBZEd03OBlnN4zS/w425-h239/Vilamoura_Guide_Logo.gif" className="splash-logo-img" alt="Logo" />
+                <button className="btn-explore" style={{width:'200px', background: '#003366'}} onClick={() => setView('menu')}>{t.enter}</button>
               </div>
             );
           }
@@ -189,7 +171,7 @@
           return (
             <div style={{height: '100%'}}>
               <div className="lang-bar">
-                {['pt','en','fr','de','es'].map(l => (
+                {['pt','en','fr'].map(l => (
                   <button key={l} className={`lang-btn ${lang === l ? 'active' : ''}`} onClick={() => setLang(l)}>{l.toUpperCase()}</button>
                 ))}
               </div>
@@ -206,7 +188,7 @@
                             {filtered.map(l => (
                                 <div key={l.id} className="item-row" onClick={() => openMap(l)}>
                                     <img src={l.img} style={{width:50, height:50, borderRadius:8, objectFit:'cover'}} />
-                                    <div><div style={{fontWeight:'bold'}}>{l.nome}</div><div style={{fontSize:11}}>{l.info[lang]}</div></div>
+                                    <div><div style={{fontWeight:'bold'}}>{l.nome}</div><div style={{fontSize:11}}>{l.info[lang] || l.info.en}</div></div>
                                 </div>
                             ))}
                         </div>
@@ -225,7 +207,7 @@
                             {LOCAIS.filter(l => l.cat === catAtiva).map(l => (
                                 <div key={l.id} className="item-row" onClick={() => openMap(l)}>
                                     <img src={l.img} style={{width:50, height:50, borderRadius:8, objectFit:'cover'}} />
-                                    <div><div style={{fontWeight:'bold'}}>{l.nome}</div><div style={{fontSize:11}}>{l.info[lang]}</div></div>
+                                    <div><div style={{fontWeight:'bold'}}>{l.nome}</div><div style={{fontSize:11}}>{l.info[lang] || l.info.en}</div></div>
                                 </div>
                             ))}
                         </div>
@@ -233,7 +215,7 @@
                     <div className="footer-nav"><button className="btn-explore" onClick={() => openMap(LOCAIS)}>{t.explore}</button></div>
                 </div>
                 <div className="map-view" style={{ visibility: subView === 'mapa' ? 'visible' : 'hidden' }}>
-                    <button className="btn-back-map" onClick={() => setSubView('grid')}>MENU</button>
+                    <button className="btn-back-map" onClick={() => {setSubView('grid'); setQuery('');}}>MENU</button>
                     <div ref={mapRef} id="map-canvas"></div>
                 </div>
               </div>
