@@ -35,6 +35,25 @@
         
         .footer-nav { position: absolute; bottom: 0; width: 100%; padding: 15px; background: white; border-top: 1px solid #eee; box-sizing: border-box; text-align: center; }
         .btn-explore { width: 100%; max-width: 300px; padding: 14px; border-radius: 30px; background: #27ae60; color: white; border: none; font-weight: bold; cursor: pointer; }
+        
+        /* NOVO: Botão Explore no topo da grelha */
+        .explore-top-btn {
+            width: 100%;
+            max-width: 300px;
+            padding: 12px;
+            border-radius: 25px;
+            background: #27ae60;
+            color: white;
+            border: none;
+            font-weight: bold;
+            cursor: pointer;
+            margin: 10px auto 15px auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            box-shadow: 0 3px 8px rgba(0,0,0,0.15);
+        }
 
         .map-view { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 20; background: white; }
         .btn-back-map { position: absolute; top: 15px; left: 15px; z-index: 30; padding: 10px 20px; border-radius: 25px; background: #003366; color: white; border: 2px solid white; font-weight: bold; }
@@ -229,17 +248,27 @@
                             ))}
                         </div>
                     ) : subView === 'grid' ? (
-                        <div className="grid-cats">
-                            {CATEGORIAS.map(c => (
-                                <div key={c.id} className="cat-card" onClick={() => { setCatAtiva(c.id); setSubView('lista'); }}>
-                                    <i className={`fas ${c.icon}`} style={{fontSize:'24px', color:'#003366'}}></i>
-                                    <div style={{fontWeight:'bold', marginTop:5}}>{t.cats[c.id]}</div>
-                                </div>
-                            ))}
+                        <div>
+                            {/* NOVO BOTÃO: EXPLORAR TUDO - VISÍVEL NO TOPO DA GRELHA */}
+                            <button 
+                                className="explore-top-btn"
+                                onClick={() => openMap(LOCAIS)}
+                            >
+                                <i className="fas fa-map-marked-alt"></i>
+                                {t.explore}
+                            </button>
+                            
+                            <div className="grid-cats">
+                                {CATEGORIAS.map(c => (
+                                    <div key={c.id} className="cat-card" onClick={() => { setCatAtiva(c.id); setSubView('lista'); }}>
+                                        <i className={`fas ${c.icon}`} style={{fontSize:'24px', color:'#003366'}}></i>
+                                        <div style={{fontWeight:'bold', marginTop:5}}>{t.cats[c.id]}</div>
+                                    </div>
+                                ))}
+                            </div>
                         </div>
                     ) : (
                         <div>
-                            {/* CABEÇALHO COM BOTÕES VOLTAR E EXPLORAR */}
                             <div style={{ padding: '15px', display: 'flex', gap: '10px', alignItems: 'center', flexWrap: 'wrap' }}>
                                 <button 
                                     onClick={() => setSubView('grid')} 
@@ -247,7 +276,6 @@
                                 >
                                     ← {t.back}
                                 </button>
-                                {/* NOVO BOTÃO: EXPLORAR TUDO */}
                                 <button 
                                     onClick={() => openMap(LOCAIS)} 
                                     style={{ 
@@ -264,8 +292,6 @@
                                     {t.explore}
                                 </button>
                             </div>
-                            
-                            {/* LISTA DE ITENS DA CATEGORIA */}
                             {LOCAIS.filter(l => l.cat === catAtiva).map(l => (
                                 <div key={l.id} className="item-row" onClick={() => openMap(l)}>
                                     <img src={l.img} style={{width:50, height:50, borderRadius:8, objectFit:'cover'}} />
@@ -277,6 +303,7 @@
                             ))}
                         </div>
                     )}
+                    {/* Botão no rodapé mantido para consistência */}
                     <div className="footer-nav"><button className="btn-explore" onClick={() => openMap(LOCAIS)}>{t.explore}</button></div>
                 </div>
                 <div className="map-view" style={{ visibility: subView === 'mapa' ? 'visible' : 'hidden' }}>
