@@ -133,13 +133,6 @@
                 });
             }
           }, [view]);
-                });
-                directionsRenderer.current = new google.maps.DirectionsRenderer({
-                    map: googleMap.current,
-                    polylineOptions: { strokeColor: "#003366", strokeWeight: 5 }
-                });
-            }
-          }, [view]);
 
           window.getInternalRoute = (lat, lng) => {
             if (navigator.geolocation) {
@@ -269,4 +262,3 @@
     </script>
 </body>
 </html>
-
