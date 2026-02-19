@@ -239,15 +239,45 @@
                         </div>
                     ) : (
                         <div>
-                            <button onClick={() => setSubView('grid')} style={{padding:15, background:'none', border:'none', color:'#003366', fontWeight:'bold'}}>← {t.back}</button>
-                            {LOCAIS.filter(l => l.cat === catAtiva).map(l => (
-                                <div key={l.id} className="item-row" onClick={() => openMap(l)}>
-                                    <img src={l.img} style={{width:50, height:50, borderRadius:8, objectFit:'cover'}} />
-                                    <div><div style={{fontWeight:'bold'}}>{l.nome}</div><div style={{fontSize:11}}>{l.info[lang] || l.info.en}</div></div>
-                                </div>
-                            ))}
-                        </div>
-                    )}
+                         ) : (
+    <div>
+        {/* Cabeçalho com botão Voltar e botão Explore */}
+        <div style={{ padding: '15px', display: 'flex', gap: '10px', alignItems: 'center', flexWrap: 'wrap' }}>
+            <button 
+                onClick={() => setSubView('grid')} 
+                style={{ padding: '10px 15px', background: 'none', border: 'none', color: '#003366', fontWeight: 'bold', cursor: 'pointer' }}
+            >
+                ← {t.back}
+            </button>
+            <button 
+                onClick={() => openMap(LOCAIS.filter(l => l.cat === catAtiva))} 
+                style={{ 
+                    padding: '10px 20px', 
+                    background: '#27ae60', 
+                    color: 'white', 
+                    border: 'none', 
+                    borderRadius: '25px', 
+                    fontWeight: 'bold', 
+                    cursor: 'pointer',
+                    fontSize: '12px'
+                }}
+            >
+                {t.explore}
+            </button>
+        </div>
+        
+        {/* Lista de itens da categoria */}
+        {LOCAIS.filter(l => l.cat === catAtiva).map(l => (
+            <div key={l.id} className="item-row" onClick={() => openMap(l)}>
+                <img src={l.img} style={{width:50, height:50, borderRadius:8, objectFit:'cover'}} />
+                <div>
+                    <div style={{fontWeight:'bold'}}>{l.nome}</div>
+                    <div style={{fontSize:11}}>{l.info[lang] || l.info.en}</div>
+                </div>
+            </div>
+        ))}
+    </div>
+)
                     <div className="footer-nav"><button className="btn-explore" onClick={() => openMap(LOCAIS)}>{t.explore}</button></div>
                 </div>
                 <div className="map-view" style={{ visibility: subView === 'mapa' ? 'visible' : 'hidden' }}>
@@ -262,3 +292,4 @@
     </script>
 </body>
 </html>
+
