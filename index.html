@@ -23,7 +23,7 @@
         .lang-btn.active { background: #c5a059; border-color: #c5a059; }
 
         .app-content { height: calc(100vh - 45px); position: relative; width: 100%; }
-        .menu-view { height: 100%; overflow-y: auto; padding-bottom: 80px; box-sizing: border-box; }
+        .menu-view { height: 100%; overflow-y: auto; padding-bottom: 20px; box-sizing: border-box; }
         
         .search-area { padding: 15px; position: sticky; top: 0; background: #f4f7f9; z-index: 10; }
         .search-box { position: relative; }
@@ -32,9 +32,6 @@
 
         .grid-cats { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding: 0 15px; }
         .cat-card { background: #fff; border-radius: 15px; text-align: center; padding: 20px 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); cursor: pointer; border: 1px solid #eee; }
-        
-        .footer-nav { position: absolute; bottom: 0; width: 100%; padding: 15px; background: white; border-top: 1px solid #eee; box-sizing: border-box; text-align: center; }
-        .btn-explore { width: 100%; max-width: 300px; padding: 14px; border-radius: 30px; background: #27ae60; color: white; border: none; font-weight: bold; cursor: pointer; }
         
         .explore-below-btn {
             width: 100%;
@@ -301,7 +298,7 @@
                             ))}
                         </div>
                     )}
-                    <div className="footer-nav"><button className="btn-explore" onClick={() => openMap(LOCAIS)}>{t.explore}</button></div>
+                    {/* Botão do rodapé REMOVIDO */}
                 </div>
                 <div className="map-view" style={{ visibility: subView === 'mapa' ? 'visible' : 'hidden' }}>
                     <button className="btn-back-map" onClick={() => {setSubView('grid'); setQuery('');}}>{t.back}</button>
