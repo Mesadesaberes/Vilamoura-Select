@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Vilamoura Guide Pro</title>
+    <title>Vilamoura Select</title>
     
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
@@ -36,7 +36,6 @@
         .footer-nav { position: absolute; bottom: 0; width: 100%; padding: 15px; background: white; border-top: 1px solid #eee; box-sizing: border-box; text-align: center; }
         .btn-explore { width: 100%; max-width: 300px; padding: 14px; border-radius: 30px; background: #27ae60; color: white; border: none; font-weight: bold; cursor: pointer; }
         
-        /* Botão Explore abaixo das categorias */
         .explore-below-btn {
             width: 100%;
             max-width: 300px;
@@ -217,7 +216,7 @@
           if (view === 'splash') {
             return (
               <div className="splash-screen">
-                <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEin_fE4hbcxBUz4ZPCu4p_2Qpctbyyih5dEm1AMIUbTj6Uw-h_jiJ2exk7EmMYZuG8oNj_B_lHcrefPLG7ELOLDwAj8tV1zd8KnJAAdeDBTn2XQbjshxtldmSlPnIVsawzYEeHOZDcXzETLrlFWuAIyIw_VO7vRYm199BSgvRW6ttnZ1JBZEd03OBlnN4zS/w425-h239/Vilamoura_Guide_Logo.gif" className="splash-logo-img" alt="Logo" />
+                <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEin_fE4hbcxBUz4ZPCu4p_2Qpctbyyih5dEm1AMIUbTj6Uw-h_jiJ2exk7EmMYZuG8oNj_B_lHcrefPLG7ELOLDwAj8tV1zd8KnJAAdeDBTn2XQbjshxtldmSlPnIVsawzYEeHOZDcXzETLrlFWuAIyIw_VO7vRYm199BSgvRW6ttnZ1JBZEd03OBlnN4zS/w425-h239/Vilamoura_Guide_Logo.gif" className="splash-logo-img" alt="Vilamoura Select" />
                 <button className="btn-explore" style={{width:'200px', background: '#003366'}} onClick={() => setView('menu')}>{t.enter}</button>
               </div>
             );
@@ -249,7 +248,6 @@
                         </div>
                     ) : subView === 'grid' ? (
                         <div>
-                            {/* GRELHA DE CATEGORIAS (FAMÍLIAS) */}
                             <div className="grid-cats">
                                 {CATEGORIAS.map(c => (
                                     <div key={c.id} className="cat-card" onClick={() => { setCatAtiva(c.id); setSubView('lista'); }}>
@@ -259,7 +257,6 @@
                                 ))}
                             </div>
                             
-                            {/* BOTÃO EXPLORAR ABAIXO DAS CATEGORIAS */}
                             <button 
                                 className="explore-below-btn"
                                 onClick={() => openMap(LOCAIS)}
