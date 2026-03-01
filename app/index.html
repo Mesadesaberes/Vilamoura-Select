@@ -174,20 +174,64 @@
             }
           }, [view]);
           
-          // ✅ FUNÇÃO openMap ATUALIZADA COM SOLUÇÃO HÍBRIDA
+          // ✅ FUNÇÃO GLOBAL PARA CALCULAR ROTA (Android/Desktop)
+          window.calculateRoute = (lat, lng, destName) => {
+            console.log('🗺️ Calcular rota para:', destName, lat, lng);
+            
+            // ✅ iOS: Abre Apple Maps externo
+            const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+            if (isIOS) {
+              window.open(`http://maps.apple.com/?daddr=${lat},${lng}`, '_blank');
+              return;
+            }
+            
+            // ✅ Android/Desktop: Tenta rota interna
+            if (!navigator.geolocation) {
+              alert('A geolocalização não é suportada no seu dispositivo. A abrir Google Maps...');
+              window.open(`https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}`, '_blank');
+              return;
+            }
+            
+            navigator.geolocation.getCurrentPosition(
+              (pos) => {
+                console.log('📍 Localização obtida:', pos.coords.latitude, pos.coords.longitude);
+                const service = new google.maps.DirectionsService();
+                service.route({
+                  origin: { lat: pos.coords.latitude, lng: pos.coords.longitude },
+                  destination: { lat: parseFloat(lat), lng: parseFloat(lng) },
+                  travelMode: google.maps.TravelMode.DRIVING
+                }, (result, status) => {
+                  console.log('🧭 Status da rota:', status);
+                  if (status === 'OK' && directionsRenderer.current) {
+                    directionsRenderer.current.setDirections(result);
+                    console.log('✅ Rota calculada com sucesso!');
+                  } else {
+                    console.log('❌ Erro na rota:', status);
+                    alert('Não foi possível calcular a rota internamente. A abrir Google Maps...');
+                    window.open(`https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}`, '_blank');
+                  }
+                });
+              },
+              (err) => {
+                console.log('❌ Erro de geolocalização:', err);
+                alert('Precisa de ativar a localização para calcular rotas. A abrir Google Maps...');
+                window.open(`https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}`, '_blank');
+              },
+              { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
+            );
+          };
+          
+          // ✅ FUNÇÃO openMap ATUALIZADA
           const openMap = (items) => {
             setSubView('mapa');
             if(directionsRenderer.current) directionsRenderer.current.setDirections({routes: []});
             markers.current.forEach(m => m.setMap(null));
             const list = Array.isArray(items) ? items : [items];
             list.forEach(loc => {
-              // ✅ DETETAR iOS PARA ESCOLHER MAPA
               const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
-              
-              // ✅ iOS: Abre Apple Maps externo | Android: Rota interna na app
               const routeAction = isIOS
                 ? `window.open('http://maps.apple.com/?daddr=${loc.lat},${loc.lng}', '_blank')`
-                : `window.calculateInternalRoute(${loc.lat}, ${loc.lng})`;
+                : `window.calculateRoute(${loc.lat}, ${loc.lng}, '${loc.nome || 'Destino'}')`;
               
               const marker = new google.maps.Marker({
                   position: { lat: loc.lat, lng: loc.lng }, map: googleMap.current,
@@ -213,29 +257,6 @@
             });
             if(!Array.isArray(items)) { googleMap.current.setCenter({lat: items.lat, lng: items.lng}); googleMap.current.setZoom(17); }
             else { googleMap.current.setZoom(14); googleMap.current.setCenter({ lat: 37.076, lng: -8.118 }); }
-          };
-          
-          // ✅ FUNÇÃO PARA CALCULAR ROTA INTERNA (Android/Desktop)
-          window.calculateInternalRoute = (lat, lng) => {
-            if (navigator.geolocation) {
-              navigator.geolocation.getCurrentPosition((pos) => {
-                const service = new google.maps.DirectionsService();
-                service.route({
-                  origin: { lat: pos.coords.latitude, lng: pos.coords.longitude },
-                  destination: { lat: parseFloat(lat), lng: parseFloat(lng) },
-                  travelMode: google.maps.TravelMode.DRIVING
-                }, (result, status) => {
-                  if (status === 'OK') {
-                    directionsRenderer.current.setDirections(result);
-                  } else {
-                    alert('Não foi possível calcular a rota. A abrir Google Maps...');
-                    window.open(`https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}`, '_blank');
-                  }
-                });
-              }, () => {
-                alert('Precisa de ativar a localização para calcular rotas.');
-              });
-            }
           };
           
           const filtered = locais.filter(l => l.nome && l.nome.toLowerCase().includes(query.toLowerCase()));
