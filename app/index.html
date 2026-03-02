@@ -174,20 +174,26 @@
             }
           }, [view]);
           
-          // ✅ FUNÇÃO GLOBAL PARA CALCULAR ROTA (Android/Desktop)
-          window.calculateRoute = (lat, lng, destName) => {
-            console.log('🗺️ Calcular rota para:', destName, lat, lng);
+          // ✅ FUNÇÃO GLOBAL PARA CALCULAR ROTA (DEFINIDA ANTES DE SER USADA)
+          window.calcularRota = function(lat, lng) {
+            console.log('🗺️ Botão Rota clicado - Destino:', lat, lng);
             
-            // ✅ iOS: Abre Apple Maps externo
+            // ✅ DETETAR iOS
             const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+            console.log('📱 É iOS?', isIOS);
+            
             if (isIOS) {
+              console.log('🍏 iOS: A abrir Apple Maps');
               window.open(`http://maps.apple.com/?daddr=${lat},${lng}`, '_blank');
               return;
             }
             
-            // ✅ Android/Desktop: Tenta rota interna
+            // ✅ ANDROID/DESKTOP: Rota Interna
+            console.log('🤖 Android/Desktop: A tentar rota interna');
+            
             if (!navigator.geolocation) {
-              alert('A geolocalização não é suportada no seu dispositivo. A abrir Google Maps...');
+              console.log('❌ Geolocalização não suportada');
+              alert('A geolocalização não é suportada. A abrir Google Maps...');
               window.open(`https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}`, '_blank');
               return;
             }
@@ -203,36 +209,31 @@
                 }, (result, status) => {
                   console.log('🧭 Status da rota:', status);
                   if (status === 'OK' && directionsRenderer.current) {
-                    directionsRenderer.current.setDirections(result);
                     console.log('✅ Rota calculada com sucesso!');
+                    directionsRenderer.current.setDirections(result);
                   } else {
                     console.log('❌ Erro na rota:', status);
-                    alert('Não foi possível calcular a rota internamente. A abrir Google Maps...');
+                    alert('Não foi possível calcular a rota. A abrir Google Maps...');
                     window.open(`https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}`, '_blank');
                   }
                 });
               },
               (err) => {
-                console.log('❌ Erro de geolocalização:', err);
-                alert('Precisa de ativar a localização para calcular rotas. A abrir Google Maps...');
+                console.log('❌ Erro de geolocalização:', err.code, err.message);
+                alert('Ative a localização para calcular rotas. A abrir Google Maps...');
                 window.open(`https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}`, '_blank');
               },
               { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
             );
           };
           
-          // ✅ FUNÇÃO openMap ATUALIZADA
+          // ✅ FUNÇÃO openMap
           const openMap = (items) => {
             setSubView('mapa');
             if(directionsRenderer.current) directionsRenderer.current.setDirections({routes: []});
             markers.current.forEach(m => m.setMap(null));
             const list = Array.isArray(items) ? items : [items];
             list.forEach(loc => {
-              const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
-              const routeAction = isIOS
-                ? `window.open('http://maps.apple.com/?daddr=${loc.lat},${loc.lng}', '_blank')`
-                : `window.calculateRoute(${loc.lat}, ${loc.lng}, '${loc.nome || 'Destino'}')`;
-              
               const marker = new google.maps.Marker({
                   position: { lat: loc.lat, lng: loc.lng }, map: googleMap.current,
                   label: { text: loc.icon || '📍', color: 'white' }
@@ -245,7 +246,7 @@
                   <h3 style="margin:10px 0 5px 0; color:#003366; font-size:16px;">${loc.nome || 'Sem nome'}</h3>
                   <p style="font-size:12px; margin-bottom:10px; color:#666;">${infoText}</p>
                   <div class="info-buttons">
-                    <button onclick="${routeAction}" class="btn-info bg-blue">${t.route}</button>
+                    <button onclick="window.calcularRota(${loc.lat}, ${loc.lng})" class="btn-info bg-blue">${t.route}</button>
                     ${loc.tel ? `<a href="tel:${loc.tel}" class="btn-info bg-green">${t.call}</a>` : ''}
                     ${loc.web && loc.web !== '#' ? `<a href="${loc.web}" target="_blank" class="btn-info bg-gold">${t.visit}</a>` : ''}
                   </div>
