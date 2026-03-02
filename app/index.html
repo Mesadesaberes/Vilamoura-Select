@@ -205,7 +205,7 @@
                 service.route({
                   origin: { lat: pos.coords.latitude, lng: pos.coords.longitude },
                   destination: { lat: parseFloat(lat), lng: parseFloat(lng) },
-                  travelMode: google.maps.TravelMode.DRIVING
+                  travelMode: google.maps.TravelMode.WALKING
                 }, (result, status) => {
                   console.log('🧭 Status da rota:', status);
                   if (status === 'OK' && directionsRenderer.current) {
@@ -282,3 +282,4 @@
     </script>
 </body>
 </html>
+
