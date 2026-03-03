@@ -44,12 +44,21 @@
         .search-box input { width: 100%; padding: 12px 40px; border-radius: 25px; border: 1px solid #ddd; box-sizing: border-box; }
         .search-box i { position: absolute; left: 15px; top: 14px; color: #888; }
         .grid-cats { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding: 0 15px; }
-        .cat-card { background: #fff; border-radius: 15px; text-align: center; padding: 20px 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); cursor: pointer; border: 1px solid #eee; }
+        .cat-card { background: #fff; border-radius: 15px; text-align: center; padding: 20px 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); cursor: pointer; border: 1px solid #eee; transition: transform 0.2s; }
+        .cat-card:hover { transform: translateY(-3px); box-shadow: 0 6px 15px rgba(0,0,0,0.1); }
+        .cat-card i { font-size: 28px; color: #003366; margin-bottom: 10px; }
+        .cat-card div { font-weight: 600; font-size: 13px; color: #003366; }
+        .subcat-card { background: #fff; border-radius: 12px; text-align: center; padding: 15px 10px; box-shadow: 0 3px 8px rgba(0,0,0,0.05); cursor: pointer; border: 1px solid #eee; transition: all 0.2s; }
+        .subcat-card:hover { transform: translateY(-2px); box-shadow: 0 5px 12px rgba(0,0,0,0.1); border-color: #c5a059; }
+        .subcat-card i { font-size: 24px; color: #003366; margin-bottom: 8px; }
+        .subcat-card div { font-weight: 600; font-size: 12px; color: #003366; }
         .explore-below-btn { width: 100%; max-width: 300px; padding: 12px; border-radius: 25px; background: #27ae60; color: white; border: none; font-weight: bold; cursor: pointer; margin: 20px auto 10px auto; display: flex; align-items: center; justify-content: center; gap: 8px; }
         .map-view { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 20; background: white; }
-        .btn-back-map { position: absolute; top: 15px; left: 15px; z-index: 30; padding: 10px 20px; border-radius: 25px; background: #003366; color: white; border: 2px solid white; font-weight: bold; }
+        .btn-back-map { position: absolute; top: 15px; left: 15px; z-index: 30; padding: 10px 20px; border-radius: 25px; background: #003366; color: white; border: 2px solid white; font-weight: bold; cursor: pointer; }
+        .btn-back-nav { padding: 10px 15px; background: none; border: none; color: #003366; font-weight: bold; cursor: pointer; font-size: 14px; }
         #map-canvas { width: 100%; height: 100%; }
         .item-row { display: flex; gap: 12px; background: #fff; padding: 12px; border-radius: 12px; margin: 0 15px 10px 15px; align-items: center; box-shadow: 0 2px 5px rgba(0,0,0,0.05); cursor: pointer; }
+        .item-row img { width: 50px; height: 50px; border-radius: 8px; object-fit: cover; }
         .info-buttons { display: flex; flex-direction: column; gap: 6px; margin-top: 10px; }
         .btn-info { display: block; text-align: center; padding: 10px; border-radius: 6px; text-decoration: none; color: white; font-size: 11px; font-weight: bold; border: none; cursor: pointer; }
         .bg-blue { background: #003366; }
@@ -57,6 +66,8 @@
         .bg-gold { background: #c5a059; }
         .loader { text-align: center; padding: 40px; color: #666; }
         .error-msg { text-align: center; padding: 20px; color: #c00; background: #ffe6e6; margin: 10px 15px; border-radius: 8px; }
+        .nav-header { padding: 15px; display: flex; gap: 10px; align-items: center; background: #fff; border-bottom: 1px solid #eee; }
+        .nav-title { font-weight: bold; color: #003366; font-size: 16px; }
     </style>
 </head>
 <body>
@@ -81,19 +92,68 @@
             { code: 'es', flag: 'https://flagcdn.com/w40/es.png', name: 'Español' }
         ];
         const i18n = {
-          pt: { enter: "ENTRAR", search: "Procurar...", back: "VOLTAR", route: "CALCULAR ROTA", call: "LIGAR", visit: "WEBSITE", explore: "📍 EXPLORAR TUDO", loading: "A carregar...", welcome: "Bem-vindo", welcomeText: "O seu guia independente para descobrir o melhor de Vilamoura.", selectLang: "Idioma", start: "COMEÇAR", dontShowAgain: "Não mostrar novamente", cats: { hoteis: "Hotéis", comer: "Comer", bares: "Bares", lazer: "Lazer", golf: "Golf", lojas: "Lojas", imobiliarias: "Imóveis", util: "Útil", transportes: "Transportes", experiencias: "Experiências" } },
+          pt: { enter: "ENTRAR", search: "Procurar...", back: "VOLTAR", route: "CALCULAR ROTA", call: "LIGAR", visit: "WEBSITE", explore: "📍 EXPLORAR TUDO", loading: "A carregar...", welcome: "Bem-vindo", welcomeText: "O seu guia independente para descobrir o melhor de Vilamoura.", selectLang: "Idioma", start: "COMEÇAR", dontShowAgain: "Não mostrar novamente", cats: { hoteis: "Hotéis", comer: "Comer", bares: "Bares", lazer: "Lazer", golf: "Golfe", lojas: "Lojas", imobiliarias: "Imóveis", util: "Útil", transportes: "Transportes", experiencias: "Experiências" } },
           en: { enter: "ENTER", search: "Search...", back: "BACK", route: "GET ROUTE", call: "CALL", visit: "WEBSITE", explore: "📍 EXPLORE ALL", loading: "Loading...", welcome: "Welcome", welcomeText: "Your independent guide to discover the best of Vilamoura.", selectLang: "Language", start: "GET STARTED", dontShowAgain: "Don't show again", cats: { hoteis: "Hotels", comer: "Eat", bares: "Bars", lazer: "Leisure", golf: "Golf", lojas: "Shops", imobiliarias: "Property", util: "Useful", transportes: "Transport", experiencias: "Experiences" } },
           fr: { enter: "ENTRER", search: "Chercher...", back: "RETOUR", route: "ITINÉRAIRE", call: "APPELER", visit: "SITE WEB", explore: "📍 TOUT VOIR", loading: "Chargement...", welcome: "Bienvenue", welcomeText: "Votre guide indépendant pour découvrir le meilleur de Vilamoura.", selectLang: "Langue", start: "COMMENCER", dontShowAgain: "Ne plus afficher", cats: { hoteis: "Hôtels", comer: "Manger", bares: "Bars", lazer: "Loisirs", golf: "Golf", lojas: "Boutiques", imobiliarias: "Immo", util: "Utile", transportes: "Transports", experiencias: "Expériences" } },
           de: { enter: "EINTRETEN", search: "Suche...", back: "ZURÜCK", route: "ROUTE BERECHNEN", call: "ANRUFEN", visit: "WEBSEITE", explore: "📍 ALLES SEHEN", loading: "Laden...", welcome: "Willkommen", welcomeText: "Ihr unabhängiger Reiseführer für Vilamoura.", selectLang: "Sprache", start: "STARTEN", dontShowAgain: "Nicht wieder anzeigen", cats: { hoteis: "Hotels", comer: "Essen", bares: "Bars", lazer: "Freizeit", golf: "Golf", lojas: "Läden", imobiliarias: "Immo", util: "Nützlich", transportes: "Transport", experiencias: "Erlebnisse" } },
           es: { enter: "ENTRAR", search: "Buscar...", back: "VOLVER", route: "CALCULAR RUTA", call: "LLAMAR", visit: "SITIO WEB", explore: "📍 EXPLORAR TODO", loading: "Cargando...", welcome: "Bienvenido", welcomeText: "Tu guía independiente para descubrir lo mejor de Vilamoura.", selectLang: "Idioma", start: "COMENZAR", dontShowAgain: "No mostrar de nuevo", cats: { hoteis: "Hoteles", comer: "Comer", bares: "Bares", lazer: "Ocio", golf: "Golf", lojas: "Tiendas", imobiliarias: "Inmuebles", util: "Útil", transportes: "Transporte", experiencias: "Experiencias" } }
         };
+        
+        // ✅ CATEGORIAS COM SUBCATEGORIAS
         const CATEGORIAS = [
-          { id: 'hoteis', icon: 'fa-hotel' }, { id: 'comer', icon: 'fa-utensils' },
-          { id: 'bares', icon: 'fa-glass-cheers' }, { id: 'lazer', icon: 'fa-camera-retro' },
-          { id: 'golf', icon: 'fa-golf-ball-tee' }, { id: 'lojas', icon: 'fa-bag-shopping' },
-          { id: 'imobiliarias', icon: 'fa-house-chimney' }, { id: 'util', icon: 'fa-shield-halved' },
-          { id: 'transportes', icon: 'fa-bus' }, { id: 'experiencias', icon: 'fa-ticket-alt' }
+          { id: 'hoteis', icon: 'fa-hotel', subcats: [
+              { id: '5-estrelas', nome: '5 Estrelas', icon: 'fa-star' },
+              { id: '4-estrelas', nome: '4 Estrelas', icon: 'fa-star' },
+              { id: 'apartamentos', nome: 'Apartamentos', icon: 'fa-building' }
+            ]},
+          { id: 'comer', icon: 'fa-utensils', subcats: [
+              { id: 'steakhouses', nome: 'Steakhouses', icon: 'fa-drumstick-bite' },
+              { id: 'seafood', nome: 'Seafood', icon: 'fa-fish' },
+              { id: 'tradicionais', nome: 'Tradicionais', icon: 'fa-utensils' },
+              { id: 'italianos', nome: 'Italianos', icon: 'fa-pizza-slice' },
+              { id: 'chineses', nome: 'Chineses', icon: 'fa-bowl-rice' },
+              { id: 'thai', nome: 'Thai', icon: 'fa-bowl-food' },
+              { id: 'indianos', nome: 'Indianos', icon: 'fa-curry' }
+            ]},
+          { id: 'bares', icon: 'fa-glass-cheers', subcats: [
+              { id: 'wine-cocktail', nome: 'Wine & Cocktail', icon: 'fa-wine-glass' },
+              { id: 'sports', nome: 'Sports Bars', icon: 'fa-tv' },
+              { id: 'beach', nome: 'Beach Bars', icon: 'fa-umbrella-beach' },
+              { id: 'nightclub', nome: 'Nightclubs', icon: 'fa-music' }
+            ]},
+          { id: 'lazer', icon: 'fa-camera-retro', subcats: [
+              { id: 'casino', nome: 'Casino', icon: 'fa-dice' },
+              { id: 'spa', nome: 'Spa & Massagens', icon: 'fa-spa' },
+              { id: 'interesse', nome: 'Interesse Local', icon: 'fa-landmark' },
+              { id: 'atividades', nome: 'Atividades', icon: 'fa-person-hiking' }
+            ]},
+          { id: 'golf', icon: 'fa-golf-ball-tee', subcats: [
+              { id: 'campos', nome: 'Campos', icon: 'fa-golf-ball-tee' },
+              { id: 'academias', nome: 'Academias', icon: 'fa-graduation-cap' },
+              { id: 'pro-shops', nome: 'Pro Shops', icon: 'fa-shop' }
+            ]},
+          { id: 'lojas', icon: 'fa-bag-shopping', subcats: [
+              { id: 'moda', nome: 'Moda', icon: 'fa-shirt' },
+              { id: 'souvenirs', nome: 'Souvenirs', icon: 'fa-gift' },
+              { id: 'sapataria', nome: 'Sapataria', icon: 'fa-shoe-prints' },
+              { id: 'aderecos', nome: 'Adereços', icon: 'fa-glasses' }
+            ]},
+          { id: 'util', icon: 'fa-shield-halved', subcats: [
+              { id: 'saude', nome: 'Saúde', icon: 'fa-hospital' },
+              { id: 'bancos', nome: 'Bancos & Câmbios', icon: 'fa-building-columns' },
+              { id: 'seguranca', nome: 'Segurança', icon: 'fa-shield' },
+              { id: 'correios', nome: 'Correios', icon: 'fa-envelope' }
+            ]},
+          { id: 'transportes', icon: 'fa-bus', subcats: [
+              { id: 'taxis', nome: 'Táxis', icon: 'fa-taxi' },
+              { id: 'rent-a-car', nome: 'Rent-a-car', icon: 'fa-car' },
+              { id: 'bicicletas', nome: 'Bicicletas', icon: 'fa-bicycle' },
+              { id: 'autocarros', nome: 'Autocarros', icon: 'fa-bus' }
+            ]},
+          { id: 'imobiliarias', icon: 'fa-house-chimney', subcats: null },
+          { id: 'experiencias', icon: 'fa-ticket-alt', subcats: null }
         ];
+        
         const getInfoText = (info, lang) => {
             if (!info) return '';
             if (typeof info === 'object' && info[lang]) return info[lang];
@@ -117,11 +177,13 @@
           if (hour >= 19 && hour < 23) return m.evening;
           return m.night;
         };
+        
         function App() {
           const [view, setView] = useState('splash');
           const [lang, setLang] = useState('pt');
-          const [subView, setSubView] = useState('grid');
+          const [navLevel, setNavLevel] = useState('categorias'); // 'categorias' | 'subcategorias' | 'locais'
           const [catAtiva, setCatAtiva] = useState(null);
+          const [subcatAtiva, setSubcatAtiva] = useState(null);
           const [query, setQuery] = useState('');
           const [locais, setLocais] = useState([]);
           const [loading, setLoading] = useState(true);
@@ -134,20 +196,24 @@
           const directionsRenderer = useRef(null);
           const t = i18n[lang] || i18n.en;
           const personalizedMessage = getPersonalizedMessage(lang);
+          
           useEffect(() => {
             const savedLang = localStorage.getItem('vilamoura_lang');
             if (savedLang) { setLang(savedLang); setSelectedLang(savedLang); }
           }, []);
+          
           const handleEnter = () => {
             const hasSeenWelcome = localStorage.getItem('vilamoura_welcome_seen');
             if (hasSeenWelcome) { setView('menu'); } else { setView('welcome'); }
           };
+          
           const handleStart = () => {
             if (dontShowAgain) { localStorage.setItem('vilamoura_welcome_seen', 'true'); }
             localStorage.setItem('vilamoura_lang', selectedLang);
             setLang(selectedLang);
             setView('menu');
           };
+          
           useEffect(() => {
             if (view === 'menu') {
                 setLoading(true); setError(null);
@@ -160,6 +226,7 @@
                     .catch((err) => { console.error("Erro Firestore:", err); setError('Erro ao carregar dados.'); setLoading(false); });
             }
           }, [view]);
+          
           useEffect(() => {
             if (view === 'menu' && !googleMap.current && mapRef.current) {
                 googleMap.current = new google.maps.Map(mapRef.current, {
@@ -174,30 +241,22 @@
             }
           }, [view]);
           
-          // ✅ FUNÇÃO GLOBAL PARA CALCULAR ROTA (DEFINIDA ANTES DE SER USADA)
           window.calcularRota = function(lat, lng) {
             console.log('🗺️ Botão Rota clicado - Destino:', lat, lng);
-            
-            // ✅ DETETAR iOS
             const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
             console.log('📱 É iOS?', isIOS);
-            
             if (isIOS) {
               console.log('🍏 iOS: A abrir Apple Maps');
               window.open(`http://maps.apple.com/?daddr=${lat},${lng}`, '_blank');
               return;
             }
-            
-            // ✅ ANDROID/DESKTOP: Rota Interna
             console.log('🤖 Android/Desktop: A tentar rota interna');
-            
             if (!navigator.geolocation) {
               console.log('❌ Geolocalização não suportada');
               alert('A geolocalização não é suportada. A abrir Google Maps...');
               window.open(`https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}`, '_blank');
               return;
             }
-            
             navigator.geolocation.getCurrentPosition(
               (pos) => {
                 console.log('📍 Localização obtida:', pos.coords.latitude, pos.coords.longitude);
@@ -227,9 +286,8 @@
             );
           };
           
-          // ✅ FUNÇÃO openMap
           const openMap = (items) => {
-            setSubView('mapa');
+            setNavLevel('mapa');
             if(directionsRenderer.current) directionsRenderer.current.setDirections({routes: []});
             markers.current.forEach(m => m.setMap(null));
             const list = Array.isArray(items) ? items : [items];
@@ -260,14 +318,140 @@
             else { googleMap.current.setZoom(14); googleMap.current.setCenter({ lat: 37.076, lng: -8.118 }); }
           };
           
-          const filtered = locais.filter(l => l.nome && l.nome.toLowerCase().includes(query.toLowerCase()));
+          // ✅ NAVEGAÇÃO: Clicar em categoria
+          const handleCatClick = (cat) => {
+            if (cat.subcats && cat.subcats.length > 0) {
+              setCatAtiva(cat);
+              setNavLevel('subcategorias');
+            } else {
+              setCatAtiva(cat);
+              setSubcatAtiva(null);
+              setNavLevel('locais');
+            }
+          };
+          
+          // ✅ NAVEGAÇÃO: Clicar em subcategoria
+          const handleSubcatClick = (subcat) => {
+            setSubcatAtiva(subcat);
+            setNavLevel('locais');
+          };
+          
+          // ✅ NAVEGAÇÃO: Voltar
+          const handleBack = () => {
+            if (navLevel === 'locais' && subcatAtiva) {
+              setSubcatAtiva(null);
+              setNavLevel('subcategorias');
+            } else if (navLevel === 'locais' || navLevel === 'subcategorias') {
+              setCatAtiva(null);
+              setSubcatAtiva(null);
+              setNavLevel('categorias');
+            } else if (navLevel === 'mapa') {
+              setNavLevel(catAtiva ? (subcatAtiva ? 'locais' : 'subcategorias') : 'categorias');
+            }
+          };
+          
+          // ✅ FILTRAR LOCAIS
+          const getFilteredLocais = () => {
+            let filtered = locais;
+            if (query.length > 0) {
+              filtered = filtered.filter(l => l.nome && l.nome.toLowerCase().includes(query.toLowerCase()));
+            } else if (catAtiva) {
+              filtered = filtered.filter(l => l.cat === catAtiva.id);
+              if (subcatAtiva) {
+                filtered = filtered.filter(l => l.subcat === subcatAtiva.id);
+              }
+            }
+            return filtered;
+          };
+          
+          const filtered = getFilteredLocais();
+          
           if (view === 'splash') {
             return (<div className="splash-screen"><img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEh2RRJgYenNf-1LjVFu47Lj4dmOnLy9PPAcXvXN2zLle3kx2vlEAQXtIs6_C6g9H-90RCQqjSj41N6ZfeDT35GG17m8VJ3-h4iC041wDTLKTZJ7QAs5511gf8OimILN-XyQlT4v3Brs7yWpQSqL_DuvLKJrLvacbYvb7y9VZFEOyZ6FVTwLtPFtI_Xt5nZG/w400-h225/Vilamoura-Select_YourIndependentGuidetoVilamoura_retangular_2-.gif" alt="Vilamoura Select" style={{ width: '95%', maxWidth: '420px', height: 'auto', marginBottom: '35px', borderRadius: '8px' }} /><div style={{ position: 'absolute', bottom: '40px', left: '0', right: '0', display: 'flex', justifyContent: 'center', padding: '0 20px' }}><button style={{ width: '210px', padding: '15px 24px', background: '#003366', color: '#ffffff', border: '2px solid #ffffff', borderRadius: '32px', fontWeight: 'bold', fontSize: '15px', cursor: 'pointer' }} onClick={handleEnter}>{t.enter}</button></div></div>);
           }
+          
           if (view === 'welcome') {
             return (<div className="welcome-screen"><div className="welcome-content"><div className="welcome-logo"><img src="/app/icon-512.png" alt="Vilamoura Select" /></div><h1 className="welcome-title">{i18n[selectedLang].welcome}</h1><p className="welcome-text">{i18n[selectedLang].welcomeText}</p><div style={{marginBottom: '25px'}}><div className="lang-select-title">{i18n[selectedLang].selectLang}</div><div className="lang-grid-flags">{languages.map(l => (<div key={l.code} className={`lang-flag-option ${selectedLang === l.code ? 'selected' : ''}`} onClick={() => setSelectedLang(l.code)}><img src={l.flag} alt={l.name} style={{ width: '24px', height: '16px', objectFit: 'cover', borderRadius: '2px' }} /></div>))}</div></div><button className="welcome-btn" onClick={handleStart}>{i18n[selectedLang].start}</button><label className="welcome-checkbox"><input type="checkbox" checked={dontShowAgain} onChange={(e) => setDontShowAgain(e.target.checked)} />{i18n[selectedLang].dontShowAgain}</label></div></div>);
           }
-          return (<div style={{height: '100%'}}><div className="lang-bar">{['pt','en','fr','de','es'].map(l => (<button key={l} className={`lang-btn ${lang === l ? 'active' : ''}`} onClick={() => setLang(l)}>{l.toUpperCase()}</button>))}</div><div className="personalized-message">{personalizedMessage}</div><div className="app-content"><div className="menu-view" style={{ display: subView !== 'mapa' ? 'block' : 'none' }}><div className="search-area"><div className="search-box"><i className="fas fa-search"></i><input type="text" placeholder={t.search} value={query} onChange={(e) => {setQuery(e.target.value); if(subView !== 'grid') setSubView('grid');}} /></div></div>{error && <div className="error-msg">⚠️ {error}</div>}{loading ? (<div className="loader"><i className="fas fa-spinner fa-spin"></i> {t.loading}</div>) : query.length > 0 ? (<div>{filtered.length === 0 ? <div style={{padding:'20px', textAlign:'center', color:'#666'}}>Nenhum resultado</div> : null}{filtered.map(l => (<div key={l.id || l.nome} className="item-row" onClick={() => openMap(l)}><img src={cleanImageUrl(l.img)} style={{width:50, height:50, borderRadius:8, objectFit:'cover'}} onError={(e) => {e.target.src='https://via.placeholder.com/50?text=?'}} /><div><div style={{fontWeight:'bold'}}>{l.nome}</div><div style={{fontSize:11}}>{getInfoText(l.info, lang)}</div></div></div>))}</div>) : subView === 'grid' ? (<div><div className="grid-cats">{CATEGORIAS.map(c => (<div key={c.id} className="cat-card" onClick={() => { setCatAtiva(c.id); setSubView('lista'); }}><i className={`fas ${c.icon}`} style={{fontSize:'24px', color:'#003366'}}></i><div style={{fontWeight:'bold', marginTop:5}}>{t.cats[c.id]}</div></div>))}</div><button className="explore-below-btn" onClick={() => openMap(locais)}><i className="fas fa-map-marked-alt"></i> {t.explore}</button></div>) : (<div><div style={{ padding: '15px', display: 'flex', gap: '10px', alignItems: 'center' }}><button onClick={() => setSubView('grid')} style={{ padding: '10px 15px', background: 'none', border: 'none', color: '#003366', fontWeight: 'bold', cursor: 'pointer' }}>← {t.back}</button></div>{locais.filter(l => l.cat === catAtiva).map(l => (<div key={l.id || l.nome} className="item-row" onClick={() => openMap(l)}><img src={cleanImageUrl(l.img)} style={{width:50, height:50, borderRadius:8, objectFit:'cover'}} onError={(e) => {e.target.src='https://via.placeholder.com/50?text=?'}} /><div><div style={{fontWeight:'bold'}}>{l.nome}</div><div style={{fontSize:11}}>{getInfoText(l.info, lang)}</div></div></div>))}</div>)}</div><div className="map-view" style={{ visibility: subView === 'mapa' ? 'visible' : 'hidden' }}><button className="btn-back-map" onClick={() => {setSubView('grid'); setQuery('');}}>{t.back}</button><div ref={mapRef} id="map-canvas"></div></div></div></div>);
+          
+          return (
+            <div style={{height: '100%'}}>
+              <div className="lang-bar">{['pt','en','fr','de','es'].map(l => (<button key={l} className={`lang-btn ${lang === l ? 'active' : ''}`} onClick={() => setLang(l)}>{l.toUpperCase()}</button>))}</div>
+              <div className="personalized-message">{personalizedMessage}</div>
+              <div className="app-content">
+                <div className="menu-view" style={{ display: navLevel !== 'mapa' ? 'block' : 'none' }}>
+                  
+                  {/* HEADER DE NAVEGAÇÃO */}
+                  {navLevel !== 'categorias' && (
+                    <div className="nav-header">
+                      <button onClick={handleBack} className="btn-back-nav">← {t.back}</button>
+                      <span className="nav-title">
+                        {subcatAtiva ? subcatAtiva.nome : (catAtiva ? t.cats[catAtiva.id] : '')}
+                      </span>
+                    </div>
+                  )}
+                  
+                  {/* SEARCH */}
+                  <div className="search-area">
+                    <div className="search-box">
+                      <i className="fas fa-search"></i>
+                      <input type="text" placeholder={t.search} value={query} onChange={(e) => {setQuery(e.target.value); if(navLevel !== 'categorias') setNavLevel('locais');}} />
+                    </div>
+                  </div>
+                  
+                  {error && <div className="error-msg">⚠️ {error}</div>}
+                  
+                  {loading ? (
+                    <div className="loader"><i className="fas fa-spinner fa-spin"></i> {t.loading}</div>
+                  ) : query.length > 0 || navLevel === 'locais' ? (
+                    <div>
+                      {filtered.length === 0 ? (
+                        <div style={{padding:'20px', textAlign:'center', color:'#666'}}>Nenhum resultado</div>
+                      ) : null}
+                      {filtered.map(l => (
+                        <div key={l.id || l.nome} className="item-row" onClick={() => openMap(l)}>
+                          <img src={cleanImageUrl(l.img)} onError={(e) => {e.target.src='https://via.placeholder.com/50?text=?'}} />
+                          <div>
+                            <div style={{fontWeight:'bold'}}>{l.nome}</div>
+                            <div style={{fontSize:11}}>{getInfoText(l.info, lang)}</div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  ) : navLevel === 'categorias' ? (
+                    <div>
+                      <div className="grid-cats">
+                        {CATEGORIAS.map(c => (
+                          <div key={c.id} className="cat-card" onClick={() => handleCatClick(c)}>
+                            <i className={`fas ${c.icon}`}></i>
+                            <div>{t.cats[c.id]}</div>
+                          </div>
+                        ))}
+                      </div>
+                      <button className="explore-below-btn" onClick={() => openMap(locais)}>
+                        <i className="fas fa-map-marked-alt"></i> {t.explore}
+                      </button>
+                    </div>
+                  ) : navLevel === 'subcategorias' && catAtiva ? (
+                    <div className="grid-cats">
+                      {catAtiva.subcats.map(s => (
+                        <div key={s.id} className="subcat-card" onClick={() => handleSubcatClick(s)}>
+                          <i className={`fas ${s.icon}`}></i>
+                          <div>{s.nome}</div>
+                        </div>
+                      ))}
+                    </div>
+                  ) : null}
+                  
+                </div>
+                
+                <div className="map-view" style={{ visibility: navLevel === 'mapa' ? 'visible' : 'hidden' }}>
+                  <button className="btn-back-map" onClick={handleBack}>{t.back}</button>
+                  <div ref={mapRef} id="map-canvas"></div>
+                </div>
+              </div>
+            </div>
+          );
         }
         ReactDOM.createRoot(document.getElementById('root')).render(<App />);
     </script>
@@ -282,4 +466,3 @@
     </script>
 </body>
 </html>
-
