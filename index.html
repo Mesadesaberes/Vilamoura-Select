@@ -9,119 +9,201 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; line-height: 1.6; color: #333; background: #f4f7f9; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; line-height: 1.6; color: #333; background: #f4f7f9; overflow-x: hidden; }
         
         /* Container */
         .container { max-width: 1100px; margin: 0 auto; padding: 0 20px; }
         
+        /* ✅ ANIMAÇÕES AO SCROLL */
+        .fade-in { opacity: 0; transform: translateY(30px); transition: opacity 0.8s ease, transform 0.8s ease; }
+        .fade-in.visible { opacity: 1; transform: translateY(0); }
+        .fade-in:nth-child(2) { transition-delay: 0.1s; }
+        .fade-in:nth-child(3) { transition-delay: 0.2s; }
+        .fade-in:nth-child(4) { transition-delay: 0.3s; }
+        
         /* Hero Section */
         .hero { 
+            position: relative;
             background: linear-gradient(135deg, #003366 0%, #004080 100%); 
             color: white; 
-            padding: 80px 0; 
+            padding: 100px 0; 
             text-align: left;
+            overflow: hidden;
+            min-height: 500px;
+            display: flex;
+            align-items: center;
         }
-        .hero h1 { font-size: 42px; margin-bottom: 15px; font-weight: 700; }
-        .hero p { font-size: 18px; opacity: 0.95; max-width: 650px; margin-bottom: 30px; line-height: 1.8; }
+        .hero-video {
+            position: absolute;
+            top: 50%; left: 50%;
+            min-width: 100%; min-height: 100%;
+            width: auto; height: auto;
+            transform: translate(-50%, -50%);
+            z-index: 0;
+            object-fit: cover;
+            opacity: 0.25;
+        }
+        .hero-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, rgba(0,51,102,0.92) 0%, rgba(0,64,128,0.88) 100%);
+            z-index: 1;
+        }
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            max-width: 700px;
+        }
+        .hero h1 { font-size: 46px; margin-bottom: 20px; font-weight: 700; line-height: 1.2; }
+        .hero p { font-size: 19px; opacity: 0.95; margin-bottom: 35px; line-height: 1.8; }
         .hero-buttons { display: flex; gap: 15px; flex-wrap: wrap; }
+        
+        /* Botões */
         .btn { 
             display: inline-block; 
-            padding: 14px 32px; 
+            padding: 15px 35px; 
             background: #c5a059; 
             color: #003366; 
             text-decoration: none; 
             border-radius: 30px; 
             font-weight: 700; 
             font-size: 15px;
-            transition: all 0.3s;
+            transition: all 0.3s ease;
             border: none;
             cursor: pointer;
+            position: relative;
+            overflow: hidden;
         }
-        .btn:hover { background: #d4af6a; transform: translateY(-2px); }
+        .btn:hover { background: #d4af6a; transform: translateY(-3px); box-shadow: 0 10px 25px rgba(197, 160, 89, 0.4); }
+        .btn::after {
+            content: '';
+            position: absolute;
+            top: 50%; left: 50%;
+            width: 0; height: 0;
+            background: rgba(255,255,255,0.3);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: width 0.6s ease, height 0.6s ease;
+        }
+        .btn:hover::after { width: 300px; height: 300px; }
+        
         .btn-outline { background: transparent; border: 2px solid white; color: white; }
         .btn-outline:hover { background: white; color: #003366; }
         
         /* Stats Section */
-        .stats { padding: 60px 0; background: white; }
+        .stats { padding: 70px 0; background: white; }
         .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 40px; }
         .stat-item { text-align: left; }
-        .stat-number { font-size: 42px; font-weight: 700; color: #c5a059; margin-bottom: 5px; }
-        .stat-label { font-size: 14px; color: #666; text-transform: uppercase; letter-spacing: 1px; }
+        .stat-number { font-size: 48px; font-weight: 700; color: #c5a059; margin-bottom: 5px; }
+        .stat-label { font-size: 14px; color: #666; text-transform: uppercase; letter-spacing: 1px; font-weight: 600; }
         
         /* Features Section */
-        .features { padding: 60px 0; }
-        .section-title { font-size: 32px; color: #003366; margin-bottom: 40px; font-weight: 700; }
+        .features { padding: 70px 0; }
+        .section-title { font-size: 36px; color: #003366; margin-bottom: 50px; font-weight: 700; text-align: left; }
         .features-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 30px; }
         .feature-card { 
             background: white; 
-            padding: 30px; 
-            border-radius: 10px; 
-            box-shadow: 0 2px 15px rgba(0,0,0,0.08);
+            padding: 35px; 
+            border-radius: 12px; 
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
             text-align: left;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
         }
-        .feature-card i { font-size: 36px; color: #003366; margin-bottom: 20px; }
-        .feature-card h3 { font-size: 18px; color: #003366; margin-bottom: 10px; }
-        .feature-card p { font-size: 14px; color: #666; line-height: 1.7; }
+        .feature-card:hover { transform: translateY(-8px); box-shadow: 0 15px 35px rgba(0,0,0,0.12); }
+        .feature-card i { font-size: 40px; color: #003366; margin-bottom: 20px; }
+        .feature-card h3 { font-size: 19px; color: #003366; margin-bottom: 12px; font-weight: 600; }
+        .feature-card p { font-size: 15px; color: #666; line-height: 1.8; }
+        
+        /* ✅ COMO FUNCIONA */
+        .how-it-works { padding: 70px 0; background: #f8fafc; }
+        .steps-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 35px; margin-top: 40px; }
+        .step-card { 
+            background: white; 
+            padding: 35px; 
+            border-radius: 15px; 
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+        .step-card:hover { transform: translateY(-8px); }
+        .step-number { 
+            width: 65px; height: 65px; 
+            background: #003366; 
+            border-radius: 50%; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            margin: 0 auto 20px; 
+            color: white; 
+            font-size: 28px; 
+            font-weight: 700;
+        }
+        .step-card h3 { color: #003366; margin-bottom: 12px; font-weight: 600; font-size: 18px; }
+        .step-card p { color: #666; font-size: 14px; line-height: 1.7; }
         
         /* Categories Section */
-        .categories { padding: 60px 0; background: white; }
-        .categories-list { 
-            display: grid; 
-            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); 
-            gap: 15px; 
-        }
+        .categories { padding: 70px 0; background: white; }
+        .categories-list { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 15px; }
         .category-item { 
             background: #f4f7f9; 
-            padding: 15px 20px; 
-            border-radius: 8px; 
+            padding: 18px 22px; 
+            border-radius: 10px; 
             text-align: left;
             font-weight: 600;
             color: #003366;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 12px;
         }
-        .category-item i { margin-right: 10px; color: #c5a059; }
+        .category-item:hover { transform: translateY(-5px); box-shadow: 0 8px 20px rgba(0,0,0,0.1); }
+        .category-item i { color: #c5a059; font-size: 18px; }
         
         /* B2B Section */
         .b2b { 
-            padding: 80px 0; 
+            padding: 90px 0; 
             background: linear-gradient(135deg, #003366 0%, #004080 100%); 
             color: white; 
         }
         .b2b .section-title { color: white; }
-        .b2b-content { max-width: 800px; }
-        .b2b p { font-size: 16px; opacity: 0.95; margin-bottom: 25px; line-height: 1.8; }
-        .benefits-list { list-style: none; margin: 30px 0; }
+        .b2b-content { max-width: 850px; }
+        .b2b p { font-size: 17px; opacity: 0.95; margin-bottom: 28px; line-height: 1.8; }
+        .benefits-list { list-style: none; margin: 35px 0; }
         .benefits-list li { 
-            padding: 8px 0; 
-            font-size: 15px;
+            padding: 10px 0; 
+            font-size: 16px;
             display: flex;
             align-items: center;
         }
-        .benefits-list li i { color: #c5a059; margin-right: 12px; font-size: 16px; }
+        .benefits-list li i { color: #c5a059; margin-right: 14px; font-size: 18px; }
         
         /* Pricing */
-        .pricing { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 25px; margin: 40px 0; }
+        .pricing { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 28px; margin: 45px 0; }
         .pricing-card { 
             background: white; 
             color: #333; 
-            padding: 30px; 
-            border-radius: 10px; 
+            padding: 35px; 
+            border-radius: 12px; 
             text-align: left;
             position: relative;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
         }
+        .pricing-card:hover { transform: translateY(-8px); box-shadow: 0 15px 35px rgba(0,0,0,0.12); }
         .pricing-card.featured { border: 3px solid #c5a059; transform: scale(1.05); }
-        .pricing-card h3 { font-size: 20px; color: #003366; margin-bottom: 10px; }
-        .pricing-card .price { font-size: 32px; font-weight: 700; color: #c5a059; margin-bottom: 20px; }
-        .pricing-card .price span { font-size: 14px; color: #666; font-weight: 400; }
-        .pricing-card ul { list-style: none; margin: 20px 0; }
-        .pricing-card ul li { padding: 8px 0; font-size: 14px; color: #666; }
-        .pricing-card ul li i { color: #27ae60; margin-right: 8px; }
+        .pricing-card.featured:hover { transform: scale(1.05) translateY(-8px); }
+        .pricing-card h3 { font-size: 21px; color: #003366; margin-bottom: 12px; font-weight: 600; }
+        .pricing-card .price { font-size: 36px; font-weight: 700; color: #c5a059; margin-bottom: 22px; }
+        .pricing-card .price span { font-size: 15px; color: #666; font-weight: 400; }
+        .pricing-card ul { list-style: none; margin: 22px 0; }
+        .pricing-card ul li { padding: 10px 0; font-size: 15px; color: #666; }
+        .pricing-card ul li i { color: #27ae60; margin-right: 10px; }
         .badge { 
             position: absolute; 
-            top: -12px; 
-            right: 20px; 
+            top: -14px; 
+            right: 25px; 
             background: #c5a059; 
             color: #003366; 
-            padding: 5px 15px; 
+            padding: 6px 18px; 
             border-radius: 20px; 
             font-size: 12px; 
             font-weight: 700;
@@ -131,44 +213,81 @@
         .launch-offer { 
             background: rgba(197, 160, 89, 0.2); 
             border: 2px solid #c5a059; 
-            border-radius: 10px; 
-            padding: 25px; 
-            margin: 30px 0;
+            border-radius: 12px; 
+            padding: 30px; 
+            margin: 35px 0;
             text-align: left;
         }
-        .launch-offer h3 { color: #c5a059; font-size: 20px; margin-bottom: 10px; }
-        .launch-offer p { font-size: 15px; margin-bottom: 10px; }
-        .launch-offer .discount { font-weight: 700; color: white; }
+        .launch-offer h3 { color: #c5a059; font-size: 22px; margin-bottom: 12px; font-weight: 600; }
+        .launch-offer p { font-size: 16px; margin-bottom: 12px; }
+        .launch-offer .discount { font-weight: 700; color: white; font-size: 17px; }
         
         /* CTA Buttons */
-        .cta-buttons { display: flex; gap: 15px; flex-wrap: wrap; margin-top: 30px; }
+        .cta-buttons { display: flex; gap: 15px; flex-wrap: wrap; margin-top: 35px; }
         .cta-buttons .btn { background: #c5a059; color: #003366; }
         .cta-buttons .btn-secondary { background: white; color: #003366; }
         
         /* Footer */
-        footer { background: #002244; color: white; padding: 40px 0; text-align: left; }
-        footer p { opacity: 0.8; font-size: 14px; margin-bottom: 10px; }
-        footer a { color: #c5a059; text-decoration: none; }
-        footer a:hover { text-decoration: underline; }
+        footer { background: #002244; color: white; padding: 50px 0; text-align: left; }
+        footer p { opacity: 0.8; font-size: 14px; margin-bottom: 12px; }
+        footer a { color: #c5a059; text-decoration: none; transition: opacity 0.3s; }
+        footer a:hover { opacity: 0.8; }
+        
+        /* ✅ BOTÃO FLUTUANTE */
+        .floating-cta {
+            position: fixed;
+            bottom: 25px;
+            right: 25px;
+            background: #c5a059;
+            color: #003366;
+            padding: 14px 24px;
+            border-radius: 35px;
+            font-weight: 700;
+            text-decoration: none;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.25);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: transform 0.3s ease;
+            animation: pulse 2.5s infinite;
+            font-size: 14px;
+        }
+        .floating-cta:hover { transform: scale(1.08); animation: none; }
+        .floating-cta i { font-size: 18px; }
+        @keyframes pulse {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(197, 160, 89, 0.7); }
+            50% { box-shadow: 0 0 0 12px rgba(197, 160, 89, 0); }
+        }
         
         /* Responsive */
         @media (max-width: 768px) {
-            .hero { padding: 50px 0; }
-            .hero h1 { font-size: 32px; }
-            .hero p { font-size: 16px; }
-            .section-title { font-size: 26px; }
+            .hero { padding: 70px 0; min-height: 400px; }
+            .hero h1 { font-size: 34px; }
+            .hero p { font-size: 17px; }
+            .section-title { font-size: 28px; }
             .pricing-card.featured { transform: scale(1); }
-            .stats-grid { gap: 25px; }
+            .pricing-card.featured:hover { transform: translateY(-8px); }
+            .stats-grid { gap: 30px; }
+            .stat-number { font-size: 40px; }
+            .floating-cta { bottom: 18px; right: 18px; padding: 12px 20px; font-size: 13px; }
+            .floating-cta i { font-size: 16px; }
         }
     </style>
 </head>
 <body>
     <!-- Hero Section -->
     <section class="hero">
-        <div class="container">
-            <h1>🌊 Descubra Vilamoura na sua totalidade.</h1>
-            <p>O seu guia independente para explorar restaurantes, hotéis, golfe e muito mais. Gratuito, funciona offline e disponível em 5 idiomas.</p>
-            <div class="hero-buttons">
+        <!-- Vídeo de fundo (opcional - podes remover se quiseres mais leve) -->
+        <video autoplay muted loop playsinline class="hero-video">
+            <source src="https://assets.mixkit.co/videos/preview/mixkit-waves-coming-to-the-beach-5016-large.mp4" type="video/mp4">
+        </video>
+        <div class="hero-overlay"></div>
+        
+        <div class="container hero-content">
+            <h1 class="fade-in">🌊 Descubra Vilamoura na sua totalidade.</h1>
+            <p class="fade-in">O seu guia independente para explorar restaurantes, hotéis, golfe e muito mais. Gratuito, funciona offline e disponível em 5 idiomas.</p>
+            <div class="hero-buttons fade-in">
                 <a href="/app/" class="btn" target="_blank">📱 ABRIR APP</a>
                 <a href="#anuncie" class="btn btn-outline">🏢 ANUNCIAR</a>
             </div>
@@ -179,21 +298,21 @@
     <section class="stats">
         <div class="container">
             <div class="stats-grid">
-                <div class="stat-item">
-                    <div class="stat-number">10</div>
+                <div class="stat-item fade-in">
+                    <div class="stat-number" data-target="10">0</div>
                     <div class="stat-label">Categorias</div>
                 </div>
-                <div class="stat-item">
-                    <div class="stat-number">5</div>
+                <div class="stat-item fade-in">
+                    <div class="stat-number" data-target="5">0</div>
                     <div class="stat-label">Idiomas</div>
                 </div>
-                <div class="stat-item">
-                    <div class="stat-number">100%</div>
-                    <div class="stat-label">Gratuito</div>
+                <div class="stat-item fade-in">
+                    <div class="stat-number" data-target="100">0</div>
+                    <div class="stat-label">% Gratuito</div>
                 </div>
-                <div class="stat-item">
-                    <div class="stat-number">24/7</div>
-                    <div class="stat-label">Disponível</div>
+                <div class="stat-item fade-in">
+                    <div class="stat-number" data-target="24">0</div>
+                    <div class="stat-label">/7 Disponível</div>
                 </div>
             </div>
         </div>
@@ -202,24 +321,24 @@
     <!-- Features Section -->
     <section class="features">
         <div class="container">
-            <h2 class="section-title">PORQUE USAR A APP?</h2>
+            <h2 class="section-title fade-in">PORQUE USAR A APP?</h2>
             <div class="features-grid">
-                <div class="feature-card">
+                <div class="feature-card fade-in">
                     <i class="fas fa-map-marked-alt"></i>
                     <h3>Mapa Interativo</h3>
                     <p>Encontre todos os negócios no mapa com um clique. Localização precisa e rotas integradas.</p>
                 </div>
-                <div class="feature-card">
+                <div class="feature-card fade-in">
                     <i class="fas fa-wifi"></i>
                     <h3>Funciona Offline</h3>
                     <p>Use a app mesmo sem conexão de internet. Ideal para turistas sem dados móveis.</p>
                 </div>
-                <div class="feature-card">
+                <div class="feature-card fade-in">
                     <i class="fas fa-language"></i>
                     <h3>Multilíngue</h3>
                     <p>Disponível em Português, Inglês, Francês, Alemão e Espanhol. Todos se sentem em casa.</p>
                 </div>
-                <div class="feature-card">
+                <div class="feature-card fade-in">
                     <i class="fas fa-mobile-alt"></i>
                     <h3>Instala como App</h3>
                     <p>Adicione ao ecrã principal do telemóvel em segundos. Sem lojas de apps, sem downloads complicados.</p>
@@ -228,21 +347,45 @@
         </div>
     </section>
 
+    <!-- ✅ COMO FUNCIONA -->
+    <section class="how-it-works">
+        <div class="container">
+            <h2 class="section-title fade-in">✨ COMO FUNCIONA?</h2>
+            <div class="steps-grid">
+                <div class="step-card fade-in">
+                    <div class="step-number">1</div>
+                    <h3>Scan QR Code</h3>
+                    <p>Aponta a câmara do telemóvel ao QR Code nos panfletos, hotéis ou restaurantes.</p>
+                </div>
+                <div class="step-card fade-in">
+                    <div class="step-number">2</div>
+                    <h3>Adiciona ao Ecrã</h3>
+                    <p>Clica em "Adicionar ao ecrã principal" — funciona como uma app normal, sem lojas.</p>
+                </div>
+                <div class="step-card fade-in">
+                    <div class="step-number">3</div>
+                    <h3>Explora Vilamoura</h3>
+                    <p>Descobre restaurantes, hotéis, golfe e muito mais — tudo offline e em 5 idiomas!</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
     <!-- Categories Section -->
     <section class="categories">
         <div class="container">
-            <h2 class="section-title">O QUE ENCONTRA</h2>
+            <h2 class="section-title fade-in">O QUE ENCONTRA</h2>
             <div class="categories-list">
-                <div class="category-item"><i class="fas fa-hotel"></i>Hotéis</div>
-                <div class="category-item"><i class="fas fa-utensils"></i>Restaurantes</div>
-                <div class="category-item"><i class="fas fa-glass-cheers"></i>Bares</div>
-                <div class="category-item"><i class="fas fa-camera-retro"></i>Lazer</div>
-                <div class="category-item"><i class="fas fa-golf-ball-tee"></i>Golfe</div>
-                <div class="category-item"><i class="fas fa-bag-shopping"></i>Lojas</div>
-                <div class="category-item"><i class="fas fa-house-chimney"></i>Imobiliárias</div>
-                <div class="category-item"><i class="fas fa-shield-halved"></i>Serviços Úteis</div>
-                <div class="category-item"><i class="fas fa-bus"></i>Transportes</div>
-                <div class="category-item"><i class="fas fa-ticket-alt"></i>Experiências</div>
+                <div class="category-item fade-in"><i class="fas fa-hotel"></i>Hotéis</div>
+                <div class="category-item fade-in"><i class="fas fa-utensils"></i>Restaurantes</div>
+                <div class="category-item fade-in"><i class="fas fa-glass-cheers"></i>Bares</div>
+                <div class="category-item fade-in"><i class="fas fa-camera-retro"></i>Lazer</div>
+                <div class="category-item fade-in"><i class="fas fa-golf-ball-tee"></i>Golfe</div>
+                <div class="category-item fade-in"><i class="fas fa-bag-shopping"></i>Lojas</div>
+                <div class="category-item fade-in"><i class="fas fa-house-chimney"></i>Imobiliárias</div>
+                <div class="category-item fade-in"><i class="fas fa-shield-halved"></i>Serviços Úteis</div>
+                <div class="category-item fade-in"><i class="fas fa-bus"></i>Transportes</div>
+                <div class="category-item fade-in"><i class="fas fa-ticket-alt"></i>Experiências</div>
             </div>
         </div>
     </section>
@@ -251,22 +394,22 @@
     <section class="b2b" id="anuncie">
         <div class="container">
             <div class="b2b-content">
-                <h2 class="section-title">🏢 TEM UM NEGÓCIO EM VILAMOURA?</h2>
-                <p>O Vilamoura Select é usado por visitantes que estão ativamente à procura de restaurantes, hotéis, atividades e muito mais na região.</p>
-                <p>Destaque o seu negócio e seja uma das primeiras opções que eles veem.</p>
+                <h2 class="section-title fade-in">🏢 TEM UM NEGÓCIO EM VILAMOURA?</h2>
+                <p class="fade-in">O Vilamoura Select é usado por visitantes que estão ativamente à procura de restaurantes, hotéis, atividades e muito mais na região.</p>
+                <p class="fade-in">Destaque o seu negócio e seja uma das primeiras opções que eles veem.</p>
                 
                 <ul class="benefits-list">
-                    <li><i class="fas fa-check-circle"></i>Posição privilegiada na categoria</li>
-                    <li><i class="fas fa-check-circle"></i>Fotos do seu negócio em destaque</li>
-                    <li><i class="fas fa-check-circle"></i>Link direto para website ou reservas</li>
-                    <li><i class="fas fa-check-circle"></i>Contacto direto (telefone/email)</li>
-                    <li><i class="fas fa-check-circle"></i>Localização no mapa interativo</li>
-                    <li><i class="fas fa-check-circle"></i>Analytics básico de visualizações e cliques</li>
+                    <li class="fade-in"><i class="fas fa-check-circle"></i>Posição privilegiada na categoria</li>
+                    <li class="fade-in"><i class="fas fa-check-circle"></i>Fotos do seu negócio em destaque</li>
+                    <li class="fade-in"><i class="fas fa-check-circle"></i>Link direto para website ou reservas</li>
+                    <li class="fade-in"><i class="fas fa-check-circle"></i>Contacto direto (telefone/email)</li>
+                    <li class="fade-in"><i class="fas fa-check-circle"></i>Localização no mapa interativo</li>
+                    <li class="fade-in"><i class="fas fa-check-circle"></i>Analytics básico de visualizações e cliques</li>
                 </ul>
 
                 <!-- Pricing -->
                 <div class="pricing">
-                    <div class="pricing-card">
+                    <div class="pricing-card fade-in">
                         <h3>🥉 BÁSICO</h3>
                         <div class="price">€29<span>/mês</span></div>
                         <ul>
@@ -275,7 +418,7 @@
                             <li><i class="fas fa-check"></i>Localização no mapa</li>
                         </ul>
                     </div>
-                    <div class="pricing-card featured">
+                    <div class="pricing-card featured fade-in">
                         <span class="badge">MAIS POPULAR</span>
                         <h3>🥈 DESTAQUE</h3>
                         <div class="price">€59<span>/mês</span></div>
@@ -286,7 +429,7 @@
                             <li><i class="fas fa-check"></i>Descrição até 100 palavras</li>
                         </ul>
                     </div>
-                    <div class="pricing-card">
+                    <div class="pricing-card fade-in">
                         <h3>🥇 PREMIUM</h3>
                         <div class="price">€99<span>/mês</span></div>
                         <ul>
@@ -299,14 +442,14 @@
                 </div>
 
                 <!-- Launch Offer -->
-                <div class="launch-offer">
+                <div class="launch-offer fade-in">
                     <h3>🎉 OFERTA DE LANÇAMENTO</h3>
                     <p class="discount">PRIMEIROS 10 PARCEIROS: 50% DE DESCONTO NOS PRIMEIROS 3 MESES!</p>
                     <p>Básico: <strong>€14,50/mês</strong> | Destaque: <strong>€29,50/mês</strong> | Premium: <strong>€49,50/mês</strong></p>
                 </div>
 
                 <!-- CTA Buttons -->
-                <div class="cta-buttons">
+                <div class="cta-buttons fade-in">
                     <a href="mailto:geral@vilamouraselect.pt?subject=Quero Anunciar - Vilamoura Select" class="btn">📧 ENVIAR EMAIL</a>
                     <a href="https://wa.me/351961156215?text=Olá, gostaria de saber mais sobre anunciar no Vilamoura Select." class="btn btn-secondary" target="_blank">💬 WHATSAPP</a>
                 </div>
@@ -322,5 +465,60 @@
             <p style="margin-top: 15px; opacity: 0.6; font-size: 12px;">Feito com ❤️ em Portugal</p>
         </div>
     </footer>
+
+    <!-- ✅ BOTÃO FLUTUANTE -->
+    <a href="/app/" target="_blank" class="floating-cta">
+        <i class="fas fa-mobile-alt"></i> ABRIR APP
+    </a>
+
+    <!-- ✅ JAVASCRIPT PARA ANIMAÇÕES -->
+    <script>
+        // Animações ao scroll (fade-in)
+        const observerOptions = { threshold: 0.15, rootMargin: '0px 0px -50px 0px' };
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, observerOptions);
+        
+        document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+
+        // Stats que contam ao aparecer
+        const animateValue = (el, start, end, duration) => {
+            let startTimestamp = null;
+            const step = (timestamp) => {
+                if (!startTimestamp) startTimestamp = timestamp;
+                const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+                const value = Math.floor(progress * (end - start) + start);
+                if (end === 100) {
+                    el.textContent = value + '%';
+                } else if (end === 24) {
+                    el.textContent = value + '/7';
+                } else {
+                    el.textContent = value;
+                }
+                if (progress < 1) window.requestAnimationFrame(step);
+            };
+            window.requestAnimationFrame(step);
+        };
+
+        const statsObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const el = entry.target;
+                    const end = parseInt(el.dataset.target);
+                    animateValue(el, 0, end, 1800);
+                    statsObserver.unobserve(el);
+                }
+            });
+        }, { threshold: 0.5 });
+
+        document.querySelectorAll('.stat-number[data-target]').forEach(el => {
+            statsObserver.observe(el);
+        });
+    </script>
 </body>
 </html>
