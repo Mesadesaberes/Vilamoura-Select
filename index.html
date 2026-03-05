@@ -253,11 +253,42 @@
         .cta-buttons .btn { background: #c5a059; color: #003366; }
         .cta-buttons .btn-secondary { background: white; color: #003366; }
         
-        /* Footer */
+        /* ✅ FOOTER COM REDES SOCIAIS */
         footer { background: #002244; color: white; padding: 55px 0; text-align: left; }
-        footer p { opacity: 0.85; font-size: 14px; margin-bottom: 14px; }
+        .footer-content { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 40px; margin-bottom: 35px; }
+        footer h3 { color: white; font-size: 18px; margin-bottom: 15px; font-weight: 600; }
+        footer p { opacity: 0.85; font-size: 14px; margin-bottom: 14px; line-height: 1.8; }
         footer a { color: #c5a059; text-decoration: none; transition: opacity 0.3s; }
         footer a:hover { opacity: 0.85; }
+        footer ul { list-style: none; }
+        footer ul li { margin-bottom: 10px; font-size: 14px; opacity: 0.85; }
+        
+        /* Redes Sociais Ícones */
+        .social-links { display: flex; gap: 15px; margin-bottom: 15px; flex-wrap: wrap; }
+        .social-links a {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            color: white;
+            font-size: 20px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .social-links a:hover {
+            transform: translateY(-5px);
+        }
+        .social-instagram { background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%); box-shadow: 0 4px 15px rgba(220, 39, 67, 0.3); }
+        .social-instagram:hover { box-shadow: 0 8px 25px rgba(220, 39, 67, 0.4); }
+        .social-facebook { background: #1877F2; box-shadow: 0 4px 15px rgba(24, 119, 242, 0.3); }
+        .social-facebook:hover { box-shadow: 0 8px 25px rgba(24, 119, 242, 0.4); }
+        .social-linkedin { background: #0A66C2; box-shadow: 0 4px 15px rgba(10, 102, 194, 0.3); }
+        .social-linkedin:hover { box-shadow: 0 8px 25px rgba(10, 102, 194, 0.4); }
+        .social-youtube { background: #FF0000; box-shadow: 0 4px 15px rgba(255, 0, 0, 0.3); }
+        .social-youtube:hover { box-shadow: 0 8px 25px rgba(255, 0, 0, 0.4); }
+        .social-pinterest { background: #E60023; box-shadow: 0 4px 15px rgba(230, 0, 35, 0.3); }
+        .social-pinterest:hover { box-shadow: 0 8px 25px rgba(230, 0, 35, 0.4); }
         
         /* ✅ BOTÃO FLUTUANTE */
         .floating-cta {
@@ -299,6 +330,8 @@
             .floating-cta { bottom: 20px; right: 20px; padding: 13px 22px; font-size: 13px; }
             .floating-cta i { font-size: 17px; }
             .video-section { padding: 55px 0; }
+            .footer-content { grid-template-columns: 1fr; gap: 30px; }
+            .social-links { justify-content: flex-start; }
         }
     </style>
 </head>
@@ -505,12 +538,77 @@
         </div>
     </section>
 
-    <!-- Footer -->
+    <!-- ✅ FOOTER COM REDES SOCIAIS -->
     <footer>
         <div class="container">
-            <p>© 2025 Vilamoura Select. Todos os direitos reservados.</p>
-            <p>📧 geral@vilamouraselect.pt | 🌐 vilamouraselect.pt</p>
-            <p style="margin-top: 15px; opacity: 0.6; font-size: 12px;">Feito com ❤️ em Portugal</p>
+            <div class="footer-content">
+                <!-- Coluna 1: Sobre -->
+                <div>
+                    <h3>Vilamoura Select</h3>
+                    <p>O seu guia independente para descobrir o melhor de Vilamoura. Gratuito, offline e multilíngue.</p>
+                </div>
+                
+                <!-- Coluna 2: Links Rápidos -->
+                <div>
+                    <h3>Links Rápidos</h3>
+                    <ul>
+                        <li><a href="/app/" target="_blank">📱 Abrir App</a></li>
+                        <li><a href="#anuncie">🏢 Anunciar</a></li>
+                        <li><a href="https://www.youtube.com/watch?v=lNuvdqKETUk" target="_blank">🎥 Ver Vídeo</a></li>
+                    </ul>
+                </div>
+                
+                <!-- Coluna 3: Contacto -->
+                <div>
+                    <h3>Contacto</h3>
+                    <ul>
+                        <li>📧 geral@vilamouraselect.pt</li>
+                        <li>🌐 vilamouraselect.pt</li>
+                        <li>📍 Vilamoura, Algarve</li>
+                    </ul>
+                </div>
+                
+                <!-- Coluna 4: Redes Sociais -->
+                <div>
+                    <h3>Siga-nos</h3>
+                    <div class="social-links">
+                        <!-- Instagram -->
+                        <a href="https://www.instagram.com/vilamouraselect/" target="_blank" rel="noopener noreferrer" class="social-instagram" title="Instagram">
+                            <i class="fab fa-instagram"></i>
+                        </a>
+                        
+                        <!-- Facebook -->
+                        <a href="https://www.facebook.com/vilamouraselect" target="_blank" rel="noopener noreferrer" class="social-facebook" title="Facebook">
+                            <i class="fab fa-facebook-f"></i>
+                        </a>
+                        
+                        <!-- LinkedIn -->
+                        <a href="https://www.linkedin.com/company/vilamoura-select" target="_blank" rel="noopener noreferrer" class="social-linkedin" title="LinkedIn">
+                            <i class="fab fa-linkedin-in"></i>
+                        </a>
+                        
+                        <!-- YouTube -->
+                        <a href="https://www.youtube.com/@vilamouraselect" target="_blank" rel="noopener noreferrer" class="social-youtube" title="YouTube">
+                            <i class="fab fa-youtube"></i>
+                        </a>
+                        
+                        <!-- Pinterest -->
+                        <a href="https://pt.pinterest.com/vilamouraselect/" target="_blank" rel="noopener noreferrer" class="social-pinterest" title="Pinterest">
+                            <i class="fab fa-pinterest-p"></i>
+                        </a>
+                    </div>
+                    <p style="opacity: 0.75; font-size: 12px; margin-top: 10px;">Siga-nos para dicas, novidades e ofertas exclusivas!</p>
+                </div>
+            </div>
+            
+            <!-- Divider -->
+            <div style="border-top: 1px solid rgba(255,255,255,0.15); margin: 30px 0;"></div>
+            
+            <!-- Copyright -->
+            <div style="text-align: center; opacity: 0.7; font-size: 13px;">
+                <p>© 2025 Vilamoura Select. Todos os direitos reservados.</p>
+                <p style="margin-top: 8px; opacity: 0.6; font-size: 12px;">Feito com ❤️ em Portugal 🇵🇹</p>
+            </div>
         </div>
     </footer>
 
