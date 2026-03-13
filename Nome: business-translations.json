@@ -1,0 +1,230 @@
+{
+  "tivoli-marina": {
+    "pt": "Hotel de luxo na marina com spa, piscina e vista panorâmica",
+    "en": "Luxury marina hotel with spa, pool and panoramic views",
+    "fr": "Hôtel de luxe dans la marina avec spa, piscine et vue panoramique",
+    "de": "Luxushotel im Yachthafen mit Spa, Pool und Panoramablick"
+  },
+  "anantara-vilamoura": {
+    "pt": "Resort 5 estrelas com campos de golfe e restaurantes premiados",
+    "en": "5-star resort with golf courses and award-winning restaurants",
+    "fr": "Resort 5 étoiles avec terrains de golf et restaurants primés",
+    "de": "5-Sterne-Resort mit Golfplätzen und preisgekrönten Restaurants"
+  },
+  "dom-pedro": {
+    "pt": "Hotel moderno com acesso direto à praia e marina",
+    "en": "Modern hotel with direct beach and marina access",
+    "fr": "Hôtel moderne avec accès direct à la plage et à la marina",
+    "de": "Modernes Hotel mit direktem Zugang zu Strand und Yachthafen"
+  },
+  "miramar-algarve": {
+    "pt": "Hotel familiar com piscina exterior e animação noturna",
+    "en": "Family hotel with outdoor pool and evening entertainment",
+    "fr": "Hôtel familial avec piscine extérieure et animation nocturne",
+    "de": "Familienhotel mit Außenpool und Abendunterhaltung"
+  },
+  "hotel-marina": {
+    "pt": "Hotel central na marina com terraço e bar panorâmico",
+    "en": "Central marina hotel with terrace and panoramic bar",
+    "fr": "Hôtel central dans la marina avec terrasse et bar panoramique",
+    "de": "Zentrales Marina-Hotel mit Terrasse und Panoramabar"
+  },
+  "vilamoura-garden": {
+    "pt": "Suites com jardim privado e kitchenette, ideal para famílias",
+    "en": "Suites with private garden and kitchenette, ideal for families",
+    "fr": "Suites avec jardin privé et kitchenette, idéales pour les familles",
+    "de": "Suiten mit privatem Garten und Küchenzeile, ideal für Familien"
+  },
+  "aqua-suites": {
+    "pt": "Suites modernas com piscina e acesso fácil à marina",
+    "en": "Modern suites with pool and easy marina access",
+    "fr": "Suites modernes avec piscine et accès facile à la marina",
+    "de": "Moderne Suiten mit Pool und einfachem Zugang zum Yachthafen"
+  },
+  "fontecruz": {
+    "pt": "Hotel boutique com design contemporâneo e spa de luxo",
+    "en": "Boutique hotel with contemporary design and luxury spa",
+    "fr": "Hôtel boutique avec design contemporain et spa de luxe",
+    "de": "Boutique-Hotel mit zeitgenössischem Design und Luxus-Spa"
+  },
+  "old-village": {
+    "pt": "Resort de charme com arquitetura algarvia e jardins tropicais",
+    "en": "Charming resort with Algarve architecture and tropical gardens",
+    "fr": "Resort de charme avec architecture algarvienne et jardins tropicaux",
+    "de": "Charmantes Resort mit Algarve-Architektur und tropischen Gärten"
+  },
+  "victoria-hotel": {
+    "pt": "Hotel clássico com vista para o golfe e restaurante gourmet",
+    "en": "Classic hotel with golf views and gourmet restaurant",
+    "fr": "Hôtel classique avec vue sur le golf et restaurant gastronomique",
+    "de": "Klassisches Hotel mit Golfblick und Gourmet-Restaurant"
+  },
+  "colombo": {
+    "pt": "Restaurante tradicional português com marisco fresco e ambiente acolhedor",
+    "en": "Traditional Portuguese restaurant with fresh seafood and cozy atmosphere",
+    "fr": "Restaurant traditionnel portugais avec fruits de mer frais et ambiance chaleureuse",
+    "de": "Traditionelles portugiesisches Restaurant mit frischen Meeresfrüchten und gemütlicher Atmosphäre"
+  },
+  "a-padaria": {
+    "pt": "Padaria artesanal com pães frescos, pastelaria e café de especialidade",
+    "en": "Artisan bakery with fresh bread, pastries and specialty coffee",
+    "fr": "Boulangerie artisanale avec pain frais, pâtisseries et café de spécialité",
+    "de": "Handwerkliche Bäckerei mit frischem Brot, Gebäck und Spezialitätenkaffee"
+  },
+  "gourmet-burger": {
+    "pt": "Hambúrgueres gourmet com ingredientes premium e ambiente descontraído",
+    "en": "Gourmet burgers with premium ingredients and relaxed atmosphere",
+    "fr": "Burgers gourmands avec ingrédients premium et ambiance décontractée",
+    "de": "Gourmet-Burger mit Premium-Zutaten und entspannter Atmosphäre"
+  },
+  "the-steakhouse": {
+    "pt": "Carnes premium grelhadas na brasa com seleção de vinhos",
+    "en": "Premium grilled meats over charcoal with wine selection",
+    "fr": "Viandes premium grillées au charbon avec sélection de vins",
+    "de": "Premium-Fleisch vom Holzkohlegrill mit Weinauswahl"
+  },
+  "pizza-hut": {
+    "pt": "Pizzas internacionais com entrega ao domicílio e ambiente familiar",
+    "en": "International pizzas with home delivery and family atmosphere",
+    "fr": "Pizzas internationales avec livraison à domicile et ambiance familiale",
+    "de": "Internationale Pizzas mit Lieferservice und familiärer Atmosphäre"
+  },
+  "mcdonalds": {
+    "pt": "Fast-food internacional com menu variado e serviço rápido",
+    "en": "International fast food with varied menu and quick service",
+    "fr": "Fast-food international avec menu varié et service rapide",
+    "de": "Internationales Fast Food mit vielfältigem Menü und schnellem Service"
+  },
+  "sal-fogo": {
+    "pt": "Steakhouse com grelhados de qualidade e ambiente moderno",
+    "en": "Quality grilled steaks in a modern atmosphere",
+    "fr": "Steakhouse avec grillades de qualité dans une ambiance moderne",
+    "de": "Steakhouse mit hochwertigen Grillgerichten in modernem Ambiente"
+  },
+  "fairways": {
+    "pt": "Steakhouse com vista para o golfe e ambiente elegante",
+    "en": "Steakhouse with golf views and elegant atmosphere",
+    "fr": "Steakhouse avec vue sur le golf et ambiance élégante",
+    "de": "Steakhouse mit Golfblick und eleganter Atmosphäre"
+  },
+  "ruis-restaurante": {
+    "pt": "Steakhouse tradicional com ambiente familiar",
+    "en": "Traditional steakhouse with family atmosphere",
+    "fr": "Steakhouse traditionnel avec ambiance familiale",
+    "de": "Traditionelles Steakhouse mit familiärer Atmosphäre"
+  },
+  "el-cristo": {
+    "pt": "Marisco fresco e especialidades de peixe grelhado",
+    "en": "Fresh seafood and grilled fish specialties",
+    "fr": "Fruits de mer frais et spécialités de poisson grillé",
+    "de": "Frische Meeresfrüchte und gegrillte Fischspezialitäten"
+  },
+  "ostra-douro": {
+    "pt": "Ostras frescas e marisco premium na marina",
+    "en": "Fresh oysters and premium seafood at the marina",
+    "fr": "Huîtres fraîches et fruits de mer premium dans la marina",
+    "de": "Frische Austern und Premium-Meeresfrüchte im Yachthafen"
+  },
+  "tai-tai": {
+    "pt": "Comida chinesa tradicional com opção de delivery",
+    "en": "Traditional Chinese food with delivery option",
+    "fr": "Cuisine chinoise traditionnelle avec option de livraison",
+    "de": "Traditionelles chinesisches Essen mit Lieferservice"
+  },
+  "goldenmarina": {
+    "pt": "Sushi fresco e cozinha asiática fusion na marina",
+    "en": "Fresh sushi and Asian fusion cuisine at the marina",
+    "fr": "Sushi frais et cuisine asiatique fusion dans la marina",
+    "de": "Frischer Sushi und asiatische Fusion-Küche im Yachthafen"
+  },
+  "kiss-bar": {
+    "pt": "Bar animado com cocktails, música ao vivo e terraço na marina",
+    "en": "Lively bar with cocktails, live music and marina terrace",
+    "fr": "Bar animé avec cocktails, musique live et terrasse dans la marina",
+    "de": "Lebhafte Bar mit Cocktails, Live-Musik und Terrasse im Yachthafen"
+  },
+  "libertine": {
+    "pt": "Cocktail bar sofisticado com mixologia criativa e ambiente íntimo",
+    "en": "Sophisticated cocktail bar with creative mixology and intimate atmosphere",
+    "fr": "Bar à cocktails sophistiqué avec mixologie créative et ambiance intime",
+    "de": "Sophistizierte Cocktailbar mit kreativer Mixologie und intimer Atmosphäre"
+  },
+  "piano-bar": {
+    "pt": "Bar elegante com piano ao vivo e seleção premium de vinhos",
+    "en": "Elegant bar with live piano and premium wine selection",
+    "fr": "Bar élégant avec piano live et sélection premium de vins",
+    "de": "Elegante Bar mit Live-Klavier und Premium-Weinauswahl"
+  },
+  "vinil": {
+    "pt": "Bar temático com música vintage, cocktails clássicos e ambiente retro",
+    "en": "Themed bar with vintage music, classic cocktails and retro atmosphere",
+    "fr": "Bar thématique avec musique vintage, cocktails classiques et ambiance rétro",
+    "de": "Thematische Bar mit Vintage-Musik, klassischen Cocktails und Retro-Atmosphäre"
+  },
+  "irish-pub": {
+    "pt": "Pub tradicional irlandês com cerveja de barril, petiscos e desporto ao vivo",
+    "en": "Traditional Irish pub with draft beer, snacks and live sports",
+    "fr": "Pub irlandais traditionnel avec bière pression, snacks et sport en direct",
+    "de": "Traditioneller irischer Pub mit Fassbier, Snacks und Live-Sport"
+  },
+  "oriental-shopping": {
+    "pt": "Loja de artigos orientais, presentes e decoração única",
+    "en": "Oriental gifts, home decor and unique souvenirs shop",
+    "fr": "Boutique d'articles orientaux, cadeaux et décoration unique",
+    "de": "Shop für orientalische Geschenke, Heimdekoration und einzigartige Souvenirs"
+  },
+  "sopelle": {
+    "pt": "Sapataria com calçado de qualidade para homem e mulher",
+    "en": "Quality footwear for men and women",
+    "fr": "Chaussures de qualité pour hommes et femmes",
+    "de": "Qualitätsschuhe für Herren und Damen"
+  },
+  "quebramar": {
+    "pt": "Moda masculina e vestuário casual com estilo mediterrânico",
+    "en": "Men's fashion and casual wear with Mediterranean style",
+    "fr": "Mode masculine et vêtements décontractés de style méditerranéen",
+    "de": "Herrenmode und Freizeitkleidung im mediterranen Stil"
+  },
+  "centro-medico": {
+    "pt": "Clínica médica com consultas de medicina geral e especialidades",
+    "en": "Medical clinic with general practice and specialist consultations",
+    "fr": "Clinique médicale avec consultations de médecine générale et spécialités",
+    "de": "Medizinische Klinik mit Allgemeinmedizin und Facharztberatungen"
+  },
+  "cgd": {
+    "pt": "Banco público português com serviços financeiros e ATM",
+    "en": "Portuguese public bank with financial services and ATM",
+    "fr": "Banque publique portugaise avec services financiers et distributeur",
+    "de": "Portugiesische Staatsbank mit Finanzdienstleistungen und Geldautomat"
+  },
+  "millennium-bcp": {
+    "pt": "Serviços bancários, câmbio e apoio a clientes internacionais",
+    "en": "Banking services, currency exchange and support for international clients",
+    "fr": "Services bancaires, change de devises et assistance aux clients internationaux",
+    "de": "Bankdienstleistungen, Währungsumtausch und Unterstützung für internationale Kunden"
+  },
+  "ctt": {
+    "pt": "Serviços postais, envios nacionais e internacionais",
+    "en": "Postal services, national and international shipping",
+    "fr": "Services postaux, envois nationaux et internationaux",
+    "de": "Postdienste, nationale und internationale Sendungen"
+  },
+  "farmacia-marina": {
+    "pt": "Farmácia com medicamentos, produtos de saúde e aconselhamento",
+    "en": "Pharmacy with medications, health products and advice",
+    "fr": "Pharmacie avec médicaments, produits de santé et conseils",
+    "de": "Apotheke mit Medikamenten, Gesundheitsprodukten und Beratung"
+  },
+  "santander": {
+    "pt": "Banco com serviços financeiros, cartões e apoio multilingue",
+    "en": "Bank with financial services, cards and multilingual support",
+    "fr": "Banque avec services financiers, cartes et assistance multilingue",
+    "de": "Bank mit Finanzdienstleistungen, Karten und mehrsprachigem Support"
+  },
+  "psp-quarteira": {
+    "pt": "Esquadra da Polícia de Segurança Pública para assistência local",
+    "en": "Public Security Police station for local assistance",
+    "fr": "Commissariat de police pour assistance locale",
+    "de": "Polizeistation für lokale Unterstützung"
+  }
+}
