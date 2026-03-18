@@ -57,7 +57,7 @@
         .btn-back-map { position: absolute; top: 15px; left: 15px; z-index: 30; padding: 10px 20px; border-radius: 25px; background: #003366; color: white; border: 2px solid white; font-weight: bold; cursor: pointer; }
         .btn-back-nav { padding: 10px 15px; background: none; border: none; color: #003366; font-weight: bold; cursor: pointer; font-size: 14px; }
         #map-canvas { width: 100%; height: 100%; }
-        .item-row { display: flex; gap: 12px; background: #fff; padding: 12px; border-radius: 12px; margin: 0 15px 10px 15px; align-items: center; box-shadow: 0 2px 5px rgba(0,0,0,0.05); cursor: pointer; }
+        .item-row { display: flex; gap: 12px; background: #fff; padding: 12px; border-radius: 12px; margin: 0 15px 10px 15px; align-items: center; box-shadow: 0 2px 5px rgba(0,0,0,0.05); cursor: pointer; position: relative; }
         .item-row img { width: 50px; height: 50px; border-radius: 8px; object-fit: cover; }
         .info-buttons { display: flex; flex-direction: column; gap: 6px; margin-top: 10px; }
         .btn-info { display: block; text-align: center; padding: 10px; border-radius: 6px; text-decoration: none; color: white; font-size: 11px; font-weight: bold; border: none; cursor: pointer; }
@@ -68,6 +68,7 @@
         .error-msg { text-align: center; padding: 20px; color: #c00; background: #ffe6e6; margin: 10px 15px; border-radius: 8px; }
         .nav-header { padding: 15px; display: flex; gap: 10px; align-items: center; background: #fff; border-bottom: 1px solid #eee; }
         .nav-title { font-weight: bold; color: #003366; font-size: 16px; }
+        .featured-badge { position: absolute; top: -8px; right: -8px; background: #ffd700; color: #003366; padding: 2px 8px; border-radius: 10px; font-size: 10px; font-weight: bold; }
     </style>
 </head>
 <body>
@@ -181,7 +182,7 @@
         function App() {
           const [view, setView] = useState('splash');
           const [lang, setLang] = useState('pt');
-          const [navLevel, setNavLevel] = useState('categorias'); // 'categorias' | 'subcategorias' | 'locais'
+          const [navLevel, setNavLevel] = useState('categorias');
           const [catAtiva, setCatAtiva] = useState(null);
           const [subcatAtiva, setSubcatAtiva] = useState(null);
           const [query, setQuery] = useState('');
@@ -286,6 +287,7 @@
             );
           };
           
+          // ✅ FUNÇÃO openMap ATUALIZADA COM GALERIA DE FOTOS
           const openMap = (items) => {
             setNavLevel('mapa');
             if(directionsRenderer.current) directionsRenderer.current.setDirections({routes: []});
@@ -298,9 +300,25 @@
               });
               const infoText = getInfoText(loc.info, lang);
               const imgSrc = cleanImageUrl(loc.img);
+              
+              // ✅ NOVO: Galeria de fotos múltiplas
+              const fotos = loc.fotos || (imgSrc ? [imgSrc] : []);
+              let galleryHTML = '';
+              if (fotos.length > 0) {
+                galleryHTML = `
+                  <div style="display:flex; gap:4px; margin-bottom:10px; overflow-x:auto; padding-bottom:5px;">
+                    ${fotos.slice(0, 5).map(foto => `
+                      <img src="${cleanImageUrl(foto)}" 
+                           style="width:60px; height:60px; border-radius:6px; object-fit:cover; flex-shrink:0; border:1px solid #eee;" 
+                           onerror="this.style.display='none'">
+                    `).join('')}
+                  </div>
+                `;
+              }
+              
               const content = `
-                <div style="width:200px; padding:5px;">
-                  ${imgSrc ? `<img src="${imgSrc}" style="width:100%; border-radius:8px; min-height:120px; object-fit:cover;" onerror="this.src='https://via.placeholder.com/200x120?text=Sem+Foto'">` : ''}
+                <div style="width:220px; padding:5px;">
+                  ${galleryHTML}
                   <h3 style="margin:10px 0 5px 0; color:#003366; font-size:16px;">${loc.nome || 'Sem nome'}</h3>
                   <p style="font-size:12px; margin-bottom:10px; color:#666;">${infoText}</p>
                   <div class="info-buttons">
@@ -408,15 +426,38 @@
                       {filtered.length === 0 ? (
                         <div style={{padding:'20px', textAlign:'center', color:'#666'}}>Nenhum resultado</div>
                       ) : null}
-                      {filtered.map(l => (
-                        <div key={l.id || l.nome} className="item-row" onClick={() => openMap(l)}>
-                          <img src={cleanImageUrl(l.img)} onError={(e) => {e.target.src='https://via.placeholder.com/50?text=?'}} />
-                          <div>
-                            <div style={{fontWeight:'bold'}}>{l.nome}</div>
-                            <div style={{fontSize:11}}>{getInfoText(l.info, lang)}</div>
-                          </div>
-                        </div>
-                      ))}
+                      {/* ✅ LISTA DE NEGÓCIOS COM DESTAQUE VISUAL */}
+                      {filtered
+                        .sort((a, b) => (b.nivel_destaque || 0) - (a.nivel_destaque || 0))
+                        .map(l => {
+                          const isFeatured = l.destaque || l.nivel_destaque > 0;
+                          const featuredBorder = l.nivel_destaque === 3 ? '#ffd700' : l.nivel_destaque === 2 ? '#c0c0c0' : '#cd7f32';
+                          const featuredBg = isFeatured ? 'linear-gradient(135deg, #fff9e6 0%, #fff 100%)' : '#fff';
+                          
+                          return (
+                            <div 
+                              key={l.id || l.nome} 
+                              className="item-row" 
+                              onClick={() => openMap(l)}
+                              style={{
+                                border: isFeatured ? `2px solid ${featuredBorder}` : '1px solid #eee',
+                                background: featuredBg,
+                                marginBottom: '10px'
+                              }}
+                            >
+                              {isFeatured && (
+                                <div className="featured-badge">
+                                  ⭐ {l.nivel_destaque === 3 ? 'OURO' : l.nivel_destaque === 2 ? 'PRATA' : 'BRONZE'}
+                                </div>
+                              )}
+                              <img src={cleanImageUrl(l.img)} onError={(e) => {e.target.src='https://via.placeholder.com/50?text=?'}} style={{borderRadius: isFeatured ? '12px' : '8px'}} />
+                              <div>
+                                <div style={{fontWeight: isFeatured ? 'bold' : 'normal', color: isFeatured ? '#003366' : '#333'}}>{l.nome}</div>
+                                <div style={{fontSize:11}}>{getInfoText(l.info, lang)}</div>
+                              </div>
+                            </div>
+                          );
+                        })}
                     </div>
                   ) : navLevel === 'categorias' ? (
                     <div>
