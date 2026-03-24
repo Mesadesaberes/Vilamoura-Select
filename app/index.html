@@ -58,7 +58,7 @@
         .btn-back-nav { padding: 10px 15px; background: none; border: none; color: #003366; font-weight: bold; cursor: pointer; font-size: 14px; }
         #map-canvas { width: 100%; height: 100%; }
         
-        /* ✅ ITEM ROW ATUALIZADO: overflow visible para badge */
+        /* ✅ ITEM ROW: overflow visible para badge */
         .item-row { 
           display: flex; 
           gap: 12px; 
@@ -74,7 +74,7 @@
         }
         .item-row img { width: 50px; height: 50px; border-radius: 8px; object-fit: cover; }
         
-        /* ✅ BADGE DE DESTAQUE: VISÍVEL E COM CONTRASTE */
+        /* ✅ BADGE DE DESTAQUE */
         .featured-badge {
           position: absolute;
           top: -6px;
@@ -131,7 +131,6 @@
           es: { enter: "ENTRAR", search: "Buscar...", back: "VOLVER", route: "CALCULAR RUTA", call: "LLAMAR", visit: "SITIO WEB", explore: "📍 EXPLORAR TODO", loading: "Cargando...", welcome: "Bienvenido", welcomeText: "Tu guía independiente para descubrir lo mejor de Vilamoura.", selectLang: "Idioma", start: "COMENZAR", dontShowAgain: "No mostrar de nuevo", cats: { hoteis: "Hoteles", comer: "Comer", bares: "Bares", lazer: "Ocio", golf: "Golf", lojas: "Tiendas", imobiliarias: "Inmuebles", util: "Útil", transportes: "Transporte", experiencias: "Experiencias" } }
         };
         
-        // ✅ CATEGORIAS COM SUBCATEGORIAS
         const CATEGORIAS = [
           { id: 'hoteis', icon: 'fa-hotel', subcats: [
               { id: '5-estrelas', nome: '5 Estrelas', icon: 'fa-star' },
@@ -274,43 +273,33 @@
           }, [view]);
           
           window.calcularRota = function(lat, lng) {
-            console.log('🗺️ Botão Rota clicado - Destino:', lat, lng);
             const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
-            console.log('📱 É iOS?', isIOS);
             if (isIOS) {
-              console.log('🍏 iOS: A abrir Apple Maps');
               window.open(`http://maps.apple.com/?daddr=${lat},${lng}`, '_blank');
               return;
             }
-            console.log('🤖 Android/Desktop: A tentar rota interna');
             if (!navigator.geolocation) {
-              console.log('❌ Geolocalização não suportada');
               alert('A geolocalização não é suportada. A abrir Google Maps...');
               window.open(`https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}`, '_blank');
               return;
             }
             navigator.geolocation.getCurrentPosition(
               (pos) => {
-                console.log('📍 Localização obtida:', pos.coords.latitude, pos.coords.longitude);
                 const service = new google.maps.DirectionsService();
                 service.route({
                   origin: { lat: pos.coords.latitude, lng: pos.coords.longitude },
                   destination: { lat: parseFloat(lat), lng: parseFloat(lng) },
                   travelMode: google.maps.TravelMode.WALKING
                 }, (result, status) => {
-                  console.log('🧭 Status da rota:', status);
                   if (status === 'OK' && directionsRenderer.current) {
-                    console.log('✅ Rota calculada com sucesso!');
                     directionsRenderer.current.setDirections(result);
                   } else {
-                    console.log('❌ Erro na rota:', status);
                     alert('Não foi possível calcular a rota. A abrir Google Maps...');
                     window.open(`https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}`, '_blank');
                   }
                 });
               },
               (err) => {
-                console.log('❌ Erro de geolocalização:', err.code, err.message);
                 alert('Ative a localização para calcular rotas. A abrir Google Maps...');
                 window.open(`https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}`, '_blank');
               },
@@ -318,7 +307,7 @@
             );
           };
           
-          // ✅ FUNÇÃO openMap ATUALIZADA COM GALERIA DE FOTOS MAIORES
+          // ✅ FUNÇÃO openMap COM GALERIA 80px + EXPANDIR
           const openMap = (items) => {
             setNavLevel('mapa');
             if(directionsRenderer.current) directionsRenderer.current.setDirections({routes: []});
@@ -332,7 +321,7 @@
               const infoText = getInfoText(loc.info, lang);
               const imgSrc = cleanImageUrl(loc.img);
               
-              // ✅ NOVO: Galeria com fotos maiores (80px) + click para expandir
+              // ✅ Galeria 80px + click para expandir
               const fotos = loc.fotos || (imgSrc ? [imgSrc] : []);
               let galleryHTML = '';
               if (fotos.length > 0) {
@@ -368,7 +357,26 @@
             else { googleMap.current.setZoom(14); googleMap.current.setCenter({ lat: 37.076, lng: -8.118 }); }
           };
           
-          // ✅ NAVEGAÇÃO: Clicar em categoria
+          // ✅ FUNÇÕES DE DESTAQUE
+          const getDestaqueFromPlan = (loc) => {
+            if (loc.nivel_destaque) return loc.nivel_destaque;
+            if (loc.subscricao?.ativo) {
+              const plano = loc.subscricao.plano;
+              if (plano === 'ouro') return 3;
+              if (plano === 'prata') return 2;
+            }
+            return 0;
+          };
+          
+          const getSortedLocais = (locais) => {
+            return [...locais].sort((a, b) => {
+              const aDestaque = getDestaqueFromPlan(a);
+              const bDestaque = getDestaqueFromPlan(b);
+              if (aDestaque !== bDestaque) return bDestaque - aDestaque;
+              return (a.nome || '').localeCompare(b.nome || '');
+            });
+          };
+          
           const handleCatClick = (cat) => {
             if (cat.subcats && cat.subcats.length > 0) {
               setCatAtiva(cat);
@@ -380,13 +388,11 @@
             }
           };
           
-          // ✅ NAVEGAÇÃO: Clicar em subcategoria
           const handleSubcatClick = (subcat) => {
             setSubcatAtiva(subcat);
             setNavLevel('locais');
           };
           
-          // ✅ NAVEGAÇÃO: Voltar
           const handleBack = () => {
             if (navLevel === 'locais' && subcatAtiva) {
               setSubcatAtiva(null);
@@ -400,7 +406,6 @@
             }
           };
           
-          // ✅ FILTRAR LOCAIS
           const getFilteredLocais = () => {
             let filtered = locais;
             if (query.length > 0) {
@@ -431,7 +436,6 @@
               <div className="app-content">
                 <div className="menu-view" style={{ display: navLevel !== 'mapa' ? 'block' : 'none' }}>
                   
-                  {/* HEADER DE NAVEGAÇÃO */}
                   {navLevel !== 'categorias' && (
                     <div className="nav-header">
                       <button onClick={handleBack} className="btn-back-nav">← {t.back}</button>
@@ -441,7 +445,6 @@
                     </div>
                   )}
                   
-                  {/* SEARCH */}
                   <div className="search-area">
                     <div className="search-box">
                       <i className="fas fa-search"></i>
@@ -458,12 +461,12 @@
                       {filtered.length === 0 ? (
                         <div style={{padding:'20px', textAlign:'center', color:'#666'}}>Nenhum resultado</div>
                       ) : null}
-                      {/* ✅ LISTA DE NEGÓCIOS COM DESTAQUE VISUAL */}
-                      {filtered
-                        .sort((a, b) => (b.nivel_destaque || 0) - (a.nivel_destaque || 0))
+                      {/* ✅ LISTA COM DESTAQUE E ORDENAÇÃO */}
+                      {getSortedLocais(filtered)
                         .map(l => {
-                          const isFeatured = l.destaque || l.nivel_destaque > 0;
-                          const featuredBorder = l.nivel_destaque === 3 ? '#ffd700' : l.nivel_destaque === 2 ? '#c0c0c0' : '#cd7f32';
+                          const destaqueNivel = getDestaqueFromPlan(l);
+                          const isFeatured = destaqueNivel > 0;
+                          const featuredBorder = destaqueNivel === 3 ? '#ffd700' : destaqueNivel === 2 ? '#c0c0c0' : '#cd7f32';
                           const featuredBg = isFeatured ? 'linear-gradient(135deg, #fff9e6 0%, #fff 100%)' : '#fff';
                           
                           return (
@@ -479,7 +482,7 @@
                             >
                               {isFeatured && (
                                 <div className="featured-badge" style={{ zIndex: 10 }}>
-                                  ⭐ {l.nivel_destaque === 3 ? 'OURO' : l.nivel_destaque === 2 ? 'PRATA' : 'BRONZE'}
+                                  ⭐ {destaqueNivel === 3 ? 'OURO' : destaqueNivel === 2 ? 'PRATA' : 'BRONZE'}
                                 </div>
                               )}
                               <img src={cleanImageUrl(l.img)} onError={(e) => {e.target.src='https://via.placeholder.com/50?text=?'}} style={{borderRadius: isFeatured ? '12px' : '8px'}} />
