@@ -190,22 +190,61 @@
             if (typeof info === 'string') return info;
             return '';
         };
-        const cleanImageUrl = (url) => { if (!url) return ''; return url.trim().replace(/\s+/g, ''); };
         const getPersonalizedMessage = (lang) => {
-          const hour = new Date().getHours();
-          const day = new Date().getDay();
-          const isWeekend = day === 0 || day === 6;
-          const messages = {
-            pt: { morning: isWeekend ? "☀️ Bom fim de semana em Vilamoura!" : "☀️ Bom dia! Pronto para explorar?", lunch: "🍽️ Hora de almoço? Veja os nossos restaurantes!", afternoon: "🌊 Boa tarde! A marina espera por si.", evening: "🌙 Boa noite! Descubra a vida noturna.", night: "✨ Bem-vindo a Vilamoura!" },
-            en: { morning: isWeekend ? "☀️ Great weekend in Vilamoura!" : "☀️ Good morning! Ready to explore?", lunch: "🍽️ Lunch time? Check out our restaurants!", afternoon: "🌊 Good afternoon! The marina awaits.", evening: "🌙 Good evening! Discover the nightlife.", night: "✨ Welcome to Vilamoura!" }
-          };
-          const m = messages[lang] || messages.en;
-          if (hour >= 6 && hour < 12) return m.morning;
-          if (hour >= 12 && hour < 14) return m.lunch;
-          if (hour >= 14 && hour < 19) return m.afternoon;
-          if (hour >= 19 && hour < 23) return m.evening;
-          return m.night;
-        };
+  const hour = new Date().getHours();
+  const day = new Date().getDay();
+  const isWeekend = day === 0 || day === 6;
+  
+  const messages = {
+    // ✅ PORTUGUÊS
+    pt: {
+      morning: isWeekend ? "☀️ Bom fim de semana em Vilamoura!" : "☀️ Bom dia! Pronto para explorar?",
+      lunch: "🍽️ Hora de almoço? Veja os nossos restaurantes!",
+      afternoon: "🌊 Boa tarde! A marina espera por si.",
+      evening: "🌙 Boa noite! Descubra a vida noturna.",
+      night: "✨ Bem-vindo a Vilamoura!"
+    },
+    // ✅ ENGLISH
+    en: {
+      morning: isWeekend ? "☀️ Great weekend in Vilamoura!" : "☀️ Good morning! Ready to explore?",
+      lunch: "🍽️ Lunch time? Check out our restaurants!",
+      afternoon: "🌊 Good afternoon! The marina awaits.",
+      evening: "🌙 Good evening! Discover the nightlife.",
+      night: "✨ Welcome to Vilamoura!"
+    },
+    // ✅ FRANÇAIS (NOVO)
+    fr: {
+      morning: isWeekend ? "☀️ Excellent week-end à Vilamoura !" : "☀️ Bonjour ! Prêt à explorer ?",
+      lunch: "🍽️ L'heure du déjeuner ? Découvrez nos restaurants !",
+      afternoon: "🌊 Bon après-midi ! La marina vous attend.",
+      evening: "🌙 Bonsoir ! Découvrez la vie nocturne.",
+      night: "✨ Bienvenue à Vilamoura !"
+    },
+    // ✅ DEUTSCH (NOVO)
+    de: {
+      morning: isWeekend ? "☀️ Schönes Wochenende in Vilamoura!" : "☀️ Guten Morgen! Bereit zu entdecken?",
+      lunch: "🍽️ Mittagszeit? Entdecken Sie unsere Restaurants!",
+      afternoon: "🌊 Guten Nachmittag! Der Yachthafen wartet auf Sie.",
+      evening: "🌙 Guten Abend! Entdecken Sie das Nachtleben.",
+      night: "✨ Willkommen in Vilamoura!"
+    },
+    // ✅ ESPAÑOL (NOVO)
+    es: {
+      morning: isWeekend ? "☀️ ¡Gran fin de semana en Vilamoura!" : "☀️ ¡Buenos días! ¿Listo para explorar?",
+      lunch: "🍽️ ¿Hora de comer? ¡Mira nuestros restaurantes!",
+      afternoon: "🌊 ¡Buenas tardes! La marina te espera.",
+      evening: "🌙 ¡Buenas noches! Descubre la vida nocturna.",
+      night: "✨ ¡Bienvenido a Vilamoura!"
+    }
+  };
+  
+  const m = messages[lang] || messages.en;
+  if (hour >= 6 && hour < 12) return m.morning;
+  if (hour >= 12 && hour < 14) return m.lunch;
+  if (hour >= 14 && hour < 19) return m.afternoon;
+  if (hour >= 19 && hour < 23) return m.evening;
+  return m.night;
+};
         
         function App() {
           const [view, setView] = useState('splash');
