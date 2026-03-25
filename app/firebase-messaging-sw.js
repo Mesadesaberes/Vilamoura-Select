@@ -14,6 +14,13 @@ firebase.initializeApp({
 
 const messaging = firebase.messaging();
 
+// ✅ Inicializar messaging com service worker
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.ready.then(registration => {
+    messaging.useServiceWorker(registration);
+  });
+}
+
 // ✅ Background push handler
 messaging.onBackgroundMessage((payload) => {
   const { title, body, icon, click_action } = payload.notification;
