@@ -228,6 +228,129 @@ border: none; border-radius: 4px; cursor: pointer; font-size: 11px;
 .search-area {
   padding-top: 20px;
 }
+  /* ============================================
+   ✅ MOLDURA DE TELEMÓVEL PARA DESKTOP
+   ============================================ */
+
+/* Desktop (>1024px) - Com moldura */
+@media (min-width: 1025px) {
+  body {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 30px;
+    min-height: 100vh;
+  }
+  
+  #root {
+    width: 390px;
+    height: 844px;
+    max-height: 90vh;
+    background: #000;
+    border-radius: 45px;
+    padding: 10px;
+    box-shadow: 
+      0 0 0 2px #333,
+      0 25px 80px rgba(0,0,0,0.5);
+    position: relative;
+    overflow: hidden;
+    animation: phoneEnter 0.6s ease-out;
+  }
+  
+  /* Notch no topo */
+  #root::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 150px;
+    height: 30px;
+    background: #000;
+    border-radius: 0 0 20px 20px;
+    z-index: 1000;
+  }
+  
+  /* Câmara no notch */
+  #root::after {
+    content: '';
+    position: absolute;
+    top: 8px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 10px;
+    height: 10px;
+    background: #1a1a2e;
+    border-radius: 50%;
+    z-index: 1001;
+  }
+  
+  /* Splash screen dentro da moldura */
+  .splash-screen {
+    position: relative !important;
+    inset: auto !important;
+    height: 100%;
+    border-radius: 35px;
+  }
+  
+  /* Welcome screen dentro da moldura */
+  .welcome-screen {
+    position: relative !important;
+    inset: auto !important;
+    height: 100%;
+    border-radius: 35px;
+  }
+  
+  /* Animação de entrada */
+  @keyframes phoneEnter {
+    0% { opacity: 0; transform: translateY(40px) scale(0.97); }
+    100% { opacity: 1; transform: translateY(0) scale(1); }
+  }
+  
+  /* Info desktop */
+  .desktop-info {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    color: rgba(255,255,255,0.7);
+    font-size: 12px;
+    text-align: right;
+    z-index: 9999;
+  }
+}
+
+/* Tablet (769px - 1024px) */
+@media (min-width: 769px) and (max-width: 1024px) {
+  body {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    padding: 20px;
+  }
+  #root {
+    width: 375px;
+    height: 812px;
+  }
+}
+
+/* Mobile (≤768px) - Normal, SEM moldura */
+@media (max-width: 768px) {
+  body {
+    background: #f4f7f9;
+    padding: 0;
+    display: block;
+  }
+  #root {
+    width: 100%;
+    height: 100%;
+    border-radius: 0;
+    padding: 0;
+    box-shadow: none;
+    background: #f4f7f9;
+  }
+  .desktop-info {
+    display: none;
+  }
+}
 </style>
 </head>
 <body>
