@@ -137,6 +137,7 @@ color: #003366; padding: 4px 10px; border-radius: 12px;
 font-size: 11px; font-weight: bold; box-shadow: 0 2px 8px rgba(0,0,0,0.2);
 z-index: 10; white-space: nowrap; border: 1px solid #b8860b;
 }
+/* ✅ BARRA DE NOTIFICAÇÕES PUSH */
 .push-bar {
 background: #fff3cd; color: #856404;
 padding: 8px 15px; font-size: 12px; text-align: center;
@@ -208,6 +209,7 @@ const messaging = firebase.messaging();
 // ✅ DETETAR SE É DESKTOP
 const isDesktop = () => window.innerWidth > 768;
 
+// ✅ FUNÇÃO PARA LIMPAR URLs DE IMAGENS
 const cleanImageUrl = (url) => {
 if (!url) return '';
 return url.trim().replace(/\s+/g, '');
@@ -220,13 +222,86 @@ const languages = [
 { code: 'de', flag: 'https://flagcdn.com/w40/de.png', name: 'Deutsch' },
 { code: 'es', flag: 'https://flagcdn.com/w40/es.png', name: 'Español' }
 ];
+
+// ✅ i18n COM TRADUÇÕES PUSH INCLUÍDAS
 const i18n = {
-pt: { enter: "ENTRAR", search: "Procurar...", back: "VOLTAR", route: "CALCULAR ROTA", call: "LIGAR", visit: "WEBSITE", explore: "📍 EXPLORAR TUDO", loading: "A carregar...", welcome: "Bem-vindo", welcomeText: "O seu guia independente para descobrir o melhor de Vilamoura.", selectLang: "Idioma", start: "COMEÇAR", dontShowAgain: "Não mostrar novamente", cats: { hoteis: "Hotéis", comer: "Comer", bares: "Bares", lazer: "Lazer", golf: "Golfe", lojas: "Lojas", imobiliarias: "Imóveis", util: "Útil", transportes: "Transportes", experiencias: "Experiências" } },
-en: { enter: "ENTER", search: "Search...", back: "BACK", route: "GET ROUTE", call: "CALL", visit: "WEBSITE", explore: "📍 EXPLORE ALL", loading: "Loading...", welcome: "Welcome", welcomeText: "Your independent guide to discover the best of Vilamoura.", selectLang: "Language", start: "GET STARTED", dontShowAgain: "Don't show again", cats: { hoteis: "Hotels", comer: "Eat", bares: "Bars", lazer: "Leisure", golf: "Golf", lojas: "Shops", imobiliarias: "Property", util: "Useful", transportes: "Transport", experiencias: "Experiences" } },
-fr: { enter: "ENTRER", search: "Chercher...", back: "RETOUR", route: "ITINÉRAIRE", call: "APPELER", visit: "SITE WEB", explore: "📍 TOUT VOIR", loading: "Chargement...", welcome: "Bienvenue", welcomeText: "Votre guide indépendant pour découvrir le meilleur de Vilamoura.", selectLang: "Langue", start: "COMMENCER", dontShowAgain: "Ne plus afficher", cats: { hoteis: "Hôtels", comer: "Manger", bares: "Bars", lazer: "Loisirs", golf: "Golf", lojas: "Boutiques", imobiliarias: "Immo", util: "Utile", transportes: "Transports", experiencias: "Expériences" } },
-de: { enter: "EINTRETEN", search: "Suche...", back: "ZURÜCK", route: "ROUTE BERECHNEN", call: "ANRUFEN", visit: "WEBSEITE", explore: "📍 ALLES SEHEN", loading: "Laden...", welcome: "Willkommen", welcomeText: "Ihr unabhängiger Reiseführer für Vilamoura.", selectLang: "Sprache", start: "STARTEN", dontShowAgain: "Nicht wieder anzeigen", cats: { hoteis: "Hotels", comer: "Essen", bares: "Bars", lazer: "Freizeit", golf: "Golf", lojas: "Läden", imobiliarias: "Immo", util: "Nützlich", transportes: "Transport", experiencias: "Erlebnisse" } },
-es: { enter: "ENTRAR", search: "Buscar...", back: "VOLVER", route: "CALCULAR RUTA", call: "LLAMAR", visit: "SITIO WEB", explore: "📍 EXPLORAR TODO", loading: "Cargando...", welcome: "Bienvenido", welcomeText: "Tu guía independiente para descubrir lo mejor de Vilamoura.", selectLang: "Idioma", start: "COMENZAR", dontShowAgain: "No mostrar de nuevo", cats: { hoteis: "Hoteles", comer: "Comer", bares: "Bares", lazer: "Ocio", golf: "Golf", lojas: "Tiendas", imobiliarias: "Inmuebles", util: "Útil", transportes: "Transporte", experiencias: "Experiencias" } }
+pt: {
+enter: "ENTRAR", search: "Procurar...", back: "VOLTAR", route: "CALCULAR ROTA", call: "LIGAR", visit: "WEBSITE", explore: "📍 EXPLORAR TUDO", loading: "A carregar...", welcome: "Bem-vindo", welcomeText: "O seu guia independente para descobrir o melhor de Vilamoura.", selectLang: "Idioma", start: "COMEÇAR", dontShowAgain: "Não mostrar novamente", cats: { hoteis: "Hotéis", comer: "Comer", bares: "Bares", lazer: "Lazer", golf: "Golfe", lojas: "Lojas", imobiliarias: "Imóveis", util: "Útil", transportes: "Transportes", experiencias: "Experiências" },
+push: {
+inactive: "📬 Ativa notificações para promoções!",
+active: "🔔 Notificações ativas",
+activate: "✅ Ativar",
+deactivate: "Desativar",
+loading: "⏳ A ativar...",
+permissionDenied: "❌ Precisas de aceitar notificações para receber promoções!",
+iosWarning: "🍏 No iOS, as notificações web têm suporte limitado. Usa Chrome no Android ou Desktop para melhores resultados.",
+activationSuccess: "✅ Notificações ativadas! Vais receber promoções e eventos.",
+activationError: "❌ Não foi possível ativar notificações. Tenta novamente.",
+deactivationSuccess: "❌ Notificações desativadas."
+}
+},
+en: {
+enter: "ENTER", search: "Search...", back: "BACK", route: "GET ROUTE", call: "CALL", visit: "WEBSITE", explore: "📍 EXPLORE ALL", loading: "Loading...", welcome: "Welcome", welcomeText: "Your independent guide to discover the best of Vilamoura.", selectLang: "Language", start: "GET STARTED", dontShowAgain: "Don't show again", cats: { hoteis: "Hotels", comer: "Eat", bares: "Bars", lazer: "Leisure", golf: "Golf", lojas: "Shops", imobiliarias: "Property", util: "Useful", transportes: "Transport", experiencias: "Experiences" },
+push: {
+inactive: "📬 Enable notifications for promotions!",
+active: "🔔 Notifications active",
+activate: "✅ Enable",
+deactivate: "Disable",
+loading: "⏳ Enabling...",
+permissionDenied: "❌ You need to allow notifications to receive promotions!",
+iosWarning: "🍏 On iOS, web notifications have limited support. Use Chrome on Android or Desktop for best results.",
+activationSuccess: "✅ Notifications enabled! You'll receive promotions and events.",
+activationError: "❌ Could not enable notifications. Try again.",
+deactivationSuccess: "❌ Notifications disabled."
+}
+},
+fr: {
+enter: "ENTRER", search: "Chercher...", back: "RETOUR", route: "ITINÉRAIRE", call: "APPELER", visit: "SITE WEB", explore: "📍 TOUT VOIR", loading: "Chargement...", welcome: "Bienvenue", welcomeText: "Votre guide indépendant pour découvrir le meilleur de Vilamoura.", selectLang: "Langue", start: "COMMENCER", dontShowAgain: "Ne plus afficher", cats: { hoteis: "Hôtels", comer: "Manger", bares: "Bars", lazer: "Loisirs", golf: "Golf", lojas: "Boutiques", imobiliarias: "Immo", util: "Utile", transportes: "Transports", experiencias: "Expériences" },
+push: {
+inactive: "📬 Activez les notifications pour les promotions !",
+active: "🔔 Notifications actives",
+activate: "✅ Activer",
+deactivate: "Désactiver",
+loading: "⏳ Activation...",
+permissionDenied: "❌ Vous devez autoriser les notifications pour recevoir des promotions !",
+iosWarning: "🍏 Sur iOS, les notifications web ont un support limité. Utilisez Chrome sur Android ou Desktop pour de meilleurs résultats.",
+activationSuccess: "✅ Notifications activées ! Vous recevrez des promotions et événements.",
+activationError: "❌ Impossible d'activer les notifications. Réessayez.",
+deactivationSuccess: "❌ Notifications désactivées."
+}
+},
+de: {
+enter: "EINTRETEN", search: "Suche...", back: "ZURÜCK", route: "ROUTE BERECHNEN", call: "ANRUFEN", visit: "WEBSEITE", explore: "📍 ALLES SEHEN", loading: "Laden...", welcome: "Willkommen", welcomeText: "Ihr unabhängiger Reiseführer für Vilamoura.", selectLang: "Sprache", start: "STARTEN", dontShowAgain: "Nicht wieder anzeigen", cats: { hoteis: "Hotels", comer: "Essen", bares: "Bars", lazer: "Freizeit", golf: "Golf", lojas: "Läden", imobiliarias: "Immo", util: "Nützlich", transportes: "Transport", experiencias: "Erlebnisse" },
+push: {
+inactive: "📬 Aktivieren Sie Benachrichtigungen für Aktionen!",
+active: "🔔 Benachrichtigungen aktiv",
+activate: "✅ Aktivieren",
+deactivate: "Deaktivieren",
+loading: "⏳ Wird aktiviert...",
+permissionDenied: "❌ Sie müssen Benachrichtigungen zulassen, um Aktionen zu erhalten!",
+iosWarning: "🍏 Unter iOS haben Web-Benachrichtigungen eingeschränkten Support. Verwenden Sie Chrome auf Android oder Desktop für beste Ergebnisse.",
+activationSuccess: "✅ Benachrichtigungen aktiviert! Sie erhalten Aktionen und Events.",
+activationError: "❌ Benachrichtigungen konnten nicht aktiviert werden. Versuchen Sie es erneut.",
+deactivationSuccess: "❌ Benachrichtigungen deaktiviert."
+}
+},
+es: {
+enter: "ENTRAR", search: "Buscar...", back: "VOLVER", route: "CALCULAR RUTA", call: "LLAMAR", visit: "SITIO WEB", explore: "📍 EXPLORAR TODO", loading: "Cargando...", welcome: "Bienvenido", welcomeText: "Tu guía independiente para descubrir lo mejor de Vilamoura.", selectLang: "Idioma", start: "COMENZAR", dontShowAgain: "No mostrar de nuevo", cats: { hoteis: "Hoteles", comer: "Comer", bares: "Bares", lazer: "Ocio", golf: "Golf", lojas: "Tiendas", imobiliarias: "Inmuebles", util: "Útil", transportes: "Transporte", experiencias: "Experiencias" },
+push: {
+inactive: "📬 ¡Activa las notificaciones para promociones!",
+active: "🔔 Notificaciones activas",
+activate: "✅ Activar",
+deactivate: "Desactivar",
+loading: "⏳ Activando...",
+permissionDenied: "❌ ¡Necesitas permitir notificaciones para recibir promociones!",
+iosWarning: "🍏 En iOS, las notificaciones web tienen soporte limitado. Usa Chrome en Android o Desktop para mejores resultados.",
+activationSuccess: "✅ ¡Notificaciones activadas! Recibirás promociones y eventos.",
+activationError: "❌ No se pudieron activar las notificaciones. Intenta de nuevo.",
+deactivationSuccess: "❌ Notificaciones desactivadas."
+}
+}
 };
+
 const CATEGORIAS = [
 { id: 'hoteis', icon: 'fa-hotel', subcats: [
 { id: '5-estrelas', nome: '5 Estrelas', icon: 'fa-star' },
@@ -280,6 +355,7 @@ const CATEGORIAS = [
 { id: 'imobiliarias', icon: 'fa-house-chimney', subcats: null },
 { id: 'experiencias', icon: 'fa-ticket-alt', subcats: null }
 ];
+
 const getInfoText = (info, lang) => {
 if (!info) return '';
 if (typeof info === 'object' && info[lang]) return info[lang];
@@ -287,6 +363,7 @@ if (typeof info === 'object' && info.en) return info.en;
 if (typeof info === 'string') return info;
 return '';
 };
+
 const getPersonalizedMessage = (lang) => {
 const hour = new Date().getHours();
 const day = new Date().getDay();
@@ -335,6 +412,7 @@ if (hour >= 14 && hour < 19) return m.afternoon;
 if (hour >= 19 && hour < 23) return m.evening;
 return m.night;
 };
+
 function App() {
 const [view, setView] = useState('splash');
 const [lang, setLang] = useState('pt');
@@ -347,6 +425,7 @@ const [loading, setLoading] = useState(true);
 const [error, setError] = useState(null);
 const [dontShowAgain, setDontShowAgain] = useState(false);
 const [selectedLang, setSelectedLang] = useState('pt');
+// ✅ ESTADO PARA PUSH NOTIFICATIONS
 const [pushSupported, setPushSupported] = useState(false);
 const [pushSubscribed, setPushSubscribed] = useState(false);
 const [pushLoading, setPushLoading] = useState(false);
@@ -356,6 +435,8 @@ const markers = useRef([]);
 const directionsRenderer = useRef(null);
 const t = i18n[lang] || i18n.en;
 const personalizedMessage = getPersonalizedMessage(lang);
+
+// ✅ VERIFICAR SUPORTE PUSH
 useEffect(() => {
 const checkPushSupport = async () => {
 if ('serviceWorker' in navigator && 'PushManager' in window && 'Notification' in window) {
@@ -371,16 +452,28 @@ console.log('⚠️ Push check error:', err);
 };
 checkPushSupport();
 }, []);
+
+// ✅ PEDIR PERMISSÃO E SUBSCREVER (COM TRADUÇÕES + DETEÇÃO iOS)
 const requestPushPermission = async () => {
 setPushLoading(true);
+
+// ✅ DETETAR iOS E MOSTRAR AVISO AMIGÁVEL
+const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+if (isIOS) {
+alert(t.push.iosWarning);
+setPushLoading(false);
+return;
+}
+
 try {
 const permission = await Notification.requestPermission();
 if (permission !== 'granted') {
-alert('❌ Precisas de aceitar notificações para receber promoções!');
+alert(t.push.permissionDenied);
 setPushLoading(false);
 return;
 }
 const registration = await navigator.serviceWorker.register('/app/firebase-messaging-sw.js');
+// ⚠️ VAPID KEY - SUBSTITUIR PELA TUA DO FIREBASE CONSOLE
 const VAPID_KEY = 'bvk-QtJ_wcOsJ66oCEU-brXXEZDGN712hPoWlEhEons';
 const token = await messaging.getToken({ vapidKey: VAPID_KEY });
 await db.collection('push_subscriptions').add({
@@ -390,13 +483,15 @@ platform: navigator.platform,
 userAgent: navigator.userAgent
 });
 setPushSubscribed(true);
-alert('✅ Notificações ativadas! Vais receber promoções e eventos.');
+alert(t.push.activationSuccess);
 } catch (err) {
 console.error('❌ Erro push:', err);
-alert('❌ Não foi possível ativar notificações. Tenta novamente.');
+alert(t.push.activationError);
 }
 setPushLoading(false);
 };
+
+// ✅ CANCELAR SUBSCRIÇÃO (COM TRADUÇÃO)
 const unsubscribePush = async () => {
 try {
 const registration = await navigator.serviceWorker.ready;
@@ -408,26 +503,30 @@ const tokens = await db.collection('push_subscriptions')
 .get();
 tokens.forEach(doc => doc.ref.delete());
 setPushSubscribed(false);
-alert('❌ Notificações desativadas.');
+alert(t.push.deactivationSuccess);
 }
 } catch (err) {
 console.error('❌ Erro unsubscribe:', err);
 }
 };
+
 useEffect(() => {
 const savedLang = localStorage.getItem('vilamoura_lang');
 if (savedLang) { setLang(savedLang); setSelectedLang(savedLang); }
 }, []);
+
 const handleEnter = () => {
 const hasSeenWelcome = localStorage.getItem('vilamoura_welcome_seen');
 if (hasSeenWelcome) { setView('menu'); } else { setView('welcome'); }
 };
+
 const handleStart = () => {
 if (dontShowAgain) { localStorage.setItem('vilamoura_welcome_seen', 'true'); }
 localStorage.setItem('vilamoura_lang', selectedLang);
 setLang(selectedLang);
 setView('menu');
 };
+
 useEffect(() => {
 if (view === 'menu') {
 setLoading(true); setError(null);
@@ -440,6 +539,7 @@ if (dados.length === 0) setError('Nenhum negócio encontrado.');
 .catch((err) => { console.error("Erro Firestore:", err); setError('Erro ao carregar dados.'); setLoading(false); });
 }
 }, [view]);
+
 useEffect(() => {
 if (view === 'menu' && !googleMap.current && mapRef.current) {
 googleMap.current = new google.maps.Map(mapRef.current, {
@@ -453,6 +553,7 @@ suppressMarkers: true
 });
 }
 }, [view]);
+
 window.calcularRota = function(lat, lng) {
 const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
 if (isIOS) {
@@ -487,6 +588,7 @@ window.open(`https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}`, 
 { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
 );
 };
+
 const openMap = (items) => {
 setNavLevel('mapa');
 if(directionsRenderer.current) directionsRenderer.current.setDirections({routes: []});
@@ -537,6 +639,7 @@ markers.current.push(marker);
 if(!Array.isArray(items)) { googleMap.current.setCenter({lat: items.lat, lng: items.lng}); googleMap.current.setZoom(17); }
 else { googleMap.current.setZoom(14); googleMap.current.setCenter({ lat: 37.076, lng: -8.118 }); }
 };
+
 const getDestaqueFromPlan = (loc) => {
 if (loc.nivel_destaque) return loc.nivel_destaque;
 if (loc.subscricao?.ativo) {
@@ -546,6 +649,7 @@ if (plano === 'prata') return 2;
 }
 return 0;
 };
+
 const getSortedLocais = (locais) => {
 return [...locais].sort((a, b) => {
 const aDestaque = getDestaqueFromPlan(a);
@@ -554,6 +658,7 @@ if (aDestaque !== bDestaque) return bDestaque - aDestaque;
 return (a.nome || '').localeCompare(b.nome || '');
 });
 };
+
 const handleCatClick = (cat) => {
 if (cat.subcats && cat.subcats.length > 0) {
 setCatAtiva(cat);
@@ -564,10 +669,12 @@ setSubcatAtiva(null);
 setNavLevel('locais');
 }
 };
+
 const handleSubcatClick = (subcat) => {
 setSubcatAtiva(subcat);
 setNavLevel('locais');
 };
+
 const handleBack = () => {
 if (navLevel === 'locais' && subcatAtiva) {
 setSubcatAtiva(null);
@@ -580,6 +687,8 @@ setNavLevel('categorias');
 setNavLevel(catAtiva ? (subcatAtiva ? 'locais' : 'subcategorias') : 'categorias');
 }
 };
+
+// ✅ FILTRAR LOCAIS - VERSÃO FLEXÍVEL (case-insensitive, null-safe)
 const getFilteredLocais = () => {
 let filtered = locais;
 if (query.length > 0) {
@@ -605,31 +714,40 @@ return true;
 }
 return filtered;
 };
+
 const filtered = getFilteredLocais();
+
 if (view === 'splash') {
 return (<div className="splash-screen"><img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEh2RRJgYenNf-1LjVFu47Lj4dmOnLy9PPAcXvXN2zLle3kx2vlEAQXtIs6_C6g9H-90RCQqjSj41N6ZfeDT35GG17m8VJ3-h4iC041wDTLKTZJ7QAs5511gf8OimILN-XyQlT4v3Brs7yWpQSqL_DuvLKJrLvacbYvb7y9VZFEOyZ6FVTwLtPFtI_Xt5nZG/w400-h225/Vilamoura-Select_YourIndependentGuidetoVilamoura_retangular_2-.gif" alt="Vilamoura Select" style={{ width: '95%', maxWidth: '420px', height: 'auto', marginBottom: '35px', borderRadius: '8px' }} /><div style={{ position: 'absolute', bottom: '40px', left: '0', right: '0', display: 'flex', justifyContent: 'center', padding: '0 20px' }}><button style={{ width: '210px', padding: '15px 24px', background: '#003366', color: '#ffffff', border: '2px solid #ffffff', borderRadius: '32px', fontWeight: 'bold', fontSize: '15px', cursor: 'pointer' }} onClick={handleEnter}>{t.enter}</button></div></div>);
 }
+
 if (view === 'welcome') {
 return (<div className="welcome-screen"><div className="welcome-content"><div className="welcome-logo"><img src="/app/icon-512.png" alt="Vilamoura Select" /></div><h1 className="welcome-title">{i18n[selectedLang].welcome}</h1><p className="welcome-text">{i18n[selectedLang].welcomeText}</p><div style={{marginBottom: '25px'}}><div className="lang-select-title">{i18n[selectedLang].selectLang}</div><div className="lang-grid-flags">{languages.map(l => (<div key={l.code} className={`lang-flag-option ${selectedLang === l.code ? 'selected' : ''}`} onClick={() => setSelectedLang(l.code)}><img src={l.flag} alt={l.name} style={{ width: '24px', height: '16px', objectFit: 'cover', borderRadius: '2px' }} /></div>))}</div></div><button className="welcome-btn" onClick={handleStart}>{i18n[selectedLang].start}</button><label className="welcome-checkbox"><input type="checkbox" checked={dontShowAgain} onChange={(e) => setDontShowAgain(e.target.checked)} />{i18n[selectedLang].dontShowAgain}</label></div></div>);
 }
+
 return (
 <div style={{height: '100%'}} className={isDesktop() ? 'phone-screen' : ''}>
 <div className="lang-bar">{['pt','en','fr','de','es'].map(l => (<button key={l} className={`lang-btn ${lang === l ? 'active' : ''}`} onClick={() => setLang(l)}>{l.toUpperCase()}</button>))}</div>
 <div className="personalized-message">{personalizedMessage}</div>
+
+{/* ✅ BARRA DE NOTIFICAÇÕES PUSH - COM TRADUÇÕES */}
 {pushSupported && (
 <div className={`push-bar ${pushSubscribed ? 'active' : ''}`}>
 <span>
-{pushSubscribed ? '🔔 Notificações ativas' : '📬 Ativa notificações para promoções!'}
+{pushSubscribed ? t.push.active : t.push.inactive}
 </span>
 {pushSubscribed ? (
-<button className="push-btn danger" onClick={unsubscribePush}>Desativar</button>
+<button className="push-btn danger" onClick={unsubscribePush}>
+{t.push.deactivate}
+</button>
 ) : (
 <button className="push-btn" onClick={requestPushPermission} disabled={pushLoading}>
-{pushLoading ? '⏳ A ativar...' : '✅ Ativar'}
+{pushLoading ? t.push.loading : t.push.activate}
 </button>
 )}
 </div>
 )}
+
 <div className="app-content">
 <div className="menu-view" style={{ display: navLevel !== 'mapa' ? 'block' : 'none' }}>
 {navLevel !== 'categorias' && (
