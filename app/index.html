@@ -101,33 +101,38 @@ border: none; border-radius: 4px; cursor: pointer; font-size: 11px;
    ============================================ */
 
 /* Desktop (>1024px) - Com moldura elegante */
+/* ============================================
+   ✅ MOLDURA DE TELEMÓVEL PARA DESKTOP
+   ============================================ */
+
+/* Desktop (>1024px) - Com moldura */
 @media (min-width: 1025px) {
   body {
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 20px;
+    padding: 30px;
     min-height: 100vh;
   }
   
   #root {
-    max-width: 390px;
-    max-height: 844px;
-    height: 90vh;
-    position: relative;
+    width: 390px;
+    height: 844px;
+    max-height: 90vh;
     background: #000;
     border-radius: 45px;
     padding: 10px;
     box-shadow: 
       0 0 0 2px #333,
-      0 20px 60px rgba(0,0,0,0.4),
-      0 10px 30px rgba(0,0,0,0.3);
-    animation: phoneEnter 0.6s ease-out;
+      0 25px 80px rgba(0,0,0,0.5),
+      0 10px 40px rgba(0,0,0,0.3);
+    position: relative;
     overflow: hidden;
+    animation: phoneEnter 0.6s ease-out;
   }
   
-  /* Notch suave no topo */
+  /* Notch no topo */
   #root::before {
     content: '';
     position: absolute;
@@ -141,7 +146,7 @@ border: none; border-radius: 4px; cursor: pointer; font-size: 11px;
     z-index: 1000;
   }
   
-  /* Câmara discreta */
+  /* Câmara no notch */
   #root::after {
     content: '';
     position: absolute;
@@ -161,29 +166,40 @@ border: none; border-radius: 4px; cursor: pointer; font-size: 11px;
     0% { opacity: 0; transform: translateY(40px) scale(0.97); }
     100% { opacity: 1; transform: translateY(0) scale(1); }
   }
+  
+  /* Info desktop (canto inferior direito) */
+  .desktop-info {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    color: rgba(255,255,255,0.7);
+    font-size: 12px;
+    text-align: right;
+    z-index: 9999;
+  }
 }
 
 /* Tablet (769px - 1024px) */
 @media (min-width: 769px) and (max-width: 1024px) {
   body {
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    padding: 15px;
+    padding: 20px;
   }
   #root {
-    max-width: 375px;
-    max-height: 812px;
-    height: 85vh;
+    width: 375px;
+    height: 812px;
   }
 }
 
-/* Mobile (≤768px) - Normal, sem moldura */
+/* Mobile (≤768px) - Normal, SEM moldura */
 @media (max-width: 768px) {
   body {
     background: #f4f7f9;
     padding: 0;
+    display: block;
   }
   #root {
-    max-width: 100%;
+    width: 100%;
     height: 100%;
     border-radius: 0;
     padding: 0;
@@ -194,28 +210,36 @@ border: none; border-radius: 4px; cursor: pointer; font-size: 11px;
   #root::after {
     display: none;
   }
+  .desktop-info {
+    display: none;
+  }
 }
 
-/* ✅ CORRIGIR: Search bar não tapar categorias */
-.search-area {
-  padding: 15px;
-  position: sticky;
-  top: 0;
-  background: #f4f7f9;
-  z-index: 10;
-  padding-top: 20px; /* ✅ Espaço extra para o notch */
-}
-
-/* ✅ Garantir que o conteúdo da app mantém fundo branco */
-.app-content,
-.menu-view,
+/* ✅ Garantir que o conteúdo da app fica dentro da moldura */
 .splash-screen,
-.welcome-screen {
+.welcome-screen,
+.app-content {
   background: #f4f7f9;
+  border-radius: 35px;
+  overflow: hidden;
+}
+
+/* ✅ Search bar não tapar categorias */
+.search-area {
+  padding-top: 20px;
 }
 </style>
 </head>
 <body>
+<div id="root"></div>
+
+<!-- Info desktop (canto inferior direito) -->
+<div class="desktop-info">
+  <p>Vilamoura Select App</p>
+  <p style="font-size: 11px; opacity: 0.7;">Vista de desktop (simulação mobile)</p>
+</div>
+
+<script type="text/babel">
 <!-- ✅ MOLDURA DE TELEMÓVEL (SÓ DESKTOP) -->
 <div id="root"></div>
 
