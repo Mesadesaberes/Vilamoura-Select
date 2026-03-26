@@ -20,76 +20,6 @@
 <style>
 body, html { margin: 0; padding: 0; height: 100vh; width: 100%; overflow: hidden; background: #f4f7f9; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
 #root { height: 100%; width: 100%; }
-
-/* ✅ MOLDURA DE TELEMÓVEL (SÓ DESKTOP) */
-@media (min-width: 769px) {
-  body {
-    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 40px;
-  }
-  #root {
-    max-width: 414px;
-    height: 896px;
-    position: relative;
-  }
-  .phone-frame {
-    position: relative;
-    width: 100%;
-    height: 100%;
-    background: #000;
-    border-radius: 55px;
-    padding: 12px;
-    box-shadow: 
-      0 0 0 3px #2d2d2d,
-      0 0 0 6px #1a1a1a,
-      0 50px 100px -20px rgba(0,0,0,0.7),
-      0 30px 60px -30px rgba(0,0,0,0.8),
-      inset 0 0 40px rgba(255,255,255,0.1);
-  }
-  .phone-frame::before {
-    content: '';
-    position: absolute;
-    top: 25px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 180px;
-    height: 35px;
-    background: #000;
-    border-radius: 0 0 20px 20px;
-    z-index: 1000;
-  }
-  .phone-frame::after {
-    content: '';
-    position: absolute;
-    top: 35px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 8px;
-    height: 8px;
-    background: #1a1a2e;
-    border-radius: 50%;
-    z-index: 1001;
-    box-shadow: inset 0 0 2px rgba(255,255,255,0.3);
-  }
-  .phone-screen {
-    width: 100%;
-    height: 100%;
-    background: #fff;
-    border-radius: 45px;
-    overflow: hidden;
-    position: relative;
-  }
-}
-
-/* ✅ MOBILE - NORMAL (SEM MOLDURA) */
-@media (max-width: 768px) {
-  body { background: #f4f7f9; }
-  #root { max-width: 100%; height: 100%; }
-}
-
 .splash-screen { position: fixed; inset: 0; background: #ffffff; display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 1000; }
 .welcome-screen { position: fixed; inset: 0; background: linear-gradient(135deg, #003366 0%, #004080 100%); display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 1001; padding: 30px 20px; color: #ffffff; overflow-y: auto; }
 .welcome-content { max-width: 380px; text-align: center; width: 100%; }
@@ -137,7 +67,6 @@ color: #003366; padding: 4px 10px; border-radius: 12px;
 font-size: 11px; font-weight: bold; box-shadow: 0 2px 8px rgba(0,0,0,0.2);
 z-index: 10; white-space: nowrap; border: 1px solid #b8860b;
 }
-/* ✅ BARRA DE NOTIFICAÇÕES PUSH */
 .push-bar {
 background: #fff3cd; color: #856404;
 padding: 8px 15px; font-size: 12px; text-align: center;
@@ -162,36 +91,10 @@ border: none; border-radius: 4px; cursor: pointer; font-size: 11px;
 .error-msg { text-align: center; padding: 20px; color: #c00; background: #ffe6e6; margin: 10px 15px; border-radius: 8px; }
 .nav-header { padding: 15px; display: flex; gap: 10px; align-items: center; background: #fff; border-bottom: 1px solid #eee; }
 .nav-title { font-weight: bold; color: #003366; font-size: 16px; }
-
-/* ✅ INFO DESKTOP (Canto inferior direito) */
-.desktop-info {
-  position: fixed;
-  bottom: 20px;
-  right: 20px;
-  color: rgba(255,255,255,0.6);
-  font-size: 13px;
-  text-align: right;
-  display: none;
-}
-@media (min-width: 769px) {
-  .desktop-info { display: block; }
-}
 </style>
 </head>
 <body>
-<div id="root">
-  <!-- ✅ MOLDURA DE TELEMÓVEL (SÓ DESKTOP) -->
-  <div class="phone-frame" style="display: none;">
-    <div class="phone-screen"></div>
-  </div>
-</div>
-
-<!-- ✅ INFO DESKTOP -->
-<div class="desktop-info">
-  <p>Vilamoura Select App</p>
-  <p style="font-size: 11px; opacity: 0.7;">Vista de desktop (simulação mobile)</p>
-</div>
-
+<div id="root"></div>
 <script type="text/babel">
 const { useState, useEffect, useRef } = React;
 const firebaseConfig = {
@@ -206,10 +109,6 @@ if (!firebase.apps.length) { firebase.initializeApp(firebaseConfig); }
 const db = firebase.firestore();
 const messaging = firebase.messaging();
 
-// ✅ DETETAR SE É DESKTOP
-const isDesktop = () => window.innerWidth > 768;
-
-// ✅ FUNÇÃO PARA LIMPAR URLs DE IMAGENS
 const cleanImageUrl = (url) => {
 if (!url) return '';
 return url.trim().replace(/\s+/g, '');
@@ -425,7 +324,6 @@ const [loading, setLoading] = useState(true);
 const [error, setError] = useState(null);
 const [dontShowAgain, setDontShowAgain] = useState(false);
 const [selectedLang, setSelectedLang] = useState('pt');
-// ✅ ESTADO PARA PUSH NOTIFICATIONS
 const [pushSupported, setPushSupported] = useState(false);
 const [pushSubscribed, setPushSubscribed] = useState(false);
 const [pushLoading, setPushLoading] = useState(false);
@@ -436,7 +334,6 @@ const directionsRenderer = useRef(null);
 const t = i18n[lang] || i18n.en;
 const personalizedMessage = getPersonalizedMessage(lang);
 
-// ✅ VERIFICAR SUPORTE PUSH
 useEffect(() => {
 const checkPushSupport = async () => {
 if ('serviceWorker' in navigator && 'PushManager' in window && 'Notification' in window) {
@@ -453,11 +350,11 @@ console.log('⚠️ Push check error:', err);
 checkPushSupport();
 }, []);
 
-// ✅ PEDIR PERMISSÃO E SUBSCREVER (COM TRADUÇÕES + DETEÇÃO iOS)
+// ✅ PEDIR PERMISSÃO E SUBSCREVER (COM TRADUÇÕES)
 const requestPushPermission = async () => {
 setPushLoading(true);
 
-// ✅ DETETAR iOS E MOSTRAR AVISO AMIGÁVEL
+// ✅ DETETAR iOS E MOSTRAR AVISO
 const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
 if (isIOS) {
 alert(t.push.iosWarning);
@@ -472,9 +369,17 @@ alert(t.push.permissionDenied);
 setPushLoading(false);
 return;
 }
+
+// ✅ SERVICE WORKER CORRETO (sw.js unificado)
 const registration = await navigator.serviceWorker.register('/app/sw.js');
-// ⚠️ VAPID KEY - SUBSTITUIR PELA TUA DO FIREBASE CONSOLE
+
+// ⚠️ ============================================
+// ⚠️ COLOCA A TUA VAPID_KEY ABAIXO (entre aspas)
+// ⚠️ Firebase Console → Project Settings → Cloud Messaging → Web Push certificates
+// ⚠️ ============================================
 const VAPID_KEY = 'BEXGIMrOwMJ6BAppO1yi6DO16bfh0mYoSS_kOlyLaQRM-hBw51eZ6dznz25jHt3LHZHwlkw_FzEZ_b7bApjks58';
+// ⚠️ ============================================
+
 const token = await messaging.getToken({ vapidKey: VAPID_KEY });
 await db.collection('push_subscriptions').add({
 token,
@@ -688,7 +593,7 @@ setNavLevel(catAtiva ? (subcatAtiva ? 'locais' : 'subcategorias') : 'categorias'
 }
 };
 
-// ✅ FILTRAR LOCAIS - VERSÃO FLEXÍVEL (case-insensitive, null-safe)
+// ✅ FILTRAR LOCAIS - VERSÃO FLEXÍVEL
 const getFilteredLocais = () => {
 let filtered = locais;
 if (query.length > 0) {
@@ -726,7 +631,7 @@ return (<div className="welcome-screen"><div className="welcome-content"><div cl
 }
 
 return (
-<div style={{height: '100%'}} className={isDesktop() ? 'phone-screen' : ''}>
+<div style={{height: '100%'}}>
 <div className="lang-bar">{['pt','en','fr','de','es'].map(l => (<button key={l} className={`lang-btn ${lang === l ? 'active' : ''}`} onClick={() => setLang(l)}>{l.toUpperCase()}</button>))}</div>
 <div className="personalized-message">{personalizedMessage}</div>
 
