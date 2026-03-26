@@ -350,62 +350,25 @@ console.log('⚠️ Push check error:', err);
 checkPushSupport();
 }, []);
 
-// ✅ PEDIR PERMISSÃO E SUBSCREVER (COM TRADUÇÕES)
+// ✅ PEDIR PERMISSÃO E SUBSCREVER (COM TRADUÇÕES) - FUNÇÃO async CORRETA
 const requestPushPermission = async () => {
-  console.log('🔔 Push: A iniciar processo...');
-  setPushLoading(true);
-  
-  // ✅ DETETAR iOS
-  const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
-  if (isIOS) {
-    console.log('⚠️ Push: iOS detetado');
-    alert(t.push.iosWarning);
-    setPushLoading(false);
-    return;
-  }
-  
-  try {
-    const permission = await Notification.requestPermission();
-    console.log('🔔 Push: Permissão =', permission);
-    
-    if (permission !== 'granted') {
-      alert(t.push.permissionDenied);
-      setPushLoading(false);
-      return;
-    }
-    
-    // ✅ Registar service worker
-    const registration = await navigator.serviceWorker.register('/app/sw.js');
-    console.log('🔔 Push: Service Worker registado:', registration.scope);
-    
-    // ✅ VAPID_KEY
-    const VAPID_KEY = 'BEXGIMrOwMJ6BAppO1yi6DO16bfh0mYoSS_kOlyLaQRM-hBw51eZ6dznz25jHt3LHZHwlkw_FzEZ_b7bApjks58';
-    console.log('🔔 Push: VAPID_KEY length =', VAPID_KEY.length);
-    
-    // ✅ Obter token
-    console.log('🔔 Push: A obter token...');
-    const token = await messaging.getToken({ vapidKey: VAPID_KEY });
-    console.log('✅ Push: Token obtido:', token.substring(0, 50) + '...');
-    
-    // ✅ Guardar no Firestore
-    console.log('🔔 Push: A guardar subscrição...');
-    await db.collection('push_subscriptions').add({
-      token,
-      createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-      platform: navigator.platform,
-      userAgent: navigator.userAgent
-    });
-    console.log('✅ Push: Subscrição guardada!');
-    
-    setPushSubscribed(true);
-    alert(t.push.activationSuccess);
-    
-  } catch (err) {
-    console.error('❌ Erro push:', err.code, err.message);
-    alert(t.push.activationError + '\n\nConsole: ' + err.message);
-  }
-  setPushLoading(false);
-};
+setPushLoading(true);
+
+// ✅ DETETAR iOS E MOSTRAR AVISO
+const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+if (isIOS) {
+alert(t.push.iosWarning);
+setPushLoading(false);
+return;
+}
+
+try {
+const permission = await Notification.requestPermission();
+if (permission !== 'granted') {
+alert(t.push.permissionDenied);
+setPushLoading(false);
+return;
+}
 
 // ✅ SERVICE WORKER CORRETO (sw.js unificado)
 const registration = await navigator.serviceWorker.register('/app/sw.js');
@@ -414,7 +377,7 @@ const registration = await navigator.serviceWorker.register('/app/sw.js');
 // ⚠️ COLOCA A TUA VAPID_KEY ABAIXO (entre aspas)
 // ⚠️ Firebase Console → Project Settings → Cloud Messaging → Web Push certificates
 // ⚠️ ============================================
-const VAPID_KEY = 'BEXGIMrOwMJ6BAppO1yi6DO16bfh0mYoSS_kOlyLaQRM-hBw51eZ6dznz25jHt3LHZHwlkw_FzEZ_b7bApjks58';
+const VAPID_KEY = 'YOUR_VAPID_KEY_HERE';
 // ⚠️ ============================================
 
 const token = await messaging.getToken({ vapidKey: VAPID_KEY });
