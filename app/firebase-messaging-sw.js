@@ -29,7 +29,7 @@ messaging.onBackgroundMessage((payload) => {
     body,
     icon: icon || '/app/icon-192.png',
     badge: '/app/icon-192.png',
-    data: { url: click_action || '/app/' },
+     { url: click_action || '/app/' },
     actions: [
       { action: 'open', title: 'Abrir' },
       { action: 'close', title: 'Fechar' }
