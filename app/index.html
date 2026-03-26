@@ -1,677 +1,651 @@
 <!DOCTYPE html>
 <html lang="pt">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Vilamoura Select</title>
-    <link rel="icon" type="image/png" href="/favicon.png">
-    <link rel="manifest" href="/app/manifest.json">
-    <meta name="theme-color" content="#003366">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="mobile-web-app-capable" content="yes">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
-    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
-    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCqRtZgE7hw-znacoAqXuXZ4SEGVuXWudo&libraries=places"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-messaging-compat.js"></script>
-    <style>
-        body, html { margin: 0; padding: 0; height: 100vh; width: 100%; overflow: hidden; background: #f4f7f9; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-        #root { height: 100%; width: 100%; }
-        .splash-screen { position: fixed; inset: 0; background: #ffffff; display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 1000; }
-        .welcome-screen { position: fixed; inset: 0; background: linear-gradient(135deg, #003366 0%, #004080 100%); display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 1001; padding: 30px 20px; color: #ffffff; overflow-y: auto; }
-        .welcome-content { max-width: 380px; text-align: center; width: 100%; }
-        .welcome-logo { width: 100px; height: 100px; background: #ffffff; border-radius: 22px; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px auto; overflow: hidden; }
-        .welcome-logo img { width: 100%; height: 100%; object-fit: cover; }
-        .welcome-title { font-size: 24px; font-weight: bold; margin-bottom: 8px; color: #c5a059; }
-        .welcome-text { font-size: 14px; line-height: 1.6; margin-bottom: 25px; opacity: 0.95; }
-        .lang-select-title { font-size: 11px; margin-bottom: 12px; opacity: 0.8; text-transform: uppercase; }
-        .lang-grid-flags { display: flex; justify-content: center; gap: 10px; margin-bottom: 25px; }
-        .lang-flag-option { width: 42px; height: 34px; background: rgba(255,255,255,0.15); border: 2px solid transparent; border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
-        .lang-flag-option:hover { background: rgba(255,255,255,0.3); transform: scale(1.08); }
-        .lang-flag-option.selected { background: rgba(197, 160, 89, 0.3); border-color: #c5a059; }
-        .welcome-btn { width: 100%; max-width: 260px; padding: 14px 24px; background: #c5a059; color: #003366; border: none; border-radius: 28px; font-weight: bold; font-size: 15px; cursor: pointer; margin-bottom: 12px; }
-        .welcome-checkbox { display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 12px; opacity: 0.75; cursor: pointer; }
-        .lang-bar { background: #003366; display: flex; justify-content: center; gap: 4px; padding: 8px; border-bottom: 2px solid #c5a059; height: 45px; }
-        .lang-btn { background: rgba(255,255,255,0.1); border: 1px solid #fff; color: #fff; padding: 4px 6px; border-radius: 6px; cursor: pointer; font-size: 10px; font-weight: bold; min-width: 40px; }
-        .lang-btn.active { background: #c5a059; border-color: #c5a059; }
-        .personalized-message { background: linear-gradient(135deg, #003366 0%, #004080 100%); color: #ffffff; padding: 10px 15px; font-size: 13px; text-align: center; font-weight: 500; }
-        .app-content { height: calc(100vh - 90px); position: relative; width: 100%; }
-        .menu-view { height: 100%; overflow-y: auto; padding-bottom: 20px; }
-        .search-area { padding: 15px; position: sticky; top: 0; background: #f4f7f9; z-index: 10; }
-        .search-box { position: relative; }
-        .search-box input { width: 100%; padding: 12px 40px; border-radius: 25px; border: 1px solid #ddd; box-sizing: border-box; }
-        .search-box i { position: absolute; left: 15px; top: 14px; color: #888; }
-        .grid-cats { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding: 0 15px; }
-        .cat-card { background: #fff; border-radius: 15px; text-align: center; padding: 20px 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); cursor: pointer; border: 1px solid #eee; transition: transform 0.2s; }
-        .cat-card:hover { transform: translateY(-3px); box-shadow: 0 6px 15px rgba(0,0,0,0.1); }
-        .cat-card i { font-size: 28px; color: #003366; margin-bottom: 10px; }
-        .cat-card div { font-weight: 600; font-size: 13px; color: #003366; }
-        .subcat-card { background: #fff; border-radius: 12px; text-align: center; padding: 15px 10px; box-shadow: 0 3px 8px rgba(0,0,0,0.05); cursor: pointer; border: 1px solid #eee; transition: all 0.2s; }
-        .subcat-card:hover { transform: translateY(-2px); box-shadow: 0 5px 12px rgba(0,0,0,0.1); border-color: #c5a059; }
-        .subcat-card i { font-size: 24px; color: #003366; margin-bottom: 8px; }
-        .subcat-card div { font-weight: 600; font-size: 12px; color: #003366; }
-        .explore-below-btn { width: 100%; max-width: 300px; padding: 12px; border-radius: 25px; background: #27ae60; color: white; border: none; font-weight: bold; cursor: pointer; margin: 20px auto 10px auto; display: flex; align-items: center; justify-content: center; gap: 8px; }
-        .map-view { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 20; background: white; }
-        .btn-back-map { position: absolute; top: 15px; left: 15px; z-index: 30; padding: 10px 20px; border-radius: 25px; background: #003366; color: white; border: 2px solid white; font-weight: bold; cursor: pointer; }
-        .btn-back-nav { padding: 10px 15px; background: none; border: none; color: #003366; font-weight: bold; cursor: pointer; font-size: 14px; }
-        #map-canvas { width: 100%; height: 100%; }
-        
-        .item-row { display: flex; gap: 12px; background: #fff; padding: 12px; border-radius: 12px; margin: 0 15px 10px 15px; align-items: center; box-shadow: 0 2px 5px rgba(0,0,0,0.05); cursor: pointer; position: relative; overflow: visible !important; }
-        .item-row img { width: 50px; height: 50px; border-radius: 8px; object-fit: cover; }
-        
-        .featured-badge {
-          position: absolute; top: -6px; right: -6px;
-          background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%);
-          color: #003366; padding: 4px 10px; border-radius: 12px;
-          font-size: 11px; font-weight: bold; box-shadow: 0 2px 8px rgba(0,0,0,0.2);
-          z-index: 10; white-space: nowrap; border: 1px solid #b8860b;
-        }
-        
-        /* ✅ BARRA DE NOTIFICAÇÕES PUSH */
-        .push-bar {
-          background: #fff3cd; color: #856404;
-          padding: 8px 15px; font-size: 12px; text-align: center;
-          border-bottom: 1px solid #ffeeba;
-          display: flex; align-items: center; justify-content: center; gap: 10px;
-        }
-        .push-bar.active { background: #d4edda; color: #155724; border-color: #c3e6cb; }
-        .push-btn {
-          padding: 4px 10px; background: #28a745; color: #fff;
-          border: none; border-radius: 4px; cursor: pointer; font-size: 11px;
-        }
-        .push-btn:hover { background: #218838; }
-        .push-btn:disabled { background: #ccc; cursor: not-allowed; }
-        .push-btn.danger { background: #dc3545; }
-        .push-btn.danger:hover { background: #c82333; }
-        
-        .info-buttons { display: flex; flex-direction: column; gap: 6px; margin-top: 10px; }
-        .btn-info { display: block; text-align: center; padding: 10px; border-radius: 6px; text-decoration: none; color: white; font-size: 11px; font-weight: bold; border: none; cursor: pointer; }
-        .bg-blue { background: #003366; }
-        .bg-green { background: #27ae60; }
-        .bg-gold { background: #c5a059; }
-        .loader { text-align: center; padding: 40px; color: #666; }
-        .error-msg { text-align: center; padding: 20px; color: #c00; background: #ffe6e6; margin: 10px 15px; border-radius: 8px; }
-        .nav-header { padding: 15px; display: flex; gap: 10px; align-items: center; background: #fff; border-bottom: 1px solid #eee; }
-        .nav-title { font-weight: bold; color: #003366; font-size: 16px; }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Vilamoura Select</title>
+<link rel="icon" type="image/png" href="/favicon.png">
+<link rel="manifest" href="/app/manifest.json">
+<meta name="theme-color" content="#003366">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+<script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCqRtZgE7hw-znacoAqXuXZ4SEGVuXWudo&libraries=places"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-messaging-compat.js"></script>
+<style>
+body, html { margin: 0; padding: 0; height: 100vh; width: 100%; overflow: hidden; background: #f4f7f9; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+#root { height: 100%; width: 100%; }
+.splash-screen { position: fixed; inset: 0; background: #ffffff; display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 1000; }
+.welcome-screen { position: fixed; inset: 0; background: linear-gradient(135deg, #003366 0%, #004080 100%); display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 1001; padding: 30px 20px; color: #ffffff; overflow-y: auto; }
+.welcome-content { max-width: 380px; text-align: center; width: 100%; }
+.welcome-logo { width: 100px; height: 100px; background: #ffffff; border-radius: 22px; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px auto; overflow: hidden; }
+.welcome-logo img { width: 100%; height: 100%; object-fit: cover; }
+.welcome-title { font-size: 24px; font-weight: bold; margin-bottom: 8px; color: #c5a059; }
+.welcome-text { font-size: 14px; line-height: 1.6; margin-bottom: 25px; opacity: 0.95; }
+.lang-select-title { font-size: 11px; margin-bottom: 12px; opacity: 0.8; text-transform: uppercase; }
+.lang-grid-flags { display: flex; justify-content: center; gap: 10px; margin-bottom: 25px; }
+.lang-flag-option { width: 42px; height: 34px; background: rgba(255,255,255,0.15); border: 2px solid transparent; border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+.lang-flag-option:hover { background: rgba(255,255,255,0.3); transform: scale(1.08); }
+.lang-flag-option.selected { background: rgba(197, 160, 89, 0.3); border-color: #c5a059; }
+.welcome-btn { width: 100%; max-width: 260px; padding: 14px 24px; background: #c5a059; color: #003366; border: none; border-radius: 28px; font-weight: bold; font-size: 15px; cursor: pointer; margin-bottom: 12px; }
+.welcome-checkbox { display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 12px; opacity: 0.75; cursor: pointer; }
+.lang-bar { background: #003366; display: flex; justify-content: center; gap: 4px; padding: 8px; border-bottom: 2px solid #c5a059; height: 45px; }
+.lang-btn { background: rgba(255,255,255,0.1); border: 1px solid #fff; color: #fff; padding: 4px 6px; border-radius: 6px; cursor: pointer; font-size: 10px; font-weight: bold; min-width: 40px; }
+.lang-btn.active { background: #c5a059; border-color: #c5a059; }
+.personalized-message { background: linear-gradient(135deg, #003366 0%, #004080 100%); color: #ffffff; padding: 10px 15px; font-size: 13px; text-align: center; font-weight: 500; }
+.app-content { height: calc(100vh - 90px); position: relative; width: 100%; }
+.menu-view { height: 100%; overflow-y: auto; padding-bottom: 20px; }
+.search-area { padding: 15px; position: sticky; top: 0; background: #f4f7f9; z-index: 10; }
+.search-box { position: relative; }
+.search-box input { width: 100%; padding: 12px 40px; border-radius: 25px; border: 1px solid #ddd; box-sizing: border-box; }
+.search-box i { position: absolute; left: 15px; top: 14px; color: #888; }
+.grid-cats { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding: 0 15px; }
+.cat-card { background: #fff; border-radius: 15px; text-align: center; padding: 20px 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); cursor: pointer; border: 1px solid #eee; transition: transform 0.2s; }
+.cat-card:hover { transform: translateY(-3px); box-shadow: 0 6px 15px rgba(0,0,0,0.1); }
+.cat-card i { font-size: 28px; color: #003366; margin-bottom: 10px; }
+.cat-card div { font-weight: 600; font-size: 13px; color: #003366; }
+.subcat-card { background: #fff; border-radius: 12px; text-align: center; padding: 15px 10px; box-shadow: 0 3px 8px rgba(0,0,0,0.05); cursor: pointer; border: 1px solid #eee; transition: all 0.2s; }
+.subcat-card:hover { transform: translateY(-2px); box-shadow: 0 5px 12px rgba(0,0,0,0.1); border-color: #c5a059; }
+.subcat-card i { font-size: 24px; color: #003366; margin-bottom: 8px; }
+.subcat-card div { font-weight: 600; font-size: 12px; color: #003366; }
+.explore-below-btn { width: 100%; max-width: 300px; padding: 12px; border-radius: 25px; background: #27ae60; color: white; border: none; font-weight: bold; cursor: pointer; margin: 20px auto 10px auto; display: flex; align-items: center; justify-content: center; gap: 8px; }
+.map-view { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 20; background: white; }
+.btn-back-map { position: absolute; top: 15px; left: 15px; z-index: 30; padding: 10px 20px; border-radius: 25px; background: #003366; color: white; border: 2px solid white; font-weight: bold; cursor: pointer; }
+.btn-back-nav { padding: 10px 15px; background: none; border: none; color: #003366; font-weight: bold; cursor: pointer; font-size: 14px; }
+#map-canvas { width: 100%; height: 100%; }
+.item-row { display: flex; gap: 12px; background: #fff; padding: 12px; border-radius: 12px; margin: 0 15px 10px 15px; align-items: center; box-shadow: 0 2px 5px rgba(0,0,0,0.05); cursor: pointer; position: relative; overflow: visible !important; }
+.item-row img { width: 50px; height: 50px; border-radius: 8px; object-fit: cover; }
+.featured-badge {
+position: absolute; top: -6px; right: -6px;
+background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%);
+color: #003366; padding: 4px 10px; border-radius: 12px;
+font-size: 11px; font-weight: bold; box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+z-index: 10; white-space: nowrap; border: 1px solid #b8860b;
+}
+/* ✅ BARRA DE NOTIFICAÇÕES PUSH */
+.push-bar {
+background: #fff3cd; color: #856404;
+padding: 8px 15px; font-size: 12px; text-align: center;
+border-bottom: 1px solid #ffeeba;
+display: flex; align-items: center; justify-content: center; gap: 10px;
+}
+.push-bar.active { background: #d4edda; color: #155724; border-color: #c3e6cb; }
+.push-btn {
+padding: 4px 10px; background: #28a745; color: #fff;
+border: none; border-radius: 4px; cursor: pointer; font-size: 11px;
+}
+.push-btn:hover { background: #218838; }
+.push-btn:disabled { background: #ccc; cursor: not-allowed; }
+.push-btn.danger { background: #dc3545; }
+.push-btn.danger:hover { background: #c82333; }
+.info-buttons { display: flex; flex-direction: column; gap: 6px; margin-top: 10px; }
+.btn-info { display: block; text-align: center; padding: 10px; border-radius: 6px; text-decoration: none; color: white; font-size: 11px; font-weight: bold; border: none; cursor: pointer; }
+.bg-blue { background: #003366; }
+.bg-green { background: #27ae60; }
+.bg-gold { background: #c5a059; }
+.loader { text-align: center; padding: 40px; color: #666; }
+.error-msg { text-align: center; padding: 20px; color: #c00; background: #ffe6e6; margin: 10px 15px; border-radius: 8px; }
+.nav-header { padding: 15px; display: flex; gap: 10px; align-items: center; background: #fff; border-bottom: 1px solid #eee; }
+.nav-title { font-weight: bold; color: #003366; font-size: 16px; }
+</style>
 </head>
 <body>
-    <div id="root"></div>
-    <script type="text/babel">
-        const { useState, useEffect, useRef } = React;
-        const firebaseConfig = {
-            apiKey: "AIzaSyDfUDqEJxVnWbQgn6LEVQAjlKeBJdp0vyY",
-            authDomain: "vilamoura-select.firebaseapp.com",
-            projectId: "vilamoura-select",
-            storageBucket: "vilamoura-select.firebasestorage.app",
-            messagingSenderId: "189990454398",
-            appId: "1:189990454398:web:3d9eac9cf3a84b0510c42f"
-        };
-        if (!firebase.apps.length) { firebase.initializeApp(firebaseConfig); }
-        const db = firebase.firestore();
-        const messaging = firebase.messaging();
-        
-        const languages = [
-            { code: 'pt', flag: 'https://flagcdn.com/w40/pt.png', name: 'Português' },
-            { code: 'en', flag: 'https://flagcdn.com/w40/gb.png', name: 'English' },
-            { code: 'fr', flag: 'https://flagcdn.com/w40/fr.png', name: 'Français' },
-            { code: 'de', flag: 'https://flagcdn.com/w40/de.png', name: 'Deutsch' },
-            { code: 'es', flag: 'https://flagcdn.com/w40/es.png', name: 'Español' }
-        ];
-        const i18n = {
-          pt: { enter: "ENTRAR", search: "Procurar...", back: "VOLTAR", route: "CALCULAR ROTA", call: "LIGAR", visit: "WEBSITE", explore: "📍 EXPLORAR TUDO", loading: "A carregar...", welcome: "Bem-vindo", welcomeText: "O seu guia independente para descobrir o melhor de Vilamoura.", selectLang: "Idioma", start: "COMEÇAR", dontShowAgain: "Não mostrar novamente", cats: { hoteis: "Hotéis", comer: "Comer", bares: "Bares", lazer: "Lazer", golf: "Golfe", lojas: "Lojas", imobiliarias: "Imóveis", util: "Útil", transportes: "Transportes", experiencias: "Experiências" } },
-          en: { enter: "ENTER", search: "Search...", back: "BACK", route: "GET ROUTE", call: "CALL", visit: "WEBSITE", explore: "📍 EXPLORE ALL", loading: "Loading...", welcome: "Welcome", welcomeText: "Your independent guide to discover the best of Vilamoura.", selectLang: "Language", start: "GET STARTED", dontShowAgain: "Don't show again", cats: { hoteis: "Hotels", comer: "Eat", bares: "Bars", lazer: "Leisure", golf: "Golf", lojas: "Shops", imobiliarias: "Property", util: "Useful", transportes: "Transport", experiencias: "Experiences" } },
-          fr: { enter: "ENTRER", search: "Chercher...", back: "RETOUR", route: "ITINÉRAIRE", call: "APPELER", visit: "SITE WEB", explore: "📍 TOUT VOIR", loading: "Chargement...", welcome: "Bienvenue", welcomeText: "Votre guide indépendant pour découvrir le meilleur de Vilamoura.", selectLang: "Langue", start: "COMMENCER", dontShowAgain: "Ne plus afficher", cats: { hoteis: "Hôtels", comer: "Manger", bares: "Bars", lazer: "Loisirs", golf: "Golf", lojas: "Boutiques", imobiliarias: "Immo", util: "Utile", transportes: "Transports", experiencias: "Expériences" } },
-          de: { enter: "EINTRETEN", search: "Suche...", back: "ZURÜCK", route: "ROUTE BERECHNEN", call: "ANRUFEN", visit: "WEBSEITE", explore: "📍 ALLES SEHEN", loading: "Laden...", welcome: "Willkommen", welcomeText: "Ihr unabhängiger Reiseführer für Vilamoura.", selectLang: "Sprache", start: "STARTEN", dontShowAgain: "Nicht wieder anzeigen", cats: { hoteis: "Hotels", comer: "Essen", bares: "Bars", lazer: "Freizeit", golf: "Golf", lojas: "Läden", imobiliarias: "Immo", util: "Nützlich", transportes: "Transport", experiencias: "Erlebnisse" } },
-          es: { enter: "ENTRAR", search: "Buscar...", back: "VOLVER", route: "CALCULAR RUTA", call: "LLAMAR", visit: "SITIO WEB", explore: "📍 EXPLORAR TODO", loading: "Cargando...", welcome: "Bienvenido", welcomeText: "Tu guía independiente para descubrir lo mejor de Vilamoura.", selectLang: "Idioma", start: "COMENZAR", dontShowAgain: "No mostrar de nuevo", cats: { hoteis: "Hoteles", comer: "Comer", bares: "Bares", lazer: "Ocio", golf: "Golf", lojas: "Tiendas", imobiliarias: "Inmuebles", util: "Útil", transportes: "Transporte", experiencias: "Experiencias" } }
-        };
-        
-        const CATEGORIAS = [
-          { id: 'hoteis', icon: 'fa-hotel', subcats: [
-              { id: '5-estrelas', nome: '5 Estrelas', icon: 'fa-star' },
-              { id: '4-estrelas', nome: '4 Estrelas', icon: 'fa-star' },
-              { id: 'apartamentos', nome: 'Apartamentos', icon: 'fa-building' }
-            ]},
-          { id: 'comer', icon: 'fa-utensils', subcats: [
-              { id: 'steakhouses', nome: 'Steakhouses', icon: 'fa-drumstick-bite' },
-              { id: 'seafood', nome: 'Seafood', icon: 'fa-fish' },
-              { id: 'tradicionais', nome: 'Tradicionais', icon: 'fa-utensils' },
-              { id: 'italianos', nome: 'Italianos', icon: 'fa-pizza-slice' },
-              { id: 'chineses', nome: 'Chineses', icon: 'fa-bowl-rice' },
-              { id: 'thai', nome: 'Thai', icon: 'fa-bowl-food' },
-              { id: 'indianos', nome: 'Indianos', icon: 'fa-pepper-hot' }
-            ]},
-          { id: 'bares', icon: 'fa-glass-cheers', subcats: [
-              { id: 'wine-cocktail', nome: 'Wine & Cocktail', icon: 'fa-wine-glass' },
-              { id: 'sports', nome: 'Sports Bars', icon: 'fa-tv' },
-              { id: 'beach', nome: 'Beach Bars', icon: 'fa-umbrella-beach' },
-              { id: 'nightclub', nome: 'Nightclubs', icon: 'fa-music' }
-            ]},
-          { id: 'lazer', icon: 'fa-camera-retro', subcats: [
-              { id: 'casino', nome: 'Casino', icon: 'fa-dice' },
-              { id: 'spa', nome: 'Spa & Massagens', icon: 'fa-spa' },
-              { id: 'interesse', nome: 'Interesse Local', icon: 'fa-landmark' },
-              { id: 'atividades', nome: 'Atividades', icon: 'fa-person-hiking' }
-            ]},
-          { id: 'golf', icon: 'fa-golf-ball-tee', subcats: [
-              { id: 'campos', nome: 'Campos', icon: 'fa-golf-ball-tee' },
-              { id: 'academias', nome: 'Academias', icon: 'fa-graduation-cap' },
-              { id: 'pro-shops', nome: 'Pro Shops', icon: 'fa-shop' }
-            ]},
-          { id: 'lojas', icon: 'fa-bag-shopping', subcats: [
-              { id: 'moda', nome: 'Moda', icon: 'fa-shirt' },
-              { id: 'souvenirs', nome: 'Souvenirs', icon: 'fa-gift' },
-              { id: 'sapataria', nome: 'Sapataria', icon: 'fa-shoe-prints' },
-              { id: 'aderecos', nome: 'Adereços', icon: 'fa-glasses' }
-            ]},
-          { id: 'util', icon: 'fa-shield-halved', subcats: [
-              { id: 'saude', nome: 'Saúde', icon: 'fa-hospital' },
-              { id: 'bancos', nome: 'Bancos & Câmbios', icon: 'fa-building-columns' },
-              { id: 'seguranca', nome: 'Segurança', icon: 'fa-shield' },
-              { id: 'correios', nome: 'Correios', icon: 'fa-envelope' }
-            ]},
-          { id: 'transportes', icon: 'fa-bus', subcats: [
-              { id: 'taxis', nome: 'Táxis', icon: 'fa-taxi' },
-              { id: 'rent-a-car', nome: 'Rent-a-car', icon: 'fa-car' },
-              { id: 'bicicletas', nome: 'Bicicletas', icon: 'fa-bicycle' },
-              { id: 'autocarros', nome: 'Autocarros', icon: 'fa-bus' }
-            ]},
-          { id: 'imobiliarias', icon: 'fa-house-chimney', subcats: null },
-          { id: 'experiencias', icon: 'fa-ticket-alt', subcats: null }
-        ];
-        
-        const getInfoText = (info, lang) => {
-            if (!info) return '';
-            if (typeof info === 'object' && info[lang]) return info[lang];
-            if (typeof info === 'object' && info.en) return info.en;
-            if (typeof info === 'string') return info;
-            return '';
-        };
-        const getPersonalizedMessage = (lang) => {
-  const hour = new Date().getHours();
-  const day = new Date().getDay();
-  const isWeekend = day === 0 || day === 6;
-  
-  const messages = {
-    // ✅ PORTUGUÊS
-    pt: {
-      morning: isWeekend ? "☀️ Bom fim de semana em Vilamoura!" : "☀️ Bom dia! Pronto para explorar?",
-      lunch: "🍽️ Hora de almoço? Veja os nossos restaurantes!",
-      afternoon: "🌊 Boa tarde! A marina espera por si.",
-      evening: "🌙 Boa noite! Descubra a vida noturna.",
-      night: "✨ Bem-vindo a Vilamoura!"
-    },
-    // ✅ ENGLISH
-    en: {
-      morning: isWeekend ? "☀️ Great weekend in Vilamoura!" : "☀️ Good morning! Ready to explore?",
-      lunch: "🍽️ Lunch time? Check out our restaurants!",
-      afternoon: "🌊 Good afternoon! The marina awaits.",
-      evening: "🌙 Good evening! Discover the nightlife.",
-      night: "✨ Welcome to Vilamoura!"
-    },
-    // ✅ FRANÇAIS (NOVO)
-    fr: {
-      morning: isWeekend ? "☀️ Excellent week-end à Vilamoura !" : "☀️ Bonjour ! Prêt à explorer ?",
-      lunch: "🍽️ L'heure du déjeuner ? Découvrez nos restaurants !",
-      afternoon: "🌊 Bon après-midi ! La marina vous attend.",
-      evening: "🌙 Bonsoir ! Découvrez la vie nocturne.",
-      night: "✨ Bienvenue à Vilamoura !"
-    },
-    // ✅ DEUTSCH (NOVO)
-    de: {
-      morning: isWeekend ? "☀️ Schönes Wochenende in Vilamoura!" : "☀️ Guten Morgen! Bereit zu entdecken?",
-      lunch: "🍽️ Mittagszeit? Entdecken Sie unsere Restaurants!",
-      afternoon: "🌊 Guten Nachmittag! Der Yachthafen wartet auf Sie.",
-      evening: "🌙 Guten Abend! Entdecken Sie das Nachtleben.",
-      night: "✨ Willkommen in Vilamoura!"
-    },
-    // ✅ ESPAÑOL (NOVO)
-    es: {
-      morning: isWeekend ? "☀️ ¡Gran fin de semana en Vilamoura!" : "☀️ ¡Buenos días! ¿Listo para explorar?",
-      lunch: "🍽️ ¿Hora de comer? ¡Mira nuestros restaurantes!",
-      afternoon: "🌊 ¡Buenas tardes! La marina te espera.",
-      evening: "🌙 ¡Buenas noches! Descubre la vida nocturna.",
-      night: "✨ ¡Bienvenido a Vilamoura!"
-    }
-  };
-  
-  const m = messages[lang] || messages.en;
-  if (hour >= 6 && hour < 12) return m.morning;
-  if (hour >= 12 && hour < 14) return m.lunch;
-  if (hour >= 14 && hour < 19) return m.afternoon;
-  if (hour >= 19 && hour < 23) return m.evening;
-  return m.night;
+<div id="root"></div>
+<script type="text/babel">
+const { useState, useEffect, useRef } = React;
+const firebaseConfig = {
+apiKey: "AIzaSyDfUDqEJxVnWbQgn6LEVQAjlKeBJdp0vyY",
+authDomain: "vilamoura-select.firebaseapp.com",
+projectId: "vilamoura-select",
+storageBucket: "vilamoura-select.firebasestorage.app",
+messagingSenderId: "189990454398",
+appId: "1:189990454398:web:3d9eac9cf3a84b0510c42f"
 };
-        
-        function App() {
-          const [view, setView] = useState('splash');
-          const [lang, setLang] = useState('pt');
-          const [navLevel, setNavLevel] = useState('categorias');
-          const [catAtiva, setCatAtiva] = useState(null);
-          const [subcatAtiva, setSubcatAtiva] = useState(null);
-          const [query, setQuery] = useState('');
-          const [locais, setLocais] = useState([]);
-          const [loading, setLoading] = useState(true);
-          const [error, setError] = useState(null);
-          const [dontShowAgain, setDontShowAgain] = useState(false);
-          const [selectedLang, setSelectedLang] = useState('pt');
-          
-          // ✅ ESTADO PARA PUSH NOTIFICATIONS
-          const [pushSupported, setPushSupported] = useState(false);
-          const [pushSubscribed, setPushSubscribed] = useState(false);
-          const [pushLoading, setPushLoading] = useState(false);
-          
-          const mapRef = useRef(null);
-          const googleMap = useRef(null);
-          const markers = useRef([]);
-          const directionsRenderer = useRef(null);
-          const t = i18n[lang] || i18n.en;
-          const personalizedMessage = getPersonalizedMessage(lang);
-          
-          // ✅ VERIFICAR SUPORTE PUSH
-          useEffect(() => {
-            const checkPushSupport = async () => {
-              if ('serviceWorker' in navigator && 'PushManager' in window && 'Notification' in window) {
-                setPushSupported(true);
-                try {
-                  const registration = await navigator.serviceWorker.ready;
-                  const subscription = await registration.pushManager.getSubscription();
-                  setPushSubscribed(!!subscription);
-                } catch (err) {
-                  console.log('⚠️ Push check error:', err);
-                }
-              }
-            };
-            checkPushSupport();
-          }, []);
-          
-          // ✅ PEDIR PERMISSÃO E SUBSCREVER
-          const requestPushPermission = async () => {
-            setPushLoading(true);
-            try {
-              const permission = await Notification.requestPermission();
-              if (permission !== 'granted') {
-                alert('❌ Precisas de aceitar notificações para receber promoções!');
-                setPushLoading(false);
-                return;
-              }
-              
-              const registration = await navigator.serviceWorker.register('/app/firebase-messaging-sw.js');
-              
-              // ⚠️ SUBSTITUIR PELA TUA VAPID KEY DO FIREBASE CONSOLE
-              // Como obter: Firebase Console → Project Settings → Cloud Messaging → Web Push certificates → Generate key pair
-              const VAPID_KEY = 'bvk-QtJ_wcOsJ66oCEU-brXXEZDGN712hPoWlEhEons'; // ← ← ← SUBSTITUIR AQUI PELA TUA VAPID KEY REAL
-              
-              const token = await messaging.getToken({ vapidKey: VAPID_KEY });
-              
-              await db.collection('push_subscriptions').add({
-                token,
-                createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-                platform: navigator.platform,
-                userAgent: navigator.userAgent
-              });
-              
-              setPushSubscribed(true);
-              alert('✅ Notificações ativadas! Vais receber promoções e eventos.');
-            } catch (err) {
-              console.error('❌ Erro push:', err);
-              alert('❌ Não foi possível ativar notificações. Tenta novamente.');
-            }
-            setPushLoading(false);
-          };
-          
-          // ✅ CANCELAR SUBSCRIÇÃO
-          const unsubscribePush = async () => {
-            try {
-              const registration = await navigator.serviceWorker.ready;
-              const subscription = await registration.pushManager.getSubscription();
-              if (subscription) {
-                await subscription.unsubscribe();
-                const tokens = await db.collection('push_subscriptions')
-                  .where('token', '==', subscription.endpoint)
-                  .get();
-                tokens.forEach(doc => doc.ref.delete());
-                setPushSubscribed(false);
-                alert('❌ Notificações desativadas.');
-              }
-            } catch (err) {
-              console.error('❌ Erro unsubscribe:', err);
-            }
-          };
-          
-          useEffect(() => {
-            const savedLang = localStorage.getItem('vilamoura_lang');
-            if (savedLang) { setLang(savedLang); setSelectedLang(savedLang); }
-          }, []);
-          
-          const handleEnter = () => {
-            const hasSeenWelcome = localStorage.getItem('vilamoura_welcome_seen');
-            if (hasSeenWelcome) { setView('menu'); } else { setView('welcome'); }
-          };
-          
-          const handleStart = () => {
-            if (dontShowAgain) { localStorage.setItem('vilamoura_welcome_seen', 'true'); }
-            localStorage.setItem('vilamoura_lang', selectedLang);
-            setLang(selectedLang);
-            setView('menu');
-          };
-          
-          useEffect(() => {
-            if (view === 'menu') {
-                setLoading(true); setError(null);
-                db.collection('locais').get()
-                    .then((snapshot) => {
-                        const dados = snapshot.docs.map(doc => doc.data());
-                        setLocais(dados); setLoading(false);
-                        if (dados.length === 0) setError('Nenhum negócio encontrado.');
-                    })
-                    .catch((err) => { console.error("Erro Firestore:", err); setError('Erro ao carregar dados.'); setLoading(false); });
-            }
-          }, [view]);
-          
-          useEffect(() => {
-            if (view === 'menu' && !googleMap.current && mapRef.current) {
-                googleMap.current = new google.maps.Map(mapRef.current, {
-                    center: { lat: 37.076, lng: -8.118 }, zoom: 15, disableDefaultUI: true,
-                    styles: [{ featureType: "poi", elementType: "labels", stylers: [{ visibility: "off" }] }]
-                });
-                directionsRenderer.current = new google.maps.DirectionsRenderer({ 
-                    map: googleMap.current, 
-                    polylineOptions: { strokeColor: "#003366", strokeWeight: 5 },
-                    suppressMarkers: true
-                });
-            }
-          }, [view]);
-          
-          window.calcularRota = function(lat, lng) {
-            const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
-            if (isIOS) {
-              window.open(`http://maps.apple.com/?daddr=${lat},${lng}`, '_blank');
-              return;
-            }
-            if (!navigator.geolocation) {
-              alert('A geolocalização não é suportada. A abrir Google Maps...');
-              window.open(`https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}`, '_blank');
-              return;
-            }
-            navigator.geolocation.getCurrentPosition(
-              (pos) => {
-                const service = new google.maps.DirectionsService();
-                service.route({
-                  origin: { lat: pos.coords.latitude, lng: pos.coords.longitude },
-                  destination: { lat: parseFloat(lat), lng: parseFloat(lng) },
-                  travelMode: google.maps.TravelMode.WALKING
-                }, (result, status) => {
-                  if (status === 'OK' && directionsRenderer.current) {
-                    directionsRenderer.current.setDirections(result);
-                  } else {
-                    alert('Não foi possível calcular a rota. A abrir Google Maps...');
-                    window.open(`https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}`, '_blank');
-                  }
-                });
-              },
-              (err) => {
-                alert('Ative a localização para calcular rotas. A abrir Google Maps...');
-                window.open(`https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}`, '_blank');
-              },
-              { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
-            );
-          };
-          
-          const openMap = (items) => {
-            setNavLevel('mapa');
-            if(directionsRenderer.current) directionsRenderer.current.setDirections({routes: []});
-            markers.current.forEach(m => m.setMap(null));
-            const list = Array.isArray(items) ? items : [items];
-            list.forEach(loc => {
-              const marker = new google.maps.Marker({
-                  position: { lat: loc.lat, lng: loc.lng }, map: googleMap.current,
-                  label: { text: loc.icon || '📍', color: 'white' }
-              });
-              const infoText = getInfoText(loc.info, lang);
-              const imgSrc = cleanImageUrl(loc.img);
-              
-              const fotos = loc.fotos || [];
-              const fotosParaUsar = fotos.length > 0 ? fotos : (imgSrc ? [imgSrc] : []);
-              
-              let galleryHTML = '';
-              if (fotosParaUsar.length > 0) {
-                galleryHTML = `
-                  <div style="display:flex; gap:6px; margin-bottom:12px; overflow-x:auto; padding-bottom:8px; scrollbar-width:thin; scrollbar-color:#c5a059 #f1f1f1;">
-                    ${fotosParaUsar.slice(0, 6).map((foto, idx) => {
-                      const urlLimpa = cleanImageUrl(foto);
-                      if (!urlLimpa) return '';
-                      return `
-                        <img src="${urlLimpa}" 
-                             style="width:80px; height:80px; border-radius:8px; object-fit:cover; flex-shrink:0; border:2px solid #fff; box-shadow:0 2px 6px rgba(0,0,0,0.15); cursor:pointer; background:#f1f1f1;" 
-                             onerror="this.style.background='#eee'; this.src='https://via.placeholder.com/80?text=Foto+'+(${idx+1})"
-                             onclick="this.style.width=this.style.width==='160px'?'80px':'160px'; this.style.height=this.style.height==='160px'?'80px':'160px'">
-                      `;
-                    }).filter(html => html !== '').join('')}
-                  </div>
-                `;
-              }
-              
-              const content = `
-                <div style="width:240px; padding:8px;">
-                  ${galleryHTML}
-                  <h3 style="margin:10px 0 5px 0; color:#003366; font-size:16px; font-weight:bold;">${loc.nome || 'Sem nome'}</h3>
-                  <p style="font-size:12px; margin-bottom:10px; color:#666; line-height:1.4;">${infoText}</p>
-                  <div class="info-buttons">
-                    <button onclick="window.calcularRota(${loc.lat}, ${loc.lng})" class="btn-info bg-blue" style="font-size:12px; padding:10px;">${t.route}</button>
-                    ${loc.tel ? `<a href="tel:${loc.tel}" class="btn-info bg-green" style="font-size:12px; padding:10px;">${t.call}</a>` : ''}
-                    ${loc.web && loc.web !== '#' ? `<a href="${loc.web}" target="_blank" class="btn-info bg-gold" style="font-size:12px; padding:10px;">${t.visit}</a>` : ''}
-                  </div>
-                </div>
-              `;
-              const iw = new google.maps.InfoWindow({ content });
-              marker.addListener('click', () => iw.open(googleMap.current, marker));
-              markers.current.push(marker);
-            });
-            if(!Array.isArray(items)) { googleMap.current.setCenter({lat: items.lat, lng: items.lng}); googleMap.current.setZoom(17); }
-            else { googleMap.current.setZoom(14); googleMap.current.setCenter({ lat: 37.076, lng: -8.118 }); }
-          };
-          
-          const getDestaqueFromPlan = (loc) => {
-            if (loc.nivel_destaque) return loc.nivel_destaque;
-            if (loc.subscricao?.ativo) {
-              const plano = loc.subscricao.plano;
-              if (plano === 'ouro') return 3;
-              if (plano === 'prata') return 2;
-            }
-            return 0;
-          };
-          
-          const getSortedLocais = (locais) => {
-            return [...locais].sort((a, b) => {
-              const aDestaque = getDestaqueFromPlan(a);
-              const bDestaque = getDestaqueFromPlan(b);
-              if (aDestaque !== bDestaque) return bDestaque - aDestaque;
-              return (a.nome || '').localeCompare(b.nome || '');
-            });
-          };
-          
-          const handleCatClick = (cat) => {
-            if (cat.subcats && cat.subcats.length > 0) {
-              setCatAtiva(cat);
-              setNavLevel('subcategorias');
-            } else {
-              setCatAtiva(cat);
-              setSubcatAtiva(null);
-              setNavLevel('locais');
-            }
-          };
-          
-          const handleSubcatClick = (subcat) => {
-            setSubcatAtiva(subcat);
-            setNavLevel('locais');
-          };
-          
-          const handleBack = () => {
-            if (navLevel === 'locais' && subcatAtiva) {
-              setSubcatAtiva(null);
-              setNavLevel('subcategorias');
-            } else if (navLevel === 'locais' || navLevel === 'subcategorias') {
-              setCatAtiva(null);
-              setSubcatAtiva(null);
-              setNavLevel('categorias');
-            } else if (navLevel === 'mapa') {
-              setNavLevel(catAtiva ? (subcatAtiva ? 'locais' : 'subcategorias') : 'categorias');
-            }
-          };
-          
-          const getFilteredLocais = () => {
-            let filtered = locais;
-            if (query.length > 0) {
-              filtered = filtered.filter(l => l.nome && l.nome.toLowerCase().includes(query.toLowerCase()));
-            } else if (catAtiva) {
-              filtered = filtered.filter(l => l.cat === catAtiva.id);
-              if (subcatAtiva) {
-                filtered = filtered.filter(l => l.subcat === subcatAtiva.id);
-              }
-            }
-            return filtered;
-          };
-          
-          const filtered = getFilteredLocais();
-          
-          if (view === 'splash') {
-            return (<div className="splash-screen"><img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEh2RRJgYenNf-1LjVFu47Lj4dmOnLy9PPAcXvXN2zLle3kx2vlEAQXtIs6_C6g9H-90RCQqjSj41N6ZfeDT35GG17m8VJ3-h4iC041wDTLKTZJ7QAs5511gf8OimILN-XyQlT4v3Brs7yWpQSqL_DuvLKJrLvacbYvb7y9VZFEOyZ6FVTwLtPFtI_Xt5nZG/w400-h225/Vilamoura-Select_YourIndependentGuidetoVilamoura_retangular_2-.gif" alt="Vilamoura Select" style={{ width: '95%', maxWidth: '420px', height: 'auto', marginBottom: '35px', borderRadius: '8px' }} /><div style={{ position: 'absolute', bottom: '40px', left: '0', right: '0', display: 'flex', justifyContent: 'center', padding: '0 20px' }}><button style={{ width: '210px', padding: '15px 24px', background: '#003366', color: '#ffffff', border: '2px solid #ffffff', borderRadius: '32px', fontWeight: 'bold', fontSize: '15px', cursor: 'pointer' }} onClick={handleEnter}>{t.enter}</button></div></div>);
-          }
-          
-          if (view === 'welcome') {
-            return (<div className="welcome-screen"><div className="welcome-content"><div className="welcome-logo"><img src="/app/icon-512.png" alt="Vilamoura Select" /></div><h1 className="welcome-title">{i18n[selectedLang].welcome}</h1><p className="welcome-text">{i18n[selectedLang].welcomeText}</p><div style={{marginBottom: '25px'}}><div className="lang-select-title">{i18n[selectedLang].selectLang}</div><div className="lang-grid-flags">{languages.map(l => (<div key={l.code} className={`lang-flag-option ${selectedLang === l.code ? 'selected' : ''}`} onClick={() => setSelectedLang(l.code)}><img src={l.flag} alt={l.name} style={{ width: '24px', height: '16px', objectFit: 'cover', borderRadius: '2px' }} /></div>))}</div></div><button className="welcome-btn" onClick={handleStart}>{i18n[selectedLang].start}</button><label className="welcome-checkbox"><input type="checkbox" checked={dontShowAgain} onChange={(e) => setDontShowAgain(e.target.checked)} />{i18n[selectedLang].dontShowAgain}</label></div></div>);
-          }
-          
-          return (
-            <div style={{height: '100%'}}>
-              <div className="lang-bar">{['pt','en','fr','de','es'].map(l => (<button key={l} className={`lang-btn ${lang === l ? 'active' : ''}`} onClick={() => setLang(l)}>{l.toUpperCase()}</button>))}</div>
-              <div className="personalized-message">{personalizedMessage}</div>
-              
-              {/* ✅ BARRA DE NOTIFICAÇÕES PUSH */}
-              {pushSupported && (
-                <div className={`push-bar ${pushSubscribed ? 'active' : ''}`}>
-                  <span>
-                    {pushSubscribed ? '🔔 Notificações ativas' : '📬 Ativa notificações para promoções!'}
-                  </span>
-                  {pushSubscribed ? (
-                    <button className="push-btn danger" onClick={unsubscribePush}>Desativar</button>
-                  ) : (
-                    <button className="push-btn" onClick={requestPushPermission} disabled={pushLoading}>
-                      {pushLoading ? '⏳ A ativar...' : '✅ Ativar'}
-                    </button>
-                  )}
-                </div>
-              )}
-              
-              <div className="app-content">
-                <div className="menu-view" style={{ display: navLevel !== 'mapa' ? 'block' : 'none' }}>
-                  
-                  {navLevel !== 'categorias' && (
-                    <div className="nav-header">
-                      <button onClick={handleBack} className="btn-back-nav">← {t.back}</button>
-                      <span className="nav-title">
-                        {subcatAtiva ? subcatAtiva.nome : (catAtiva ? t.cats[catAtiva.id] : '')}
-                      </span>
-                    </div>
-                  )}
-                  
-                  <div className="search-area">
-                    <div className="search-box">
-                      <i className="fas fa-search"></i>
-                      <input type="text" placeholder={t.search} value={query} onChange={(e) => {setQuery(e.target.value); if(navLevel !== 'categorias') setNavLevel('locais');}} />
-                    </div>
-                  </div>
-                  
-                  {error && <div className="error-msg">⚠️ {error}</div>}
-                  
-                  {loading ? (
-                    <div className="loader"><i className="fas fa-spinner fa-spin"></i> {t.loading}</div>
-                  ) : query.length > 0 || navLevel === 'locais' ? (
-                    <div>
-                      {filtered.length === 0 ? (
-                        <div style={{padding:'20px', textAlign:'center', color:'#666'}}>Nenhum resultado</div>
-                      ) : null}
-                      {getSortedLocais(filtered)
-                        .map(l => {
-                          const destaqueNivel = getDestaqueFromPlan(l);
-                          const isFeatured = destaqueNivel > 0;
-                          const featuredBorder = destaqueNivel === 3 ? '#ffd700' : destaqueNivel === 2 ? '#c0c0c0' : '#cd7f32';
-                          const featuredBg = isFeatured ? 'linear-gradient(135deg, #fff9e6 0%, #fff 100%)' : '#fff';
-                          
-                          return (
-                            <div 
-                              key={l.id || l.nome} 
-                              className="item-row" 
-                              onClick={() => openMap(l)}
-                              style={{
-                                border: isFeatured ? `2px solid ${featuredBorder}` : '1px solid #eee',
-                                background: featuredBg,
-                                marginBottom: '10px'
-                              }}
-                            >
-                              {isFeatured && (
-                                <div className="featured-badge" style={{ zIndex: 10 }}>
-                                  ⭐ {destaqueNivel === 3 ? 'OURO' : destaqueNivel === 2 ? 'PRATA' : 'BRONZE'}
-                                </div>
-                              )}
-                              <img src={cleanImageUrl(l.img)} onError={(e) => {e.target.src='https://via.placeholder.com/50?text=?'}} style={{borderRadius: isFeatured ? '12px' : '8px'}} />
-                              <div>
-                                <div style={{fontWeight: isFeatured ? 'bold' : 'normal', color: isFeatured ? '#003366' : '#333'}}>{l.nome}</div>
-                                <div style={{fontSize:11}}>{getInfoText(l.info, lang)}</div>
-                              </div>
-                            </div>
-                          );
-                        })}
-                    </div>
-                  ) : navLevel === 'categorias' ? (
-                    <div>
-                      <div className="grid-cats">
-                        {CATEGORIAS.map(c => (
-                          <div key={c.id} className="cat-card" onClick={() => handleCatClick(c)}>
-                            <i className={`fas ${c.icon}`}></i>
-                            <div>{t.cats[c.id]}</div>
-                          </div>
-                        ))}
-                      </div>
-                      <button className="explore-below-btn" onClick={() => openMap(locais)}>
-                        <i className="fas fa-map-marked-alt"></i> {t.explore}
-                      </button>
-                    </div>
-                  ) : navLevel === 'subcategorias' && catAtiva ? (
-                    <div className="grid-cats">
-                      {catAtiva.subcats.map(s => (
-                        <div key={s.id} className="subcat-card" onClick={() => handleSubcatClick(s)}>
-                          <i className={`fas ${s.icon}`}></i>
-                          <div>{s.nome}</div>
-                        </div>
-                      ))}
-                    </div>
-                  ) : null}
-                  
-                </div>
-                
-                <div className="map-view" style={{ visibility: navLevel === 'mapa' ? 'visible' : 'hidden' }}>
-                  <button className="btn-back-map" onClick={handleBack}>{t.back}</button>
-                  <div ref={mapRef} id="map-canvas"></div>
-                </div>
-              </div>
-            </div>
-          );
-        }
-        ReactDOM.createRoot(document.getElementById('root')).render(<App />);
-    </script>
-    <script>
-      if ('serviceWorker' in navigator) {
-        window.addEventListener('load', () => {
-          navigator.serviceWorker.register('/app/sw.js')
-            .then(reg => { console.log('✅ Service Worker registado!', reg.scope); reg.update(); })
-            .catch(err => console.log('❌ Erro no Service Worker:', err));
-        });
-      }
-    </script>
+if (!firebase.apps.length) { firebase.initializeApp(firebaseConfig); }
+const db = firebase.firestore();
+const messaging = firebase.messaging();
+
+// ✅ FUNÇÃO PARA LIMPAR URLs DE IMAGENS (EM FALTA - ADICIONADA)
+const cleanImageUrl = (url) => {
+if (!url) return '';
+return url.trim().replace(/\s+/g, '');
+};
+
+const languages = [
+{ code: 'pt', flag: 'https://flagcdn.com/w40/pt.png', name: 'Português' },
+{ code: 'en', flag: 'https://flagcdn.com/w40/gb.png', name: 'English' },
+{ code: 'fr', flag: 'https://flagcdn.com/w40/fr.png', name: 'Français' },
+{ code: 'de', flag: 'https://flagcdn.com/w40/de.png', name: 'Deutsch' },
+{ code: 'es', flag: 'https://flagcdn.com/w40/es.png', name: 'Español' }
+];
+const i18n = {
+pt: { enter: "ENTRAR", search: "Procurar...", back: "VOLTAR", route: "CALCULAR ROTA", call: "LIGAR", visit: "WEBSITE", explore: "📍 EXPLORAR TUDO", loading: "A carregar...", welcome: "Bem-vindo", welcomeText: "O seu guia independente para descobrir o melhor de Vilamoura.", selectLang: "Idioma", start: "COMEÇAR", dontShowAgain: "Não mostrar novamente", cats: { hoteis: "Hotéis", comer: "Comer", bares: "Bares", lazer: "Lazer", golf: "Golfe", lojas: "Lojas", imobiliarias: "Imóveis", util: "Útil", transportes: "Transportes", experiencias: "Experiências" } },
+en: { enter: "ENTER", search: "Search...", back: "BACK", route: "GET ROUTE", call: "CALL", visit: "WEBSITE", explore: "📍 EXPLORE ALL", loading: "Loading...", welcome: "Welcome", welcomeText: "Your independent guide to discover the best of Vilamoura.", selectLang: "Language", start: "GET STARTED", dontShowAgain: "Don't show again", cats: { hoteis: "Hotels", comer: "Eat", bares: "Bars", lazer: "Leisure", golf: "Golf", lojas: "Shops", imobiliarias: "Property", util: "Useful", transportes: "Transport", experiencias: "Experiences" } },
+fr: { enter: "ENTRER", search: "Chercher...", back: "RETOUR", route: "ITINÉRAIRE", call: "APPELER", visit: "SITE WEB", explore: "📍 TOUT VOIR", loading: "Chargement...", welcome: "Bienvenue", welcomeText: "Votre guide indépendant pour découvrir le meilleur de Vilamoura.", selectLang: "Langue", start: "COMMENCER", dontShowAgain: "Ne plus afficher", cats: { hoteis: "Hôtels", comer: "Manger", bares: "Bars", lazer: "Loisirs", golf: "Golf", lojas: "Boutiques", imobiliarias: "Immo", util: "Utile", transportes: "Transports", experiencias: "Expériences" } },
+de: { enter: "EINTRETEN", search: "Suche...", back: "ZURÜCK", route: "ROUTE BERECHNEN", call: "ANRUFEN", visit: "WEBSEITE", explore: "📍 ALLES SEHEN", loading: "Laden...", welcome: "Willkommen", welcomeText: "Ihr unabhängiger Reiseführer für Vilamoura.", selectLang: "Sprache", start: "STARTEN", dontShowAgain: "Nicht wieder anzeigen", cats: { hoteis: "Hotels", comer: "Essen", bares: "Bars", lazer: "Freizeit", golf: "Golf", lojas: "Läden", imobiliarias: "Immo", util: "Nützlich", transportes: "Transport", experiencias: "Erlebnisse" } },
+es: { enter: "ENTRAR", search: "Buscar...", back: "VOLVER", route: "CALCULAR RUTA", call: "LLAMAR", visit: "SITIO WEB", explore: "📍 EXPLORAR TODO", loading: "Cargando...", welcome: "Bienvenido", welcomeText: "Tu guía independiente para descubrir lo mejor de Vilamoura.", selectLang: "Idioma", start: "COMENZAR", dontShowAgain: "No mostrar de nuevo", cats: { hoteis: "Hoteles", comer: "Comer", bares: "Bares", lazer: "Ocio", golf: "Golf", lojas: "Tiendas", imobiliarias: "Inmuebles", util: "Útil", transportes: "Transporte", experiencias: "Experiencias" } }
+};
+const CATEGORIAS = [
+{ id: 'hoteis', icon: 'fa-hotel', subcats: [
+{ id: '5-estrelas', nome: '5 Estrelas', icon: 'fa-star' },
+{ id: '4-estrelas', nome: '4 Estrelas', icon: 'fa-star' },
+{ id: 'apartamentos', nome: 'Apartamentos', icon: 'fa-building' }
+]},
+{ id: 'comer', icon: 'fa-utensils', subcats: [
+{ id: 'steakhouses', nome: 'Steakhouses', icon: 'fa-drumstick-bite' },
+{ id: 'seafood', nome: 'Seafood', icon: 'fa-fish' },
+{ id: 'tradicionais', nome: 'Tradicionais', icon: 'fa-utensils' },
+{ id: 'italianos', nome: 'Italianos', icon: 'fa-pizza-slice' },
+{ id: 'chineses', nome: 'Chineses', icon: 'fa-bowl-rice' },
+{ id: 'thai', nome: 'Thai', icon: 'fa-bowl-food' },
+{ id: 'indianos', nome: 'Indianos', icon: 'fa-pepper-hot' }
+]},
+{ id: 'bares', icon: 'fa-glass-cheers', subcats: [
+{ id: 'wine-cocktail', nome: 'Wine & Cocktail', icon: 'fa-wine-glass' },
+{ id: 'sports', nome: 'Sports Bars', icon: 'fa-tv' },
+{ id: 'beach', nome: 'Beach Bars', icon: 'fa-umbrella-beach' },
+{ id: 'nightclub', nome: 'Nightclubs', icon: 'fa-music' }
+]},
+{ id: 'lazer', icon: 'fa-camera-retro', subcats: [
+{ id: 'casino', nome: 'Casino', icon: 'fa-dice' },
+{ id: 'spa', nome: 'Spa & Massagens', icon: 'fa-spa' },
+{ id: 'interesse', nome: 'Interesse Local', icon: 'fa-landmark' },
+{ id: 'atividades', nome: 'Atividades', icon: 'fa-person-hiking' }
+]},
+{ id: 'golf', icon: 'fa-golf-ball-tee', subcats: [
+{ id: 'campos', nome: 'Campos', icon: 'fa-golf-ball-tee' },
+{ id: 'academias', nome: 'Academias', icon: 'fa-graduation-cap' },
+{ id: 'pro-shops', nome: 'Pro Shops', icon: 'fa-shop' }
+]},
+{ id: 'lojas', icon: 'fa-bag-shopping', subcats: [
+{ id: 'moda', nome: 'Moda', icon: 'fa-shirt' },
+{ id: 'souvenirs', nome: 'Souvenirs', icon: 'fa-gift' },
+{ id: 'sapataria', nome: 'Sapataria', icon: 'fa-shoe-prints' },
+{ id: 'aderecos', nome: 'Adereços', icon: 'fa-glasses' }
+]},
+{ id: 'util', icon: 'fa-shield-halved', subcats: [
+{ id: 'saude', nome: 'Saúde', icon: 'fa-hospital' },
+{ id: 'bancos', nome: 'Bancos & Câmbios', icon: 'fa-building-columns' },
+{ id: 'seguranca', nome: 'Segurança', icon: 'fa-shield' },
+{ id: 'correios', nome: 'Correios', icon: 'fa-envelope' }
+]},
+{ id: 'transportes', icon: 'fa-bus', subcats: [
+{ id: 'taxis', nome: 'Táxis', icon: 'fa-taxi' },
+{ id: 'rent-a-car', nome: 'Rent-a-car', icon: 'fa-car' },
+{ id: 'bicicletas', nome: 'Bicicletas', icon: 'fa-bicycle' },
+{ id: 'autocarros', nome: 'Autocarros', icon: 'fa-bus' }
+]},
+{ id: 'imobiliarias', icon: 'fa-house-chimney', subcats: null },
+{ id: 'experiencias', icon: 'fa-ticket-alt', subcats: null }
+];
+const getInfoText = (info, lang) => {
+if (!info) return '';
+if (typeof info === 'object' && info[lang]) return info[lang];
+if (typeof info === 'object' && info.en) return info.en;
+if (typeof info === 'string') return info;
+return '';
+};
+const getPersonalizedMessage = (lang) => {
+const hour = new Date().getHours();
+const day = new Date().getDay();
+const isWeekend = day === 0 || day === 6;
+const messages = {
+pt: {
+morning: isWeekend ? "☀️ Bom fim de semana em Vilamoura!" : "☀️ Bom dia! Pronto para explorar?",
+lunch: "🍽️ Hora de almoço? Veja os nossos restaurantes!",
+afternoon: "🌊 Boa tarde! A marina espera por si.",
+evening: "🌙 Boa noite! Descubra a vida noturna.",
+night: "✨ Bem-vindo a Vilamoura!"
+},
+en: {
+morning: isWeekend ? "☀️ Great weekend in Vilamoura!" : "☀️ Good morning! Ready to explore?",
+lunch: "🍽️ Lunch time? Check out our restaurants!",
+afternoon: "🌊 Good afternoon! The marina awaits.",
+evening: "🌙 Good evening! Discover the nightlife.",
+night: "✨ Welcome to Vilamoura!"
+},
+fr: {
+morning: isWeekend ? "☀️ Excellent week-end à Vilamoura !" : "☀️ Bonjour ! Prêt à explorer ?",
+lunch: "🍽️ L'heure du déjeuner ? Découvrez nos restaurants !",
+afternoon: "🌊 Bon après-midi ! La marina vous attend.",
+evening: "🌙 Bonsoir ! Découvrez la vie nocturne.",
+night: "✨ Bienvenue à Vilamoura !"
+},
+de: {
+morning: isWeekend ? "☀️ Schönes Wochenende in Vilamoura!" : "☀️ Guten Morgen! Bereit zu entdecken?",
+lunch: "🍽️ Mittagszeit? Entdecken Sie unsere Restaurants!",
+afternoon: "🌊 Guten Nachmittag! Der Yachthafen wartet auf Sie.",
+evening: "🌙 Guten Abend! Entdecken Sie das Nachtleben.",
+night: "✨ Willkommen in Vilamoura!"
+},
+es: {
+morning: isWeekend ? "☀️ ¡Gran fin de semana em Vilamoura!" : "☀️ ¡Buenos días! ¿Listo para explorar?",
+lunch: "🍽️ ¿Hora de comer? ¡Mira nuestros restaurantes!",
+afternoon: "🌊 ¡Buenas tardes! La marina te espera.",
+evening: "🌙 ¡Buenas noches! Descubre la vida nocturna.",
+night: "✨ ¡Bienvenido a Vilamoura!"
+}
+};
+const m = messages[lang] || messages.en;
+if (hour >= 6 && hour < 12) return m.morning;
+if (hour >= 12 && hour < 14) return m.lunch;
+if (hour >= 14 && hour < 19) return m.afternoon;
+if (hour >= 19 && hour < 23) return m.evening;
+return m.night;
+};
+function App() {
+const [view, setView] = useState('splash');
+const [lang, setLang] = useState('pt');
+const [navLevel, setNavLevel] = useState('categorias');
+const [catAtiva, setCatAtiva] = useState(null);
+const [subcatAtiva, setSubcatAtiva] = useState(null);
+const [query, setQuery] = useState('');
+const [locais, setLocais] = useState([]);
+const [loading, setLoading] = useState(true);
+const [error, setError] = useState(null);
+const [dontShowAgain, setDontShowAgain] = useState(false);
+const [selectedLang, setSelectedLang] = useState('pt');
+// ✅ ESTADO PARA PUSH NOTIFICATIONS
+const [pushSupported, setPushSupported] = useState(false);
+const [pushSubscribed, setPushSubscribed] = useState(false);
+const [pushLoading, setPushLoading] = useState(false);
+const mapRef = useRef(null);
+const googleMap = useRef(null);
+const markers = useRef([]);
+const directionsRenderer = useRef(null);
+const t = i18n[lang] || i18n.en;
+const personalizedMessage = getPersonalizedMessage(lang);
+// ✅ VERIFICAR SUPORTE PUSH
+useEffect(() => {
+const checkPushSupport = async () => {
+if ('serviceWorker' in navigator && 'PushManager' in window && 'Notification' in window) {
+setPushSupported(true);
+try {
+const registration = await navigator.serviceWorker.ready;
+const subscription = await registration.pushManager.getSubscription();
+setPushSubscribed(!!subscription);
+} catch (err) {
+console.log('⚠️ Push check error:', err);
+}
+}
+};
+checkPushSupport();
+}, []);
+// ✅ PEDIR PERMISSÃO E SUBSCREVER
+const requestPushPermission = async () => {
+setPushLoading(true);
+try {
+const permission = await Notification.requestPermission();
+if (permission !== 'granted') {
+alert('❌ Precisas de aceitar notificações para receber promoções!');
+setPushLoading(false);
+return;
+}
+const registration = await navigator.serviceWorker.register('/app/firebase-messaging-sw.js');
+// ⚠️ SUBSTITUIR PELA TUA VAPID KEY DO FIREBASE CONSOLE
+const VAPID_KEY = 'bvk-QtJ_wcOsJ66oCEU-brXXEZDGN712hPoWlEhEons';
+const token = await messaging.getToken({ vapidKey: VAPID_KEY });
+await db.collection('push_subscriptions').add({
+token,
+createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+platform: navigator.platform,
+userAgent: navigator.userAgent
+});
+setPushSubscribed(true);
+alert('✅ Notificações ativadas! Vais receber promoções e eventos.');
+} catch (err) {
+console.error('❌ Erro push:', err);
+alert('❌ Não foi possível ativar notificações. Tenta novamente.');
+}
+setPushLoading(false);
+};
+// ✅ CANCELAR SUBSCRIÇÃO
+const unsubscribePush = async () => {
+try {
+const registration = await navigator.serviceWorker.ready;
+const subscription = await registration.pushManager.getSubscription();
+if (subscription) {
+await subscription.unsubscribe();
+const tokens = await db.collection('push_subscriptions')
+.where('token', '==', subscription.endpoint)
+.get();
+tokens.forEach(doc => doc.ref.delete());
+setPushSubscribed(false);
+alert('❌ Notificações desativadas.');
+}
+} catch (err) {
+console.error('❌ Erro unsubscribe:', err);
+}
+};
+useEffect(() => {
+const savedLang = localStorage.getItem('vilamoura_lang');
+if (savedLang) { setLang(savedLang); setSelectedLang(savedLang); }
+}, []);
+const handleEnter = () => {
+const hasSeenWelcome = localStorage.getItem('vilamoura_welcome_seen');
+if (hasSeenWelcome) { setView('menu'); } else { setView('welcome'); }
+};
+const handleStart = () => {
+if (dontShowAgain) { localStorage.setItem('vilamoura_welcome_seen', 'true'); }
+localStorage.setItem('vilamoura_lang', selectedLang);
+setLang(selectedLang);
+setView('menu');
+};
+useEffect(() => {
+if (view === 'menu') {
+setLoading(true); setError(null);
+db.collection('locais').get()
+.then((snapshot) => {
+const dados = snapshot.docs.map(doc => doc.data());
+setLocais(dados); setLoading(false);
+if (dados.length === 0) setError('Nenhum negócio encontrado.');
+})
+.catch((err) => { console.error("Erro Firestore:", err); setError('Erro ao carregar dados.'); setLoading(false); });
+}
+}, [view]);
+useEffect(() => {
+if (view === 'menu' && !googleMap.current && mapRef.current) {
+googleMap.current = new google.maps.Map(mapRef.current, {
+center: { lat: 37.076, lng: -8.118 }, zoom: 15, disableDefaultUI: true,
+styles: [{ featureType: "poi", elementType: "labels", stylers: [{ visibility: "off" }] }]
+});
+directionsRenderer.current = new google.maps.DirectionsRenderer({
+map: googleMap.current,
+polylineOptions: { strokeColor: "#003366", strokeWeight: 5 },
+suppressMarkers: true
+});
+}
+}, [view]);
+window.calcularRota = function(lat, lng) {
+const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+if (isIOS) {
+window.open(`http://maps.apple.com/?daddr=${lat},${lng}`, '_blank');
+return;
+}
+if (!navigator.geolocation) {
+alert('A geolocalização não é suportada. A abrir Google Maps...');
+window.open(`https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}`, '_blank');
+return;
+}
+navigator.geolocation.getCurrentPosition(
+(pos) => {
+const service = new google.maps.DirectionsService();
+service.route({
+origin: { lat: pos.coords.latitude, lng: pos.coords.longitude },
+destination: { lat: parseFloat(lat), lng: parseFloat(lng) },
+travelMode: google.maps.TravelMode.WALKING
+}, (result, status) => {
+if (status === 'OK' && directionsRenderer.current) {
+directionsRenderer.current.setDirections(result);
+} else {
+alert('Não foi possível calcular a rota. A abrir Google Maps...');
+window.open(`https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}`, '_blank');
+}
+});
+},
+(err) => {
+alert('Ative a localização para calcular rotas. A abrir Google Maps...');
+window.open(`https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}`, '_blank');
+},
+{ enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
+);
+};
+const openMap = (items) => {
+setNavLevel('mapa');
+if(directionsRenderer.current) directionsRenderer.current.setDirections({routes: []});
+markers.current.forEach(m => m.setMap(null));
+const list = Array.isArray(items) ? items : [items];
+list.forEach(loc => {
+const marker = new google.maps.Marker({
+position: { lat: loc.lat, lng: loc.lng }, map: googleMap.current,
+label: { text: loc.icon || '📍', color: 'white' }
+});
+const infoText = getInfoText(loc.info, lang);
+const imgSrc = cleanImageUrl(loc.img);
+const fotos = loc.fotos || [];
+const fotosParaUsar = fotos.length > 0 ? fotos : (imgSrc ? [imgSrc] : []);
+let galleryHTML = '';
+if (fotosParaUsar.length > 0) {
+galleryHTML = `
+<div style="display:flex; gap:6px; margin-bottom:12px; overflow-x:auto; padding-bottom:8px; scrollbar-width:thin; scrollbar-color:#c5a059 #f1f1f1;">
+${fotosParaUsar.slice(0, 6).map((foto, idx) => {
+const urlLimpa = cleanImageUrl(foto);
+if (!urlLimpa) return '';
+return `
+<img src="${urlLimpa}"
+style="width:80px; height:80px; border-radius:8px; object-fit:cover; flex-shrink:0; border:2px solid #fff; box-shadow:0 2px 6px rgba(0,0,0,0.15); cursor:pointer; background:#f1f1f1;"
+onerror="this.style.background='#eee'; this.src='https://via.placeholder.com/80?text=Foto+'+(${idx+1})"
+onclick="this.style.width=this.style.width==='160px'?'80px':'160px'; this.style.height=this.style.height==='160px'?'80px':'160px'">
+`;
+}).filter(html => html !== '').join('')}
+</div>
+`;
+}
+const content = `
+<div style="width:240px; padding:8px;">
+${galleryHTML}
+<h3 style="margin:10px 0 5px 0; color:#003366; font-size:16px; font-weight:bold;">${loc.nome || 'Sem nome'}</h3>
+<p style="font-size:12px; margin-bottom:10px; color:#666; line-height:1.4;">${infoText}</p>
+<div class="info-buttons">
+<button onclick="window.calcularRota(${loc.lat}, ${loc.lng})" class="btn-info bg-blue" style="font-size:12px; padding:10px;">${t.route}</button>
+${loc.tel ? `<a href="tel:${loc.tel}" class="btn-info bg-green" style="font-size:12px; padding:10px;">${t.call}</a>` : ''}
+${loc.web && loc.web !== '#' ? `<a href="${loc.web}" target="_blank" class="btn-info bg-gold" style="font-size:12px; padding:10px;">${t.visit}</a>` : ''}
+</div>
+</div>
+`;
+const iw = new google.maps.InfoWindow({ content });
+marker.addListener('click', () => iw.open(googleMap.current, marker));
+markers.current.push(marker);
+});
+if(!Array.isArray(items)) { googleMap.current.setCenter({lat: items.lat, lng: items.lng}); googleMap.current.setZoom(17); }
+else { googleMap.current.setZoom(14); googleMap.current.setCenter({ lat: 37.076, lng: -8.118 }); }
+};
+const getDestaqueFromPlan = (loc) => {
+if (loc.nivel_destaque) return loc.nivel_destaque;
+if (loc.subscricao?.ativo) {
+const plano = loc.subscricao.plano;
+if (plano === 'ouro') return 3;
+if (plano === 'prata') return 2;
+}
+return 0;
+};
+const getSortedLocais = (locais) => {
+return [...locais].sort((a, b) => {
+const aDestaque = getDestaqueFromPlan(a);
+const bDestaque = getDestaqueFromPlan(b);
+if (aDestaque !== bDestaque) return bDestaque - aDestaque;
+return (a.nome || '').localeCompare(b.nome || '');
+});
+};
+const handleCatClick = (cat) => {
+if (cat.subcats && cat.subcats.length > 0) {
+setCatAtiva(cat);
+setNavLevel('subcategorias');
+} else {
+setCatAtiva(cat);
+setSubcatAtiva(null);
+setNavLevel('locais');
+}
+};
+const handleSubcatClick = (subcat) => {
+setSubcatAtiva(subcat);
+setNavLevel('locais');
+};
+const handleBack = () => {
+if (navLevel === 'locais' && subcatAtiva) {
+setSubcatAtiva(null);
+setNavLevel('subcategorias');
+} else if (navLevel === 'locais' || navLevel === 'subcategorias') {
+setCatAtiva(null);
+setSubcatAtiva(null);
+setNavLevel('categorias');
+} else if (navLevel === 'mapa') {
+setNavLevel(catAtiva ? (subcatAtiva ? 'locais' : 'subcategorias') : 'categorias');
+}
+};
+// ✅ FILTRAR LOCAIS - VERSÃO CORRIGIDA (comparação flexível)
+const getFilteredLocais = () => {
+let filtered = locais;
+
+// ✅ Pesquisa por texto (case-insensitive)
+if (query.length > 0) {
+const q = query.toLowerCase().trim();
+filtered = filtered.filter(l => {
+const nome = (l.nome || '').toLowerCase();
+const infoPt = (l.info?.pt || '').toLowerCase();
+const infoEn = (l.info?.en || '').toLowerCase();
+return nome.includes(q) || infoPt.includes(q) || infoEn.includes(q);
+});
+}
+// ✅ Filtrar por categoria/subcategoria
+else if (catAtiva) {
+const catId = (catAtiva.id || '').toLowerCase();
+
+filtered = filtered.filter(l => {
+const lCat = (l.cat || '').toLowerCase();
+if (lCat !== catId) return false;
+
+if (subcatAtiva) {
+const subcatId = (subcatAtiva.id || '').toLowerCase();
+const lSubcat = (l.subcat || '').toLowerCase();
+return lSubcat === subcatId;
+}
+
+return true;
+});
+}
+
+return filtered;
+};
+const filtered = getFilteredLocais();
+if (view === 'splash') {
+return (<div className="splash-screen"><img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEh2RRJgYenNf-1LjVFu47Lj4dmOnLy9PPAcXvXN2zLle3kx2vlEAQXtIs6_C6g9H-90RCQqjSj41N6ZfeDT35GG17m8VJ3-h4iC041wDTLKTZJ7QAs5511gf8OimILN-XyQlT4v3Brs7yWpQSqL_DuvLKJrLvacbYvb7y9VZFEOyZ6FVTwLtPFtI_Xt5nZG/w400-h225/Vilamoura-Select_YourIndependentGuidetoVilamoura_retangular_2-.gif" alt="Vilamoura Select" style={{ width: '95%', maxWidth: '420px', height: 'auto', marginBottom: '35px', borderRadius: '8px' }} /><div style={{ position: 'absolute', bottom: '40px', left: '0', right: '0', display: 'flex', justifyContent: 'center', padding: '0 20px' }}><button style={{ width: '210px', padding: '15px 24px', background: '#003366', color: '#ffffff', border: '2px solid #ffffff', borderRadius: '32px', fontWeight: 'bold', fontSize: '15px', cursor: 'pointer' }} onClick={handleEnter}>{t.enter}</button></div></div>);
+}
+if (view === 'welcome') {
+return (<div className="welcome-screen"><div className="welcome-content"><div className="welcome-logo"><img src="/app/icon-512.png" alt="Vilamoura Select" /></div><h1 className="welcome-title">{i18n[selectedLang].welcome}</h1><p className="welcome-text">{i18n[selectedLang].welcomeText}</p><div style={{marginBottom: '25px'}}><div className="lang-select-title">{i18n[selectedLang].selectLang}</div><div className="lang-grid-flags">{languages.map(l => (<div key={l.code} className={`lang-flag-option ${selectedLang === l.code ? 'selected' : ''}`} onClick={() => setSelectedLang(l.code)}><img src={l.flag} alt={l.name} style={{ width: '24px', height: '16px', objectFit: 'cover', borderRadius: '2px' }} /></div>))}</div></div><button className="welcome-btn" onClick={handleStart}>{i18n[selectedLang].start}</button><label className="welcome-checkbox"><input type="checkbox" checked={dontShowAgain} onChange={(e) => setDontShowAgain(e.target.checked)} />{i18n[selectedLang].dontShowAgain}</label></div></div>);
+}
+return (
+<div style={{height: '100%'}}>
+<div className="lang-bar">{['pt','en','fr','de','es'].map(l => (<button key={l} className={`lang-btn ${lang === l ? 'active' : ''}`} onClick={() => setLang(l)}>{l.toUpperCase()}</button>))}</div>
+<div className="personalized-message">{personalizedMessage}</div>
+{/* ✅ BARRA DE NOTIFICAÇÕES PUSH */}
+{pushSupported && (
+<div className={`push-bar ${pushSubscribed ? 'active' : ''}`}>
+<span>
+{pushSubscribed ? '🔔 Notificações ativas' : '📬 Ativa notificações para promoções!'}
+</span>
+{pushSubscribed ? (
+<button className="push-btn danger" onClick={unsubscribePush}>Desativar</button>
+) : (
+<button className="push-btn" onClick={requestPushPermission} disabled={pushLoading}>
+{pushLoading ? '⏳ A ativar...' : '✅ Ativar'}
+</button>
+)}
+</div>
+)}
+<div className="app-content">
+<div className="menu-view" style={{ display: navLevel !== 'mapa' ? 'block' : 'none' }}>
+{navLevel !== 'categorias' && (
+<div className="nav-header">
+<button onClick={handleBack} className="btn-back-nav">← {t.back}</button>
+<span className="nav-title">
+{subcatAtiva ? subcatAtiva.nome : (catAtiva ? t.cats[catAtiva.id] : '')}
+</span>
+</div>
+)}
+<div className="search-area">
+<div className="search-box">
+<i className="fas fa-search"></i>
+<input type="text" placeholder={t.search} value={query} onChange={(e) => {setQuery(e.target.value); if(navLevel !== 'categorias') setNavLevel('locais');}} />
+</div>
+</div>
+{error && <div className="error-msg">⚠️ {error}</div>}
+{loading ? (
+<div className="loader"><i className="fas fa-spinner fa-spin"></i> {t.loading}</div>
+) : query.length > 0 || navLevel === 'locais' ? (
+<div>
+{filtered.length === 0 ? (
+<div style={{padding:'20px', textAlign:'center', color:'#666'}}>Nenhum resultado</div>
+) : null}
+{getSortedLocais(filtered)
+.map(l => {
+const destaqueNivel = getDestaqueFromPlan(l);
+const isFeatured = destaqueNivel > 0;
+const featuredBorder = destaqueNivel === 3 ? '#ffd700' : destaqueNivel === 2 ? '#c0c0c0' : '#cd7f32';
+const featuredBg = isFeatured ? 'linear-gradient(135deg, #fff9e6 0%, #fff 100%)' : '#fff';
+return (
+<div
+key={l.id || l.nome}
+className="item-row"
+onClick={() => openMap(l)}
+style={{
+border: isFeatured ? `2px solid ${featuredBorder}` : '1px solid #eee',
+background: featuredBg,
+marginBottom: '10px'
+}}
+>
+{isFeatured && (
+<div className="featured-badge" style={{ zIndex: 10 }}>
+⭐ {destaqueNivel === 3 ? 'OURO' : destaqueNivel === 2 ? 'PRATA' : 'BRONZE'}
+</div>
+)}
+<img src={cleanImageUrl(l.img)} onError={(e) => {e.target.src='https://via.placeholder.com/50?text=?'}} style={{borderRadius: isFeatured ? '12px' : '8px'}} />
+<div>
+<div style={{fontWeight: isFeatured ? 'bold' : 'normal', color: isFeatured ? '#003366' : '#333'}}>{l.nome}</div>
+<div style={{fontSize:11}}>{getInfoText(l.info, lang)}</div>
+</div>
+</div>
+);
+})}
+</div>
+) : navLevel === 'categorias' ? (
+<div>
+<div className="grid-cats">
+{CATEGORIAS.map(c => (
+<div key={c.id} className="cat-card" onClick={() => handleCatClick(c)}>
+<i className={`fas ${c.icon}`}></i>
+<div>{t.cats[c.id]}</div>
+</div>
+))}
+</div>
+<button className="explore-below-btn" onClick={() => openMap(locais)}>
+<i className="fas fa-map-marked-alt"></i> {t.explore}
+</button>
+</div>
+) : navLevel === 'subcategorias' && catAtiva ? (
+<div className="grid-cats">
+{catAtiva.subcats.map(s => (
+<div key={s.id} className="subcat-card" onClick={() => handleSubcatClick(s)}>
+<i className={`fas ${s.icon}`}></i>
+<div>{s.nome}</div>
+</div>
+))}
+</div>
+) : null}
+</div>
+<div className="map-view" style={{ visibility: navLevel === 'mapa' ? 'visible' : 'hidden' }}>
+<button className="btn-back-map" onClick={handleBack}>{t.back}</button>
+<div ref={mapRef} id="map-canvas"></div>
+</div>
+</div>
+</div>
+);
+}
+ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+</script>
+<script>
+if ('serviceWorker' in navigator) {
+window.addEventListener('load', () => {
+navigator.serviceWorker.register('/app/sw.js')
+.then(reg => { console.log('✅ Service Worker registado!', reg.scope); reg.update(); })
+.catch(err => console.log('❌ Erro no Service Worker:', err));
+});
+}
+</script>
 </body>
 </html>
