@@ -472,9 +472,9 @@ alert(t.push.permissionDenied);
 setPushLoading(false);
 return;
 }
-const registration = await navigator.serviceWorker.register('/app/firebase-messaging-sw.js');
+const registration = await navigator.serviceWorker.register('/app/sw.js');
 // ⚠️ VAPID KEY - SUBSTITUIR PELA TUA DO FIREBASE CONSOLE
-const VAPID_KEY = 'BJiNNTa4VTEk9FSXsDOvwBYRxHGaysbA2TRtCyNC40q9I0b8vqzGcPl6sejUmCKM9aBjSSLi8P_pPmIS7CeZkwI';
+const VAPID_KEY = 'BEXGIMrOwMJ6BAppO1yi6DO16bfh0mYoSS_kOlyLaQRM-hBw51eZ6dznz25jHt3LHZHwlkw_FzEZ_b7bApjks58';
 const token = await messaging.getToken({ vapidKey: VAPID_KEY });
 await db.collection('push_subscriptions').add({
 token,
