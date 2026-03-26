@@ -101,7 +101,15 @@ self.addEventListener('activate', (event) => {
     }).then(() => self.clients.claim())
   );
 });
-
+self.addEventListener('fetch', (event) => {
+  // ✅ FILTRAR URLs que não podem ser cacheados
+  const url = new URL(event.request.url);
+  if (url.protocol === 'chrome-extension:' || 
+      url.protocol === 'moz-extension:' ||
+      url.hostname === 'localhost' ||
+      url.hostname === '127.0.0.1') {
+    return; // Ignora estes requests
+  }
 self.addEventListener('fetch', (event) => {
   if (event.request.url.includes('firebaseinstallations') || 
       event.request.url.includes('firebase.messaging')) {
