@@ -21,25 +21,54 @@
 <style>
 body, html { margin: 0; padding: 0; height: 100vh; width: 100%; overflow: hidden; background: #f4f7f9; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
 #root { height: 100%; width: 100%; }
+.splash-screen { position: fixed; inset: 0; background: #ffffff; display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 1000; }
+.welcome-screen { position: fixed; inset: 0; background: linear-gradient(135deg, #003366 0%, #004080 100%); display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 1001; padding: 30px 20px; color: #ffffff; overflow-y: auto; }
 .app-content { height: calc(100vh - 90px); position: relative; width: 100%; }
+.menu-view { height: 100%; overflow-y: auto; padding-bottom: 20px; }
 .map-view { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 20; background: white; display: none; }
 .map-view.active { display: block; }
 #map-canvas { width: 100%; height: 100%; display: block; }
 .btn-back-map { position: absolute; top: 15px; left: 15px; z-index: 30; padding: 10px 20px; border-radius: 25px; background: #003366; color: white; border: 2px solid white; font-weight: bold; cursor: pointer; }
+.btn-back-nav { padding: 10px 15px; background: none; border: none; color: #003366; font-weight: bold; cursor: pointer; font-size: 14px; }
+.nav-header { padding: 15px; display: flex; gap: 10px; align-items: center; background: #fff; border-bottom: 1px solid #eee; }
+.nav-title { font-weight: bold; color: #003366; font-size: 16px; }
+.search-area { padding: 15px; position: sticky; top: 0; background: #f4f7f9; z-index: 10; padding-top: 20px; }
+.search-box { position: relative; }
+.search-box input { width: 100%; padding: 12px 40px; border-radius: 25px; border: 1px solid #ddd; box-sizing: border-box; }
+.search-box i { position: absolute; left: 15px; top: 14px; color: #888; }
+.grid-cats { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding: 0 15px; }
+.cat-card { background: #fff; border-radius: 15px; text-align: center; padding: 20px 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); cursor: pointer; border: 1px solid #eee; }
+.cat-card i { font-size: 28px; color: #003366; margin-bottom: 10px; }
+.cat-card div { font-weight: 600; font-size: 13px; color: #003366; }
+.explore-below-btn { width: 100%; max-width: 300px; padding: 12px; border-radius: 25px; background: #27ae60; color: white; border: none; font-weight: bold; cursor: pointer; margin: 20px auto 10px auto; }
+.item-row { display: flex; gap: 12px; background: #fff; padding: 12px; border-radius: 12px; margin: 0 15px 10px 15px; align-items: center; cursor: pointer; }
+.item-row img { width: 50px; height: 50px; border-radius: 8px; object-fit: cover; }
+.loader { text-align: center; padding: 40px; color: #666; }
+.error-msg { text-align: center; padding: 20px; color: #c00; background: #ffe6e6; margin: 10px 15px; border-radius: 8px; }
+.lang-bar { background: #003366; display: flex; justify-content: center; gap: 4px; padding: 8px; }
+.lang-btn { background: rgba(255,255,255,0.1); border: 1px solid #fff; color: #fff; padding: 4px 6px; border-radius: 6px; cursor: pointer; font-size: 10px; font-weight: bold; }
+.lang-btn.active { background: #c5a059; border-color: #c5a059; }
+.personalized-message { background: linear-gradient(135deg, #003366 0%, #004080 100%); color: #fff; padding: 10px 15px; font-size: 13px; text-align: center; }
+.push-bar { background: #fff3cd; color: #856404; padding: 8px 15px; font-size: 12px; text-align: center; display: flex; align-items: center; justify-content: center; gap: 10px; }
+.push-bar.active { background: #d4edda; color: #155724; }
+.push-btn { padding: 4px 10px; background: #28a745; color: #fff; border: none; border-radius: 4px; cursor: pointer; font-size: 11px; }
+.push-btn.danger { background: #dc3545; }
 
-/* Moldura Desktop Simplificada */
+/* Moldura Desktop */
 @media (min-width: 1025px) {
-  body { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); display: flex; align-items: center; justify-content: center; padding: 30px; min-height: 100vh; }
+  body { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); display: flex; align-items: center; justify-content: center; padding: 30px; }
   #root { width: 390px; height: 844px; max-height: 90vh; background: #000; border-radius: 45px; padding: 10px; box-shadow: 0 0 0 2px #333, 0 25px 80px rgba(0,0,0,0.5); position: relative; overflow: hidden; }
   #root::before { content: ''; position: absolute; top: 0; left: 50%; transform: translateX(-50%); width: 150px; height: 30px; background: #000; border-radius: 0 0 20px 20px; z-index: 1000; }
   #root::after { content: ''; position: absolute; top: 8px; left: 50%; transform: translateX(-50%); width: 10px; height: 10px; background: #1a1a2e; border-radius: 50%; z-index: 1001; }
   .desktop-info { position: fixed; bottom: 20px; right: 20px; color: rgba(255,255,255,0.7); font-size: 12px; text-align: right; z-index: 9999; }
+  .splash-screen, .welcome-screen, .app-content { border-radius: 35px; overflow: hidden; }
 }
 @media (max-width: 768px) {
   body { background: #f4f7f9; padding: 0; display: block; }
   #root { width: 100%; height: 100%; border-radius: 0; padding: 0; box-shadow: none; background: #f4f7f9; }
   #root::before, #root::after, .desktop-info { display: none; }
 }
+@keyframes phoneEnter { from { opacity: 0; transform: translateY(40px); } to { opacity: 1; transform: translateY(0); } }
 </style>
 </head>
 <body>
@@ -47,7 +76,7 @@ body, html { margin: 0; padding: 0; height: 100vh; width: 100%; overflow: hidden
 <div id="root"></div>
 <div class="desktop-info">
   <p>Vilamoura Select App</p>
-  <p style="font-size: 11px; opacity: 0.7;">Vista de desktop (simulação mobile)</p>
+  <p style="font-size:11px;opacity:0.7">Vista de desktop</p>
 </div>
 
 <!-- ✅ SCRIPT: Só JavaScript/JSX aqui (SEM HTML) -->
@@ -66,37 +95,112 @@ const firebaseConfig = {
 if (!firebase.apps.length) { firebase.initializeApp(firebaseConfig); }
 const db = firebase.firestore();
 
-// App Component
+// Categorias
+const CATEGORIAS = [
+  { id: 'hoteis', icon: 'fa-hotel', nome: 'Hotéis' },
+  { id: 'comer', icon: 'fa-utensils', nome: 'Comer' },
+  { id: 'bares', icon: 'fa-glass-cheers', nome: 'Bares' },
+  { id: 'lazer', icon: 'fa-camera-retro', nome: 'Lazer' },
+  { id: 'golf', icon: 'fa-golf-ball-tee', nome: 'Golfe' },
+  { id: 'lojas', icon: 'fa-bag-shopping', nome: 'Lojas' },
+  { id: 'util', icon: 'fa-shield-halved', nome: 'Útil' },
+  { id: 'transportes', icon: 'fa-bus', nome: 'Transportes' }
+];
+
 function App() {
-  const [view, setView] = useState('menu');
-  const [navLevel, setNavLevel] = useState('mapa');
+  const [view, setView] = useState('splash');
+  const [navLevel, setNavLevel] = useState('categorias');
+  const [loading, setLoading] = useState(true);
+  const [locais, setLocais] = useState([]);
   const mapRef = useRef(null);
   const googleMap = useRef(null);
 
-  // ✅ Inicializar Mapa
+  // Carregar dados
+  useEffect(() => {
+    if (view === 'menu') {
+      setLoading(true);
+      db.collection('locais').get().then(snapshot => {
+        setLocais(snapshot.docs.map(doc => doc.data()));
+        setLoading(false);
+      }).catch(err => { console.error(err); setLoading(false); });
+    }
+  }, [view]);
+
+  // Inicializar mapa
   useEffect(() => {
     if (view === 'menu' && navLevel === 'mapa' && mapRef.current && !googleMap.current) {
-      try {
-        googleMap.current = new google.maps.Map(mapRef.current, {
-          center: { lat: 37.076, lng: -8.118 },
-          zoom: 15,
-          disableDefaultUI: true,
-          styles: [{ featureType: "poi", elementType: "labels", stylers: [{ visibility: "off" }] }]
-        });
-        console.log('✅ Mapa inicializado');
-      } catch (err) {
-        console.error('❌ Erro ao inicializar mapa:', err);
-      }
+      googleMap.current = new google.maps.Map(mapRef.current, {
+        center: { lat: 37.076, lng: -8.118 },
+        zoom: 15,
+        disableDefaultUI: true
+      });
     }
   }, [view, navLevel]);
 
+  // Splash Screen
+  if (view === 'splash') {
+    return (
+      <div className="splash-screen">
+        <h2 style={{color:'#003366',marginBottom:30}}>Vilamoura Select</h2>
+        <button className="btn" style={{padding:'15px 40px',background:'#003366',color:'#fff',border:'2px solid #fff',borderRadius:30,fontSize:16,cursor:'pointer'}} onClick={()=>setView('menu')}>ENTRAR</button>
+      </div>
+    );
+  }
+
+  // Menu Principal
   return (
-    <div style={{height: '100%'}}>
+    <div style={{height:'100%'}}>
+      <div className="lang-bar">
+        {['PT','EN','FR','DE','ES'].map(l=>(<button key={l} className={`lang-btn ${l==='PT'?'active':''}`}>{l}</button>))}
+      </div>
+      <div className="personalized-message">☀️ Bom dia! Pronto para explorar Vilamoura?</div>
+      
       <div className="app-content">
-        <div className={`map-view ${navLevel === 'mapa' ? 'active' : ''}`}>
-          <button className="btn-back-map" onClick={() => setNavLevel('categorias')}>← Voltar</button>
-          <div ref={mapRef} id="map-canvas"></div>
-        </div>
+        {/* Categorias */}
+        {navLevel === 'categorias' && (
+          <div className="menu-view">
+            <div className="search-area">
+              <div className="search-box"><i className="fas fa-search"></i><input type="text" placeholder="Procurar..." /></div>
+            </div>
+            <div className="grid-cats">
+              {CATEGORIAS.map(c=>(
+                <div key={c.id} className="cat-card" onClick={()=>setNavLevel('locais')}>
+                  <i className={`fas ${c.icon}`}></i><div>{c.nome}</div>
+                </div>
+              ))}
+            </div>
+            <button className="explore-below-btn" onClick={()=>setNavLevel('mapa')}>
+              <i className="fas fa-map-marked-alt"></i> 📍 EXPLORAR TUDO
+            </button>
+          </div>
+        )}
+        
+        {/* Lista de Locais */}
+        {navLevel === 'locais' && (
+          <div className="menu-view">
+            <div className="nav-header">
+              <button className="btn-back-nav" onClick={()=>setNavLevel('categorias')}>← Voltar</button>
+              <span className="nav-title">Hotéis</span>
+            </div>
+            <div className="search-area"><div className="search-box"><i className="fas fa-search"></i><input type="text" placeholder="Procurar..." /></div></div>
+            {loading ? <div className="loader">A carregar...</div> : (
+              locais.slice(0,5).map(l=>(
+                <div key={l.nome} className="item-row">
+                  <img src={l.img || 'https://via.placeholder.com/50'} alt={l.nome} />
+                  <div><div style={{fontWeight:'bold'}}>{l.nome}</div><div style={{fontSize:11,color:'#666'}}>{l.info?.pt || ''}</div></div>
+                </div>
+              ))
+            )}
+          </div>
+        )}
+        
+        {/* Mapa */}
+        {navLevel === 'mapa' && (
+          <div className="map-view active">
+            <button className="btn-back-map" onClick={()=>setNavLevel('categorias')}>← Voltar</button>
+            <div ref={mapRef} id="map-canvas"></div>
+          </div>
+        )}
       </div>
     </div>
   );
@@ -105,13 +209,13 @@ function App() {
 ReactDOM.createRoot(document.getElementById('root')).render(<App />);
 </script>
 
-<!-- ✅ Service Worker (FORA do script Babel) -->
+<!-- Service Worker (FORA do script Babel) -->
 <script>
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
     navigator.serviceWorker.register('/app/sw.js')
-      .then(reg => console.log('✅ Service Worker registado!', reg.scope))
-      .catch(err => console.log('❌ Erro no Service Worker:', err));
+      .then(reg => console.log('✅ SW registado'))
+      .catch(err => console.log('❌ Erro SW:', err));
   });
 }
 </script>
