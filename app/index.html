@@ -9,14 +9,14 @@
 <meta name="theme-color" content="#003366">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css  ">
-<script src="https://unpkg.com/react@18/umd/react.development.js  "></script>
-<script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js  "></script>
-<script src="https://unpkg.com/@babel/standalone/babel.min.js  "></script>
-<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCqRtZgE7hw-znacoAqXuXZ4SEGVuXWudo&libraries=places  "></script>
-<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js  "></script>
-<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js  "></script>
-<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-messaging-compat.js  "></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+<script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCqRtZgE7hw-znacoAqXuXZ4SEGVuXWudo&libraries=places"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-messaging-compat.js"></script>
 <style>
 body, html { margin: 0; padding: 0; height: 100vh; width: 100%; overflow: hidden; background: #f4f7f9; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
 #root { height: 100%; width: 100%; }
@@ -216,11 +216,11 @@ return url.trim().replace(/\s+/g, '');
 };
 
 const languages = [
-{ code: 'pt', flag: 'https://flagcdn.com/w40/pt.png  ', name: 'Português' },
-{ code: 'en', flag: 'https://flagcdn.com/w40/gb.png  ', name: 'English' },
-{ code: 'fr', flag: 'https://flagcdn.com/w40/fr.png  ', name: 'Français' },
-{ code: 'de', flag: 'https://flagcdn.com/w40/de.png  ', name: 'Deutsch' },
-{ code: 'es', flag: 'https://flagcdn.com/w40/es.png  ', name: 'Español' }
+{ code: 'pt', flag: 'https://flagcdn.com/w40/pt.png', name: 'Português' },
+{ code: 'en', flag: 'https://flagcdn.com/w40/gb.png', name: 'English' },
+{ code: 'fr', flag: 'https://flagcdn.com/w40/fr.png', name: 'Français' },
+{ code: 'de', flag: 'https://flagcdn.com/w40/de.png', name: 'Deutsch' },
+{ code: 'es', flag: 'https://flagcdn.com/w40/es.png', name: 'Español' }
 ];
 
 // ✅ i18n COM TRADUÇÕES PUSH INCLUÍDAS
@@ -562,7 +562,7 @@ return;
 }
 if (!navigator.geolocation) {
 alert('A geolocalização não é suportada. A abrir Google Maps...');
-window.open(`https://www.google.com/maps/dir/?api=1&destination=  ${lat},${lng}`, '_blank');
+window.open(`https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}`, '_blank');
 return;
 }
 navigator.geolocation.getCurrentPosition(
@@ -577,13 +577,13 @@ if (status === 'OK' && directionsRenderer.current) {
 directionsRenderer.current.setDirections(result);
 } else {
 alert('Não foi possível calcular a rota. A abrir Google Maps...');
-window.open(`https://www.google.com/maps/dir/?api=1&destination=  ${lat},${lng}`, '_blank');
+window.open(`https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}`, '_blank');
 }
 });
 },
 (err) => {
 alert('Ative a localização para calcular rotas. A abrir Google Maps...');
-window.open(`https://www.google.com/maps/dir/?api=1&destination=  ${lat},${lng}`, '_blank');
+window.open(`https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}`, '_blank');
 },
 { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
 );
@@ -613,7 +613,7 @@ if (!urlLimpa) return '';
 return `
 <img src="${urlLimpa}"
 style="width:80px; height:80px; border-radius:8px; object-fit:cover; flex-shrink:0; border:2px solid #fff; box-shadow:0 2px 6px rgba(0,0,0,0.15); cursor:pointer; background:#f1f1f1;"
-onerror="this.style.background='#eee'; this.src='https://via.placeholder.com/80?text=Foto+  '+(${idx+1})"
+onerror="this.style.background='#eee'; this.src='https://via.placeholder.com/80?text=Foto+'+(${idx+1})"
 onclick="this.style.width=this.style.width==='160px'?'80px':'160px'; this.style.height=this.style.height==='160px'?'80px':'160px'">
 `;
 }).filter(html => html !== '').join('')}
@@ -718,7 +718,7 @@ return filtered;
 const filtered = getFilteredLocais();
 
 if (view === 'splash') {
-return (<div className="splash-screen"><img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEh2RRJgYenNf-1LjVFu47Lj4dmOnLy9PPAcXvXN2zLle3kx2vlEAQXtIs6_C6g9H-90RCQqjSj41N6ZfeDT35GG17m8VJ3-h4iC041wDTLKTZJ7QAs5511gf8OimILN-XyQlT4v3Brs7yWpQSqL_DuvLKJrLvacbYvb7y9VZFEOyZ6FVTwLtPFtI_Xt5nZG/w400-h225/Vilamoura-Select_YourIndependentGuidetoVilamoura_retangular_2-.gif  " alt="Vilamoura Select" style={{ width: '95%', maxWidth: '420px', height: 'auto', marginBottom: '35px', borderRadius: '8px' }} /><div style={{ position: 'absolute', bottom: '40px', left: '0', right: '0', display: 'flex', justifyContent: 'center', padding: '0 20px' }}><button style={{ width: '210px', padding: '15px 24px', background: '#003366', color: '#ffffff', border: '2px solid #ffffff', borderRadius: '32px', fontWeight: 'bold', fontSize: '15px', cursor: 'pointer' }} onClick={handleEnter}>{t.enter}</button></div></div>);
+return (<div className="splash-screen"><img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEh2RRJgYenNf-1LjVFu47Lj4dmOnLy9PPAcXvXN2zLle3kx2vlEAQXtIs6_C6g9H-90RCQqjSj41N6ZfeDT35GG17m8VJ3-h4iC041wDTLKTZJ7QAs5511gf8OimILN-XyQlT4v3Brs7yWpQSqL_DuvLKJrLvacbYvb7y9VZFEOyZ6FVTwLtPFtI_Xt5nZG/w400-h225/Vilamoura-Select_YourIndependentGuidetoVilamoura_retangular_2-.gif" alt="Vilamoura Select" style={{ width: '95%', maxWidth: '420px', height: 'auto', marginBottom: '35px', borderRadius: '8px' }} /><div style={{ position: 'absolute', bottom: '40px', left: '0', right: '0', display: 'flex', justifyContent: 'center', padding: '0 20px' }}><button style={{ width: '210px', padding: '15px 24px', background: '#003366', color: '#ffffff', border: '2px solid #ffffff', borderRadius: '32px', fontWeight: 'bold', fontSize: '15px', cursor: 'pointer' }} onClick={handleEnter}>{t.enter}</button></div></div>);
 }
 
 if (view === 'welcome') {
@@ -794,7 +794,7 @@ marginBottom: '10px'
 ⭐ {destaqueNivel === 3 ? 'OURO' : destaqueNivel === 2 ? 'PRATA' : 'BRONZE'}
 </div>
 )}
-<img src={cleanImageUrl(l.img)} onError={(e) => {e.target.src='https://via.placeholder.com/50?text=?  '}} style={{borderRadius: isFeatured ? '12px' : '8px'}} />
+<img src={cleanImageUrl(l.img)} onError={(e) => {e.target.src='https://via.placeholder.com/50?text=?'}} style={{borderRadius: isFeatured ? '12px' : '8px'}} />
 <div>
 <div style={{fontWeight: isFeatured ? 'bold' : 'normal', color: isFeatured ? '#003366' : '#333'}}>{l.nome}</div>
 <div style={{fontSize:11}}>{getInfoText(l.info, lang)}</div>
