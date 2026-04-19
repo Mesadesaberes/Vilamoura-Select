@@ -1,4 +1,4 @@
-// ✅ /app/sw.js - SERVICE WORKER PARA PUSH NOTIFICATIONS
+// ✅ /app/sw.js - SERVICE WORKER PARA PUSH NOTIFICATIONS (CORRIGIDO)
 
 // Importar Firebase
 importScripts('https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js');
@@ -22,12 +22,14 @@ messaging.onBackgroundMessage((payload) => {
   console.log('[sw.js] Mensagem push recebida:', payload);
   
   const notificationTitle = payload.notification?.title || 'Vilamoura Select';
+  
+  // ✅ CORREÇÃO: Adicionar chave "data" ao objeto
   const notificationOptions = {
     body: payload.notification?.body || 'Nova promoção disponível!',
     icon: '/app/icon-192.png',
     badge: '/app/icon-192.png',
     vibrate: [200, 100, 200],
-     {
+    data: {  // ✅ CHAVE "data" ADICIONADA
       url: payload.data?.click_action || '/app/',
       dateOfArrival: Date.now(),
       primaryKey: 1
