@@ -205,7 +205,14 @@ appId: "1:189990454398:web:3d9eac9cf3a84b0510c42f"
 if (!firebase.apps.length) { firebase.initializeApp(firebaseConfig); }
 const db = firebase.firestore();
 const messaging = firebase.messaging();
-
+// ✅ ATIVAR MODO OFFLINE PARA FIRESTORE
+db.enablePersistence()
+  .then(() => {
+    console.log('✅ Firestore offline ativado!');
+  })
+  .catch((err) => {
+    console.warn('⚠️ Offline falhou:', err.code, err.message);
+  });
 // ✅ DETETAR SE É DESKTOP
 const isDesktop = () => window.innerWidth > 768;
 
