@@ -1,15 +1,15 @@
-// app/sw.js
+// app/sw.js - Service Worker para Notificações Push (Vilamoura-Select)
 importScripts('https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js');
 importScripts('https://www.gstatic.com/firebasejs/9.22.0/firebase-messaging-compat.js');
 
-// 1. CONFIGURAÇÃO DO FIREBASE (Use os mesmos dados do seu index.html)
+// 1. CONFIGURAÇÃO DO FIREBASE (com os seus dados reais)
 const firebaseConfig = {
-  apiKey: "SUA_API_KEY_AQUI",
-  authDomain: "SEU_PROJECT_ID.firebaseapp.com",
-  projectId: "SEU_PROJECT_ID",
-  storageBucket: "SEU_PROJECT_ID.appspot.com",
-  messagingSenderId: "189990454398", // <-- ID do remetente que vimos no painel
-  appId: "SEU_APP_ID_AQUI"
+  apiKey: "AIzaSyDfUDqEJxVnWbQgn6LEVQAjlKeBJdp0vyY",
+  authDomain: "vilamoura-select.firebaseapp.com",
+  projectId: "vilamoura-select",
+  storageBucket: "vilamoura-select.firebasestorage.app",
+  messagingSenderId: "189990454398",
+  appId: "1:189990454398:web:3d9eac9cf3a84b0510c42f"
 };
 
 // Inicializar Firebase
@@ -26,7 +26,7 @@ messaging.onBackgroundMessage((payload) => {
   const notificationTitle = payload.notification.title || 'Nova Promoção Vilamoura-Select!';
   const notificationOptions = {
     body: payload.notification.body || 'Toque para ver a novidade.',
-    icon: '/app/icon-192x192.png', // Ajuste para o caminho do seu ícone real
+    icon: '/app/icon-192x192.png', // ⚠️ Ajuste este caminho se o seu ícone tiver outro nome
     badge: '/app/icon-192x192.png',
     data: payload.data || {} // Guarda dados extras (ex: link para abrir)
   };
