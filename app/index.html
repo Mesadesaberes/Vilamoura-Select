@@ -460,42 +460,60 @@ console.log('⚠️ Push check error:', err);
 checkPushSupport();
 }, []);
 
-// ✅ PEDIR PERMISSÃO E SUBSCREVER (COM TRADUÇÕES + DETEÇÃO iOS)
+// ✅ PEDIR PERMISSÃO E SUBSCREVER (CORRIGIDO)
 const requestPushPermission = async () => {
-setPushLoading(true);
-
-// ✅ DETETAR iOS E MOSTRAR AVISO AMIGÁVEL
-const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
-if (isIOS) {
-alert(t.push.iosWarning);
-setPushLoading(false);
-return;
-}
-
-try {
-const permission = await Notification.requestPermission();
-if (permission !== 'granted') {
-alert(t.push.permissionDenied);
-setPushLoading(false);
-return;
-}
-const registration = await navigator.serviceWorker.register('/app/sw.js');
-// ⚠️ VAPID KEY - SUBSTITUIR PELA TUA DO FIREBASE CONSOLE
-const VAPID_KEY = 'BEXGIMrOwMJ6BAppO1yi6DO16bfh0mYoSS_kOlyLaQRM-hBw51eZ6dznz25jHt3LHZHwlkw_FzEZ_b7bApjks58';
-const token = await messaging.getToken({ vapidKey: VAPID_KEY });
-await db.collection('push_subscriptions').add({
-token,
-createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-platform: navigator.platform,
-userAgent: navigator.userAgent
-});
-setPushSubscribed(true);
-alert(t.push.activationSuccess);
-} catch (err) {
-console.error('❌ Erro push:', err);
-alert(t.push.activationError);
-}
-setPushLoading(false);
+  setPushLoading(true);
+  
+  // ✅ DETETAR iOS E MOSTRAR AVISO AMIGÁVEL
+  const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+  if (isIOS) {
+    alert(t.push.iosWarning);
+    setPushLoading(false);
+    return;
+  }
+  
+  try {
+    // 1. Pedir permissão
+    const permission = await Notification.requestPermission();
+    if (permission !== 'granted') {
+      alert(t.push.permissionDenied);
+      setPushLoading(false);
+      return;
+    }
+    
+    // 2. Registar o Service Worker (já existente em /app/sw.js)
+    const registration = await navigator.serviceWorker.register('/app/sw.js');
+    console.log('✅ Service Worker registado para notificações:', registration);
+    
+    // 3. Aguardar que o SW esteja pronto
+    await navigator.serviceWorker.ready;
+    
+    // 4. Obter o token usando o SW que já registámos
+    const VAPID_KEY = 'BEXGIMrOwMJ6BAppO1yi6DO16bfh0mYoSS_kOlyLaQRM-hBw51eZ6dznz25jHt3LHZHwlkw_FzEZ_b7bApjks58';
+    const token = await messaging.getToken({ 
+      vapidKey: VAPID_KEY,
+      serviceWorkerRegistration: registration // ← ESTA LINHA É A CHAVE!
+    });
+    
+    console.log('✅ Token obtido:', token);
+    
+    // 5. Guardar no Firestore
+    await db.collection('push_subscriptions').add({
+      token,
+      createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+      platform: navigator.platform,
+      userAgent: navigator.userAgent
+    });
+    
+    setPushSubscribed(true);
+    alert(t.push.activationSuccess);
+    
+  } catch (err) {
+    console.error('❌ Erro push:', err);
+    alert(t.push.activationError + '\n\nDetalhes: ' + err.message);
+  }
+  
+  setPushLoading(false);
 };
 
 // ✅ CANCELAR SUBSCRIÇÃO (COM TRADUÇÃO)
